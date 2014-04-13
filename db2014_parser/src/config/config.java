@@ -83,6 +83,17 @@ public class config {
 	public int get_number_connection(){
 		return Integer.parseInt(configFile.getProperty("NumOfConnections"));
 	}
+	
+	/** get number of connections to create **/
+	public  int get_window_height(){
+		return Integer.parseInt(configFile.getProperty("WINDOW_WIDTH"));
+	}
+	/** get number of connections to create **/
+	public int get_window_width(){
+		return Integer.parseInt(configFile.getProperty("WINDOW_HEIGHT"));
+	}
+	
+
 
  
 }
