@@ -126,7 +126,7 @@ COMMENT = 'general Tag Categories';
 -- Table `dbmysql05`.`users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`users` (
-  `idUsers` INT(11) NOT NULL,
+  `idUsers` INT NOT NULL AUTO_INCREMENT,
   `userName` VARCHAR(45) NOT NULL,
   `userPassword` VARCHAR(45) NOT NULL,
   `hashPassword` INT(11) NOT NULL,

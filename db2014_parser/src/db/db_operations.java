@@ -10,16 +10,10 @@ import java.sql.Connection;
  * The communication with the db is being made
  * by this class methods. All the operation against the DB:
  */
-public class db_operations{
-
-	private static jdbc_connection_pooling conn_pool;
+public abstract class db_operations
+{
 	private static final int OK = 1;
 	private static final int ERR = 0;
-	
-	// constructor //
-	public db_operations(jdbc_connection_pooling connParam) {
-		conn_pool = connParam;
-	}
 
 	
 	//*** db operations- select, insert, update, delete ***//
@@ -27,7 +21,7 @@ public class db_operations{
 	 * @param table - the table name we want to insert to
 	 * @param values - the values to insert in the correct order
 	 */
-	protected int insert(String table, String... values) {
+	protected static int insert(String table, String... values) {
 
 		int i;
 
@@ -44,7 +38,7 @@ public class db_operations{
 		System.out.println(state);
 		Connection conn = null;
 		try {
-			conn = conn_pool.connectionCheck();
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
 			Statement stmt = null;
 
@@ -61,25 +55,65 @@ public class db_operations{
 			e.printStackTrace();
 			return ERR;
 		}
-		conn_pool.close(conn);
+		jdbc_connection_pooling.get_conn().close(conn);
 		return OK;
 
 	}
 
+	// columns needs to look like "'col1', 'col2', 'col3'..."
+	protected static int insert_columns(String table,String columns, String... values) {
+
+		int i;
+
+		String state = "INSERT INTO " + table + " (" + columns + ") VALUES (";
+
+		for (i = 0; i < Array.getLength(values); i++) {
+			state = state+values[i];
+
+			if (i != Array.getLength(values) - 1)
+				state = state + ",";
+		}
+		state += ")";
+
+		System.out.println(state);
+		Connection conn = null;
+		try {
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
+
+			Statement stmt = null;
+
+			stmt = conn.createStatement();
+
+			stmt.executeUpdate(state);
+		}
+
+		catch (SQLException e) {
+			System.out
+			.println("Check that the number of values matches the number of coulmns in the table+ "
+					+ table);
+
+			e.printStackTrace();
+			return ERR;
+		}
+		jdbc_connection_pooling.get_conn().close(conn);
+		return OK;
+
+	}
+	
 	/** select query 
 	 * @param select- the string that should come after "SELECT"
 	 * @param from- the string that should come after "FROM"
 	 * @param where- the string that should come after "WHER"
 	 * @return ResultSet with the result to that query
 	 */
-	protected ResultSet select(String select, String from, String where) {
+	protected static ResultSet select(String select, String from, String where) {
 
 		ResultSet result = null;
 		Connection conn = null;
 		Statement stmt = null;
 
 		try {
-			conn = conn_pool.connectionCheck();
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 			stmt = conn.createStatement();
 
 		} catch (SQLException e) {
@@ -97,7 +131,7 @@ public class db_operations{
 			System.out.println("Select Error");
 			e.printStackTrace();
 		}
-		conn_pool.close(conn);
+		jdbc_connection_pooling.get_conn().close(conn);
 		return result;
 	}
 
@@ -106,10 +140,10 @@ public class db_operations{
 	 * @param columnSet- string that should come after "SET"
 	 * @param predicatesSet - string that should come after "WHERE"
 	 */
-	protected int update(String tableName, String columnSet, String predicatesSet) {
+	protected static int update(String tableName, String columnSet, String predicatesSet) {
 		Connection conn = null;
 		try {
-			conn = conn_pool.connectionCheck();
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
 			Statement stmt = null;
 
@@ -124,7 +158,7 @@ public class db_operations{
 			e.printStackTrace();
 			return ERR;
 		}
-		conn_pool.close(conn);
+		jdbc_connection_pooling.get_conn().close(conn);
 		return OK;
 
 	}
@@ -133,10 +167,10 @@ public class db_operations{
 	 * @param tableName- the name of the table we want to delete from
 	 * @param whereCol- string that comes after "WHERE"- tells which tuple to delete
 	 */
-	protected int delete(String tableName, String whereCol) {
+	protected static int delete(String tableName, String whereCol) {
 		Connection conn = null;
 		try {
-			conn = conn_pool.connectionCheck();
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
 			Statement stmt = null;
 
@@ -161,7 +195,7 @@ public class db_operations{
 	protected Connection getConnection() {
 		Connection conn = null;
 		try {
-			conn = conn_pool.connectionCheck();
+			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 		} catch (SQLException e1) {			
 			e1.printStackTrace();
 		}

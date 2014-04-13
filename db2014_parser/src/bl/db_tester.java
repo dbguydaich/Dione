@@ -4,17 +4,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import db.db_queries;
-import db.jdbc_connection_pooling;
 
 public class db_tester {
 
 	public static void main(String[] args) throws SQLException 
 	{
-		jdbc_connection_pooling conn = new jdbc_connection_pooling();
-		
-		db_queries specialOps = new db_queries(conn);
-		
-		HashMap<String, String> movies = specialOps.get_all_movies();
+		HashMap<String, String> movies = db_queries.get_all_movies();
 		
 		for  (String key : movies.keySet())
 		{
@@ -22,13 +17,13 @@ public class db_tester {
 		}
 		
 		String name = "Matan";
-		if (specialOps.does_user_exists(name))
+		if (db_queries.does_user_exists(name))
 			System.out.println("the user " + name + " exists");
 		else
 			System.out.println("the user " + name + " does not exists");
 		
 		name = "Schachar";
-		if (specialOps.does_user_exists(name))
+		if (db_queries.does_user_exists(name))
 			System.out.println("the user " + name + " exists");
 		else
 			System.out.println("the user " + name + " does not exists");

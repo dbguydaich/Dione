@@ -23,7 +23,11 @@ INSERT INTO `dbmysql05`.`movie` (`idMovie`, `idLanguage`, `idDirector`, `movieNa
 INSERT INTO `dbmysql05`.`movie` (`idMovie`, `idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('2', '1', '2', 'E.T', '1989', 'et@movies.com', '135', 'fasdfsa');
 
 -- Users
-INSERT INTO `dbmysql05`.`users` (`idUsers`, `userName`, `userPassword`, `hashPassword`) VALUES ('1', 'shachar the I', '123', '123123');
-INSERT INTO `dbmysql05`.`users` (`idUsers`, `userName`, `userPassword`, `hashPassword`) VALUES ('2', 'shachar the II', '321', '321321');
-INSERT INTO `dbmysql05`.`users` (`idUsers`, `userName`, `userPassword`, `hashPassword`) VALUES ('3', 'Matan', '1', '1');
-INSERT INTO `dbmysql05`.`users` (`idUsers`, `userName`, `userPassword`, `hashPassword`) VALUES ('4', 'Guy', 'asdf', '1');
+INSERT INTO `dbmysql05`.`users` (`userName`, `userPassword`, `hashPassword`) VALUES ('shachar the I', '123', '123123');
+INSERT INTO `dbmysql05`.`users` (`userName`, `userPassword`, `hashPassword`) VALUES ('shachar the II', '321', '321321');
+INSERT INTO `dbmysql05`.`users` (`userName`, `userPassword`, `hashPassword`) VALUES ('Matan', '1', '1');
+INSERT INTO `dbmysql05`.`users` (`userName`, `userPassword`, `hashPassword`) VALUES ('Guy', 'asdf', '1');
+
+
+-- Commit
+commit;

@@ -7,6 +7,8 @@ import config.config;
 
 public class jdbc_connection_pooling implements Runnable 
 {
+	private static jdbc_connection_pooling instance = null;
+	
 	int initialConnections;
 	Vector<Connection> connectionsAvailable = new Vector<Connection>();
 	Vector<Connection> connectionsUsed = new Vector<Connection>();
@@ -16,7 +18,7 @@ public class jdbc_connection_pooling implements Runnable
 	String userPassword ;
 
 
-	public jdbc_connection_pooling() throws SQLException {
+	protected jdbc_connection_pooling() throws SQLException {
 		try {                
 			config settings = new config();
 			String hostAdd = settings.get_host_address();
@@ -36,6 +38,23 @@ public class jdbc_connection_pooling implements Runnable
 		}
 	}
 
+	public static jdbc_connection_pooling get_conn()
+	{
+		if (instance == null)
+		{
+			try 
+			{
+				instance = new jdbc_connection_pooling();
+			} 
+			catch (SQLException e) 
+			{
+				return (null);
+			}
+		}
+		
+		return (instance);
+	}
+	
 	private Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(connectionUrl, userName,
 				userPassword);
