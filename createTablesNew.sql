@@ -6,12 +6,28 @@ CREATE SCHEMA IF NOT EXISTS `dbmysql05` DEFAULT CHARACTER SET utf8 ;
 USE `dbmysql05` ;
 
 -- -----------------------------------------------------
+-- Table `dbmysql05`.`person`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbmysql05`.`person` (
+  `idPerson` INT(11) NOT NULL,
+  `personName` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idPerson`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `dbmysql05`.`actor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor` (
   `idActor` INT(11) NOT NULL,
-  `actorName` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idActor`))
+  `idPerson` INT(11) NOT NULL,
+  PRIMARY KEY (`idActor`),
+  CONSTRAINT `idPersonActor`
+    FOREIGN KEY (`idPerson`)
+    REFERENCES `dbmysql05`.`person` (`idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -21,8 +37,13 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`director` (
   `idDirector` INT(11) NOT NULL,
-  `directorName` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idDirector`))
+  `idPerson` INT(11) NOT NULL,
+  PRIMARY KEY (`idDirector`),
+  CONSTRAINT `idPersonDirector`
+    FOREIGN KEY (`idPerson`)
+    REFERENCES `dbmysql05`.`person` (`idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
