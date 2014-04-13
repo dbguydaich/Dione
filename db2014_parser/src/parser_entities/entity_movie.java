@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class parser_entity_movie  implements Serializable{
+public class entity_movie  implements Serializable{
 	
 	/*private members*/
 	private String 						entity_movie_name; 
@@ -15,8 +15,8 @@ public class parser_entity_movie  implements Serializable{
 	private String 						entity_movie_year; 
 	private Set<String> 				entity_movie_genres;
 	private String 						entity_movie_language; 
-	private parser_entity_person 		entity_movie_director;
-	private List<parser_entity_person> 	entity_movie_actors;
+	private entity_person 		entity_movie_director;
+	private List<entity_person> 	entity_movie_actors;
 	private String 						entity_movie_wikipedia_url;
 	private String 						entity_movie_plot; 
 	private String 						entity_movie_youtube_url;
@@ -24,15 +24,15 @@ public class parser_entity_movie  implements Serializable{
 	private double 						entity_movie_rating;
 
 	/* constructor */	
-	public parser_entity_movie(String id)
+	public entity_movie(String id)
 	{
 		entity_movie_genres = new LinkedHashSet<String>();
-		entity_movie_actors = new ArrayList<parser_entity_person>();
+		entity_movie_actors = new ArrayList<entity_person>();
 		this.entity_movie_yago_id = id;
 	}
 
 	
-	public void add_to_actors(parser_entity_person movie_actor) {
+	public void add_to_actors(entity_person movie_actor) {
 		if(movie_actor != null)
 			this.entity_movie_actors.add(movie_actor);
 	}
@@ -86,15 +86,15 @@ public class parser_entity_movie  implements Serializable{
 		this.entity_movie_language = movie_langage;
 	}
 
-	public parser_entity_person get_movie_director() {
+	public entity_person get_movie_director() {
 		return entity_movie_director;
 	}
 
-	public void setmovie_director(parser_entity_person movie_director) {
+	public void setmovie_director(entity_person movie_director) {
 		this.entity_movie_director = movie_director;
 	}
 
-	public List<parser_entity_person> getActorsLst() {
+	public List<entity_person> getActorsLst() {
 		return entity_movie_actors;
 	}
 

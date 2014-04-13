@@ -84,6 +84,5 @@ public class config {
 		return Integer.parseInt(configFile.getProperty("NumOfConnections"));
 	}
 
-
  
 }

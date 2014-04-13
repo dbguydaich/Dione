@@ -2,12 +2,12 @@ package parser_entities;
 
 import java.io.Serializable;
 
-public class parser_entity_person implements Serializable{
+public class entity_person implements Serializable{
 	
 	private String entity_person_name;
 	private String entity_person_id;
 	
-	public parser_entity_person(String person_id){
+	public entity_person(String person_id){
 		this.entity_person_id = person_id;
 	}
 
