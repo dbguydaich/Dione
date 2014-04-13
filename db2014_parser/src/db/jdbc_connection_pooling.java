@@ -5,7 +5,8 @@ import java.sql.*;
 
 import config.config;
 
-public class jdbc_connection_pooling implements Runnable {
+public class jdbc_connection_pooling implements Runnable 
+{
 	int initialConnections;
 	Vector<Connection> connectionsAvailable = new Vector<Connection>();
 	Vector<Connection> connectionsUsed = new Vector<Connection>();
@@ -29,7 +30,8 @@ public class jdbc_connection_pooling implements Runnable {
 			for (int count = 0; count < initialConnections; count++) {
 				connectionsAvailable.addElement(getConnection());
 			}
-		} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) 
+		{
 			System.out.println(e.toString());
 		}
 	}
