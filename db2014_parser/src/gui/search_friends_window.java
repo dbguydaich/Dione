@@ -32,28 +32,32 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
-import com.sun.javafx.iio.common.ImageDescriptor;
+
+
 
 import config.config;
 import db.db_queries;
+//import db.db_queries;
 import bl.verifier;
 
 
 public class search_friends_window extends Composite {
-	private Text friend_name_text;
-	
+	//private Text friend_name_text;
 	
 	//data//
-	config config = new config();
-	private int window_height = config.get_window_height();
-	private int window_width = config.get_window_width();
-//
+	config config1 = new config();
+	int window_height = config1.get_window_height();
+	int window_width = config1.get_window_width();
+	
+
 //	 public static void main(String args[]) {
 //	 try {
 //	 Display display = Display.getDefault();
@@ -70,55 +74,59 @@ public class search_friends_window extends Composite {
 //	 e.printStackTrace();
 //	 }
 //	 }
-//
-//	/**
-//	 * Create the shell.
-//	 * @param display
-//	 */
-	public search_friends_window(final Display display, Composite parent,int style) {
+
+	/**
+	 * Create the shell.
+	 * @param display
+	 */
+	public search_friends_window(final Display display, Composite parent, int style) {
 		super(parent, style);
-	//	this.setSize(window_width, window_height);
-		this.setSize(10,10);
-		
-	//	db_queries queries = new db_queries();
-	
-		
-
-		//setImage(SWTResourceManager.getImage(SignUpForm.class, "/movies.png"));
-	//	setLayout(null);
-
-		Composite shell = new Composite(this, SWT.NONE);
-		shell.setBounds( 0,  0, window_width, window_height);
-		shell.setSize( window_height, window_width);
-		GridLayout  grid = new GridLayout(2,false);
-		shell.setLayout(grid);
-		
-		friend_name_text = new Text(shell, SWT.BORDER);
-		friend_name_text.setBounds(150, 200, 320, 30);
-		
-		////////////////////////////
-		
-	
-		
-
-
-		shell.setBackgroundImage(new Image(display,"search_friends_window.png"));
-
-		createContents();
-		
-
 		
 		
+		this.setSize(window_width, window_height);
+		FormLayout form_layout_tab = new FormLayout();
+		this.setLayout(form_layout_tab);
 		
 		
-
-		Button search_button = new Button(shell, SWT.PUSH);
-		search_button.setBounds(270, 280, 90, 30);
-		search_button.setText("Search");
-		search_button.addSelectionListener(new SelectionAdapter() {
+		//headline
+		Label headline_label = new Label(this, SWT.NONE);
+		headline_label.setText("Add Friend:");
+		FormData form_data_headline_label = new FormData();
+		form_data_headline_label.top = new FormAttachment(0,10);
+		form_data_headline_label.left = new FormAttachment(0,30);
+		headline_label.setFont(new Font(display, "Ariel",15, java.awt.Font.PLAIN ));
+		headline_label.setLayoutData(form_data_headline_label);		
+		
+		//this.setBackgroundImage(new Image(display,"search_friends_window.png"));
+		
+		//left area
+		Composite left_area = new Composite(this, SWT.BORDER);
+		FormData form_data_left_area = new FormData(150, 50); 
+		form_data_left_area.top = new FormAttachment(0, 40);
+		form_data_left_area.left = new FormAttachment(0, 30);
+		left_area.setLayoutData(form_data_left_area);
+		GridLayout grid_layout_left_area = new GridLayout(2, false);
+		left_area.setLayout(grid_layout_left_area);
+		
+		
+		//search text
+		final Text search_text = new Text(left_area, SWT.BORDER);
+		GridData grid_data_search_text = new GridData();
+		grid_data_search_text.verticalIndent = 10;
+		search_text.setLayoutData(grid_data_search_text);
+		
+		final String friendName = search_text.getText();
+		//add button
+		Button add_button = new Button(left_area, SWT.PUSH);
+		GridData grid_data_add_button = new GridData();
+		grid_data_add_button.verticalIndent = 10;
+		grid_data_add_button.horizontalIndent = 10;
+		add_button.setLayoutData(grid_data_add_button);
+		add_button.setText("Add");
+		add_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if(!verifier.verifyname(friend_name_text.getText())){ 
+				if(!verifier.verifyname(search_text.getText())){ 
 					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
@@ -126,68 +134,23 @@ public class search_friends_window extends Composite {
 				}
 
 
-//				else if(does_user_exists(friend_name_text.getText())){ //to be implemented next on
-//					display.syncExec(new AddUser(oparations, userNameText.getText(), passwordText.getText()){
-//						@Override
-//						public void run(){
-//							super.run();
-//							int result = this.getValue();
-//							MessageBox messageBox = new MessageBox(display.getActiveShell(),SWT.ICON_INFORMATION);
-//							if (result == 0){
-//
-//								messageBox.setText("Error");
-//								messageBox.setMessage("Connection Error");
-//								messageBox.open();
-//
-//							}else if(result == 1){
-//								messageBox.setText("Welcome");
-//								messageBox.setMessage("New user was added: " + userNameText.getText());
-//								messageBox.open();
-//
-//								// open main menu
-//								int idUser = userNameText.getText().hashCode();
-//								dispose();
-//								MainMenu MainMenuShell = new MainMenu(display,oparations,false, idUser);
-//								MainMenuShell.open();
-//								MainMenuShell.layout();
-//								while (!MainMenuShell.isDisposed()) {
-//									if (!display.readAndDispatch()) {
-//										display.sleep();
-//									}
-//								}
-//
-//							}
-//							else {
-//								messageBox.setText("Warning");
-//								messageBox.setMessage("User already exist : " + userNameText.getText());
-//								messageBox.open();
-//							}
-//
-//						}
-//
-//
-//					});
-//				}
+				else if(db_queries.does_user_exists(friendName)){ //to be implemented next on
+				
+
+
+					
+				}
 				else //no user found
 				{
 					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("No user Found");
-					messageBox.setMessage("No user Found");
+					messageBox.setMessage("No user Found. Please try again.");
 					messageBox.open();
 				}
 			}
 
 		});
 
-
-	}
-
-	/**
-	 * Create contents of the shell.
-	 */
-	protected void createContents() {
-	//	setText("Search Friend window");
-		setSize( window_height, window_width);
 
 	}
 
