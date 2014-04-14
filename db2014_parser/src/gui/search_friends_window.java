@@ -45,7 +45,7 @@ import db.db_queries;
 import bl.verifier;
 
 
-public class search_friends_window extends Shell {
+public class search_friends_window extends Composite {
 	private Text friend_name_text;
 	
 	
@@ -53,30 +53,30 @@ public class search_friends_window extends Shell {
 	config config = new config();
 	private int window_height = config.get_window_height();
 	private int window_width = config.get_window_width();
-
-	 public static void main(String args[]) {
-	 try {
-	 Display display = Display.getDefault();
-	 search_friends_window shell = new search_friends_window(display );
-	// shell.setSize(1000,1000);
-	 shell.open();
-	 shell.layout();
-	 while (!shell.isDisposed()) {
-	 if (!display.readAndDispatch()) {
-	 display.sleep();
-	 }
-	 }
-	 } catch (Exception e) {
-	 e.printStackTrace();
-	 }
-	 }
-
-	/**
-	 * Create the shell.
-	 * @param display
-	 */
-	public search_friends_window(final Display display) {
-		super(display);
+//
+//	 public static void main(String args[]) {
+//	 try {
+//	 Display display = Display.getDefault();
+//	 search_friends_window shell = new search_friends_window(display );
+//	// shell.setSize(1000,1000);
+//	 shell.open();
+//	 shell.layout();
+//	 while (!shell.isDisposed()) {
+//	 if (!display.readAndDispatch()) {
+//	 display.sleep();
+//	 }
+//	 }
+//	 } catch (Exception e) {
+//	 e.printStackTrace();
+//	 }
+//	 }
+//
+//	/**
+//	 * Create the shell.
+//	 * @param display
+//	 */
+	public search_friends_window(final Display display, Composite parent,int style) {
+		super(parent, style);
 	//	this.setSize(window_width, window_height);
 		this.setSize(10,10);
 		
@@ -101,43 +101,12 @@ public class search_friends_window extends Shell {
 	
 		
 
-	//	Label background = new Label(shell, SWT.NONE);
-		//background.setImage(new Image(display,"search_friends_window.png"));
+
 		shell.setBackgroundImage(new Image(display,"search_friends_window.png"));
-//		ImageDescriptor smileyDesc = ImageDescriptor.createFromFile(search_freinds_window.class,"Smiley.gif"); 
-//		Image smiley = (.createImage();
-		
-//		Label signupBackground = new Label(composite, SWT.NONE);
-//		signupBackground.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND));
-//		signupBackground.setImage(SWTResourceManager.getImage(search_friends_window.class, "search_friends_window.png"));
-//		signupBackground.setBounds(0, 0, window_width, window_height);
+
 		createContents();
 		
 
-
-	//	Button searchButon = new Button(composite, SWT.PUSH);
-//		searchButon.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent a) {
-//				dispose();
-//			}
-//		}
-		
-	
-				//open login window
-//				LoginWindow loginShell = new LoginWindow(display,oparations);
-//				loginShell.open();
-//				loginShell.layout();
-//				while (!loginShell.isDisposed()) {
-//					if (!display.readAndDispatch()) {
-//						display.sleep();
-//					}
-//				}
-//			}
-//		});
-	//	searchButon.setBounds(269, 439, 90, 30);
-		//searchButon.setText("Search");
-		
 		
 		
 		
@@ -217,7 +186,7 @@ public class search_friends_window extends Shell {
 	 * Create contents of the shell.
 	 */
 	protected void createContents() {
-		setText("Search Friend window");
+	//	setText("Search Friend window");
 		setSize( window_height, window_width);
 
 	}
