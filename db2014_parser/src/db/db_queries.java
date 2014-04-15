@@ -1,20 +1,8 @@
 package db;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.sql.Connection;
-
 
 /**
  * The communication with the db is being made
@@ -22,7 +10,7 @@ import java.sql.Connection;
  */
 public abstract class db_queries extends db_operations
 {		
-	// add the director to the db- to the Movie and Director table
+	// returnes HM<MovieId, movieName>  -  ID as listed on the DB
 	public static HashMap<String, String> get_all_movies() 
 	{
 		ResultSet result = select("idmovie, movieName", "movie", "");
@@ -52,59 +40,110 @@ public abstract class db_queries extends db_operations
 		return (returnedSet);
 	}
 
-	public static boolean does_user_exists(String user_name)
+	// returnes HM<personId, personName>  -  ID as listed on the DB
+	public static HashMap<String, String> get_all_persons() 
+	{
+		ResultSet result = select("idperson, personName", "person", "");
+		
+		// is table empty
+		if (result == null)
+			return (null);
+		
+		// Enumerate all movies
+		HashMap<String, String> returnedSet = new HashMap<String, String>();
+		try 
+		{
+			while (result.next())
+			{
+				String name = result.getString("personName");
+				Integer id = result.getInt("idPerson");
+				
+				returnedSet.put(id.toString(), name);
+			}
+		} 
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return (returnedSet);
+	}
+
+	public static boolean does_user_exists(String user_name) 
+			throws SQLException
 	{
 		String whereSegment = "userName = '" + user_name + "'";
 		ResultSet result = select("userName", "users", whereSegment);
 		
-		// try querey
-		try 
-		{
-			// did select find souch user
-			if (result.next())
-				return (true);
-			else
-				return (false);
-		} 
-		catch (SQLException e) 
-		{
-			// TODO Auto-generated catch block
-			System.out.println("Error: " + e.getMessage());
+		// did select find souch user
+		if (result.next())
+			return (true);
+		else
 			return (false);
-		}
 	}
 
-	public static boolean authenticate_user(String user, String pass)
+	public static boolean authenticate_user(String user, String pass) 
+			throws SQLException
 	{
-		String whereSegment = "userName = '" + user + "' AND userPassword = '" + pass + "'";
+		String whereSegment = "userName = '" + user + "' AND userPassword = '" + Integer.toString(pass.hashCode()) + "'";
 		ResultSet result = select("userName", "users", whereSegment);
 		
-		// try querey
-		try 
-		{
-			// did select find souch user
-			if (result.next())
-				return (true);
-			else
-				return (false);
-		} 
-		catch (SQLException e) 
-		{
-			// TODO Auto-generated catch block
-			System.out.println("Error: " + e.getMessage());
+		// did select find souch user
+		if (result.next())
+			return (true);
+		else
 			return (false);
-		}
 	}
 
 	public static boolean add_user(String user, String pass)
 	{
-		int rows_effected = insert("users", "`userName`, `userPassword`, `hashPassword`" , "'" +user + "'" , "'" + pass +  "'", Integer.toString(pass.hashCode()));
+		int rows_effected = insert("users", "`userName`, `userPassword`, `hashPassword`" , "'" +user + "'" , Integer.toString(pass.hashCode()));
 		
 		// did select find souch user
 		if (rows_effected > 0)
 			return (true);
 		else
 			return (false);
+	}
+
+	public static boolean rank_movie(Integer user_id, Integer movie_id, Integer rank)
+	{
+		int rows_effected = insert("user_ranks", "`user_id`, `movie_id`, `rank`" , user_id.toString(), movie_id.toString(), rank.toString());
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+
+	// return - if not exists retutn 0, else return 
+	public static int get_movie_id_by_name(String movie_name) 
+			throws NumberFormatException, SQLException
+	{
+		String whereClause = "movieName = '" + movie_name + "'";
+		ResultSet results = select("idMovie", "movie" , whereClause);
+		
+		// did select find souch user
+		if (results.next())
+			return (Integer.parseInt(results.getString("idMovie")));
+		else
+			return (0);
+	}
+
+	// return - if not exists retutn 0, else return 
+	public static int get_person_id_by_name(String person_name) 
+			throws NumberFormatException, SQLException
+	{
+		String whereClause = "personName = '" + person_name + "'";
+		ResultSet results = select("idMovie", "movie" , whereClause);
+		
+		// did select find souch user
+		if (results.next())
+			return (Integer.parseInt(results.getString("idPerson")));
+		else
+			return (0);
 	}
 }
 

@@ -128,7 +128,6 @@ COMMENT = 'general Tag Categories';
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`users` (
   `idUsers` INT NOT NULL AUTO_INCREMENT,
   `userName` VARCHAR(45) NOT NULL,
-  `userPassword` VARCHAR(45) NOT NULL,
   `hashPassword` INT(11) NOT NULL,
   PRIMARY KEY (`idUsers`))
 ENGINE = InnoDB
