@@ -20,29 +20,46 @@ import org.eclipse.swt.widgets.Text;
 import config.config;
 
 
+//////// functions the tab is waiting for: ////////
+
+// List<String> get_genres()
+
+
+
+////// Listeners to be implemented: //////////
+
+// search_button
+// perhaps auto-complete for text fields
+
+
+
 public class search_movie_tab extends Composite
 {
-	config config = new config();
-	private int window_height = config.get_window_height();
-	private int window_width = config.get_window_width();
-	
+
 	public search_movie_tab(Display display, Composite parent, int style)
 	{
 		super(parent, style);
 		
-		this.setSize(window_width, window_height);
+
+		List<Label> tags_labels = new ArrayList<Label>();	
+		List<Label> actors_labels = new ArrayList<Label>();
+		
+		List<Text> tags_texts = new ArrayList<Text>();
+		List<Text> actors_texts = new ArrayList<Text>();
+		
+		List<Button> rating_radios = new ArrayList<Button>();
+		List<Button> genres_checkboxes;
+		
+		List<String> genres;
+		
+		
+		//this.setSize(window_width, window_height);
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
 		Color color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(color);
+		color.dispose();
 		
-		Label[] tags_labels = new Label[5];
-		Label[] actors_labels = new Label[3];
-		
-		Text[] tags_texts = new Text[5];
-		Text[] actors_texts = new Text[3];
-		Button[] rating_radios = new Button[5];
-		List<Button> genres_checkboxes;
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
@@ -101,140 +118,140 @@ public class search_movie_tab extends Composite
 		
 		
 		//actor1 label
-		actors_labels[0] = new Label(left_area, SWT.NONE);
-		actors_labels[0].setText("Actor1");
+		actors_labels.add(new Label(left_area, SWT.NONE));
+		actors_labels.get(0).setText("Actor1");
 		GridData grid_data_actor0_label = new GridData();
 		grid_data_actor0_label.verticalIndent = 20;
-		actors_labels[0].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		actors_labels[0].setLayoutData(grid_data_actor0_label);
+		actors_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(0).setLayoutData(grid_data_actor0_label);
 		
 		
 		//actor1 text
-		actors_texts[0] = new Text(left_area, SWT.BORDER);
+		actors_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_actor0_text = new GridData();
 		grid_data_actor0_text.verticalIndent = 20;
 		grid_data_actor0_text.horizontalIndent = 15;
-		actors_texts[0].setLayoutData(grid_data_actor0_text);
+		actors_texts.get(0).setLayoutData(grid_data_actor0_text);
 		
 		
 		//actor2 label
-		actors_labels[1] = new Label(left_area, SWT.NONE);
-		actors_labels[1].setText("Actor2");
+		actors_labels.add(new Label(left_area, SWT.NONE));
+		actors_labels.get(1).setText("Actor2");
 		GridData grid_data_actor1_label = new GridData();
 		grid_data_actor1_label.verticalIndent = 5;
-		actors_labels[1].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		actors_labels[1].setLayoutData(grid_data_actor1_label);
+		actors_labels.get(1).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(1).setLayoutData(grid_data_actor1_label);
 				
 				
 		//actor2 text
-		actors_texts[1] = new Text(left_area, SWT.BORDER);
+		actors_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_actor1_text = new GridData();
 		grid_data_actor1_text.verticalIndent = 5;
 		grid_data_actor1_text.horizontalIndent = 15;
-		actors_texts[1].setLayoutData(grid_data_actor1_text);
+		actors_texts.get(1).setLayoutData(grid_data_actor1_text);
 
 		
 		//actor3 label
-		actors_labels[2] = new Label(left_area, SWT.NONE);
-		actors_labels[2].setText("Actor3");
+		actors_labels.add(new Label(left_area, SWT.NONE));
+		actors_labels.get(2).setText("Actor3");
 		GridData grid_data_actor2_label = new GridData();
 		grid_data_actor2_label.verticalIndent = 5;
-		actors_labels[2].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		actors_labels[2].setLayoutData(grid_data_actor2_label);
+		actors_labels.get(2).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(2).setLayoutData(grid_data_actor2_label);
 				
 				
 		//actor3 text
-		actors_texts[2] = new Text(left_area, SWT.BORDER);
+		actors_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_actor2_text = new GridData();
 		grid_data_actor2_text.verticalIndent = 5;
 		grid_data_actor2_text.horizontalIndent = 15;
-		actors_texts[2].setLayoutData(grid_data_actor2_text);
+		actors_texts.get(2).setLayoutData(grid_data_actor2_text);
 		
 		
 		
 		//tag1 label
-		tags_labels[0] = new Label(left_area, SWT.NONE);
-		tags_labels[0].setText("Tag1");
+		tags_labels.add(new Label(left_area, SWT.NONE));
+		tags_labels.get(0).setText("Tag1");
 		GridData grid_data_tag0_label = new GridData();
 		grid_data_tag0_label.verticalIndent = 20;
-		tags_labels[0].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		tags_labels[0].setLayoutData(grid_data_tag0_label);
+		tags_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(0).setLayoutData(grid_data_tag0_label);
 				
 				
 		//tag1 text
-		tags_texts[0] = new Text(left_area, SWT.BORDER);
+		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag0_text = new GridData();
 		grid_data_tag0_text.verticalIndent = 20;
 		grid_data_tag0_text.horizontalIndent = 15;
-		tags_texts[0].setLayoutData(grid_data_tag0_text);
+		tags_texts.get(0).setLayoutData(grid_data_tag0_text);
 		
 		
 		//tag2 label
-		tags_labels[1] = new Label(left_area, SWT.NONE);
-		tags_labels[1].setText("Tag2");
+		tags_labels.add(new Label(left_area, SWT.NONE));
+		tags_labels.get(1).setText("Tag2");
 		GridData grid_data_tag1_label = new GridData();
 		grid_data_tag1_label.verticalIndent = 5;
-		tags_labels[1].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		tags_labels[1].setLayoutData(grid_data_tag1_label);
+		tags_labels.get(1).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(1).setLayoutData(grid_data_tag1_label);
 						
 						
 		//tag2 text
-		tags_texts[1] = new Text(left_area, SWT.BORDER);
+		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag1_text = new GridData();
 		grid_data_tag1_text.verticalIndent = 5;
 		grid_data_tag1_text.horizontalIndent = 15;
-		tags_texts[1].setLayoutData(grid_data_tag1_text);
+		tags_texts.get(1).setLayoutData(grid_data_tag1_text);
 		
 		
 		//tag3 label
-		tags_labels[2] = new Label(left_area, SWT.NONE);
-		tags_labels[2].setText("Tag3");
+		tags_labels.add(new Label(left_area, SWT.NONE));
+		tags_labels.get(2).setText("Tag3");
 		GridData grid_data_tag2_label = new GridData();
 		grid_data_tag2_label.verticalIndent = 5;
-		tags_labels[2].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		tags_labels[2].setLayoutData(grid_data_tag2_label);
+		tags_labels.get(2).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(2).setLayoutData(grid_data_tag2_label);
 						
 						
 		//tag3 text
-		tags_texts[2] = new Text(left_area, SWT.BORDER);
+		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag2_text = new GridData();
 		grid_data_tag2_text.verticalIndent = 5;
 		grid_data_tag2_text.horizontalIndent = 15;
-		tags_texts[2].setLayoutData(grid_data_tag2_text);
+		tags_texts.get(2).setLayoutData(grid_data_tag2_text);
 		
 		
 		//tag4 label
-		tags_labels[3] = new Label(left_area, SWT.NONE);
-		tags_labels[3].setText("Tag4");
+		tags_labels.add(new Label(left_area, SWT.NONE));
+		tags_labels.get(3).setText("Tag4");
 		GridData grid_data_tag3_label = new GridData();
 		grid_data_tag3_label.verticalIndent = 5;
-		tags_labels[3].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		tags_labels[3].setLayoutData(grid_data_tag3_label);
+		tags_labels.get(3).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(3).setLayoutData(grid_data_tag3_label);
 						
 						
 		//tag4 text
-		tags_texts[3] = new Text(left_area, SWT.BORDER);
+		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag3_text = new GridData();
 		grid_data_tag3_text.verticalIndent = 5;
 		grid_data_tag3_text.horizontalIndent = 15;
-		tags_texts[3].setLayoutData(grid_data_tag3_text);
+		tags_texts.get(3).setLayoutData(grid_data_tag3_text);
 		
 		
 		//tag5 label
-		tags_labels[4] = new Label(left_area, SWT.NONE);
-		tags_labels[4].setText("Tag5");
+		tags_labels.add(new Label(left_area, SWT.NONE));
+		tags_labels.get(4).setText("Tag5");
 		GridData grid_data_tag4_label = new GridData();
 		grid_data_tag4_label.verticalIndent = 5;
-		tags_labels[4].setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
-		tags_labels[4].setLayoutData(grid_data_tag4_label);
+		tags_labels.get(4).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(4).setLayoutData(grid_data_tag4_label);
 						
 						
 		//tag5 text
-		tags_texts[4] = new Text(left_area, SWT.BORDER);
+		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag4_text = new GridData();
 		grid_data_tag4_text.verticalIndent = 5;
 		grid_data_tag4_text.horizontalIndent = 15;
-		tags_texts[4].setLayoutData(grid_data_tag4_text);
+		tags_texts.get(4).setLayoutData(grid_data_tag4_text);
 		
 	
 		
@@ -264,9 +281,9 @@ public class search_movie_tab extends Composite
 		grid_data_rating_radios.horizontalIndent = 5;
 		for(int i = 0; i < 5; i++)
 		{
-			rating_radios[i] = new Button(rating_area, SWT.RADIO);
-			rating_radios[i].setText(Integer.toString(i+1));
-			rating_radios[i].setLayoutData(grid_data_rating_radios);
+			rating_radios.add(new Button(rating_area, SWT.RADIO));
+			rating_radios.get(i).setText(Integer.toString(i+1));
+			rating_radios.get(i).setLayoutData(grid_data_rating_radios);
 		}
 		
 		
@@ -294,16 +311,17 @@ public class search_movie_tab extends Composite
 		
 		//genres check-boxes
 
-		//List<String> genre_list = get_genres();  //to be used when function exists
+		//genres = get_genres();  //to be used when function exists
 		
 		//just for check
 		genres_checkboxes = new ArrayList<Button>();
-		List<String> genres = new ArrayList<String>();	
+		genres = new ArrayList<String>();	
 		for(int i = 1; i < 20; i ++)
 		{
 			genres.add("Genre" + i + " ");
 ;
 		}
+		//
 		
 		GridData grid_data_genres_checkbox = new GridData();
 		grid_data_genres_checkbox.horizontalIndent = 20;

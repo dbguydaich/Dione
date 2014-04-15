@@ -16,14 +16,14 @@ import config.config;
 public class all_tabs_window extends Shell
 {
 	
+	config config = new config();
+	int window_height = config.get_window_height();
+	int window_width = config.get_window_width();
+	
 	public all_tabs_window(final Display display)
 	{
 		super(display);
 	
-		//config config = new config();
-		final int window_height = 480;
-		final int window_width = 640;
-
 		this.setSize(window_width, window_height);
 		this.setText("MovieBook");
 		
@@ -32,18 +32,18 @@ public class all_tabs_window extends Shell
 		
 		//tab1
 		TabItem tab1 = new TabItem(tab_folder, SWT.NONE);
-	    tab1.setText("Search Movie");
+	    tab1.setText("Overview");
 	    
 	   
 	    //tab2
 	    TabItem tab2 = new TabItem(tab_folder, SWT.NONE);
-	    tab2.setText("Add a Friend");
+	    tab2.setText("Search Movie");
 	    
 		
 	    
 	    //tab3
 		TabItem tab3 = new TabItem(tab_folder, SWT.NONE);
-	    tab3.setText("Tab 3");
+	    tab3.setText("Add a Friend");
 	    
 	  
 	   
@@ -52,11 +52,14 @@ public class all_tabs_window extends Shell
 	    tab4.setText("Tab 4");
 	    
 	    
-	    search_movie_tab search_movie = new search_movie_tab(display, tab_folder, SWT.NONE);
-	    tab1.setControl(search_movie);
+	    overview_tab overview_tab = new overview_tab(display, tab_folder, SWT.NONE);
+	    tab1.setControl(overview_tab);
 	    
-	    search_friends_window search_friends = new search_friends_window(display, tab_folder, SWT.NONE);
-	    tab2.setControl(search_friends);
+	    search_movie_tab search_movie_tab = new search_movie_tab(display, tab_folder, SWT.NONE);
+	    tab2.setControl(search_movie_tab);
+	    
+	    search_friends_window search_friends_tab = new search_friends_window(display, tab_folder, SWT.NONE);
+	    tab3.setControl(search_friends_tab);
 	}
 	
 	public static void main(String args[])
