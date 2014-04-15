@@ -1,0 +1,4 @@
+
+we need a function:
+List<String> get_genres()
+which will return all genres from database.
