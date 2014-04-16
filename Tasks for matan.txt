@@ -1,18 +1,1 @@
-
-we need a function:
-List<String> get_genres()
-which will return all genres from database.
-
-
-
-we need:
-1. a function which will return the genres we have. Make sure it will be constant let's say, ordered alphabetical.
-			
-db_queries.does_movie_exists(String title,String director,List<String> actor_list,List<String> tags_list,
-						List<Boolean>	rating_radios_text,List<Boolean>genres_numbers)}
-
-it will search the movie, acording to title, director, actor list (may be empty), tags_list (may be empty), 
-rating numbers (length 5, the rating will be the place which there is a true, genres_numbers - the same, the places will have true. (the same genres form previous task). :) contact me for more details if needed it's 3:00 am...zzzzzzzzz
-
-
-
+SchacharP talk to me..
