@@ -2,7 +2,9 @@ package db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The communication with the db is being made
@@ -70,6 +72,54 @@ public abstract class db_queries extends db_operations
 		return (returnedSet);
 	}
 
+	public static List<String> get_geners() 
+			throws SQLException 
+	{
+		ResultSet result = select("distinct(genreName)", "genre", "");
+		
+		// is table empty
+		if (result == null)
+			return (null);
+		
+		// Enumerate all movies
+		List<String> returnedList = new ArrayList<String>();
+		
+		while (result.next())
+		{
+			String name = result.getString("genreName");
+			
+			returnedList.add(name);
+		} 
+		
+		return (returnedList);
+	}
+
+// Inserters	
+	
+	public static boolean rank_movie(Integer user_id, Integer movie_id, Integer rank)
+	{
+		int rows_effected = insert("user_ranks", "`user_id`, `movie_id`, `rank`" , user_id.toString(), movie_id.toString(), rank.toString());
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+	
+	public static boolean add_user(String user, String pass)
+	{
+		int rows_effected = insert("users", "`userName`, `userPassword`, `hashPassword`" , "'" +user + "'" , Integer.toString(pass.hashCode()));
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+	
+// Booleans
+	
 	public static boolean does_user_exists(String user_name) 
 			throws SQLException
 	{
@@ -95,31 +145,65 @@ public abstract class db_queries extends db_operations
 		else
 			return (false);
 	}
-
-	public static boolean add_user(String user, String pass)
+	
+	public static boolean does_movie_exists(String title, String director, List<String> actor_list, 
+			List<String> tags_list, List<Boolean> rating_radios_text, List<Boolean> genres_numbers) 
+					throws NumberFormatException, SQLException 
 	{
-		int rows_effected = insert("users", "`userName`, `userPassword`, `hashPassword`" , "'" +user + "'" , Integer.toString(pass.hashCode()));
+		int movie_id = get_movie_id(title, director);
+		
+		// Does movie title exists
+		if (movie_id == 0)
+			return (false);
+		
+		// did all actors play in this title
+		for (String actor_name : actor_list)
+		{
+			if (did_actor_play_in_movie(movie_id, get_actor_id(actor_name)))
+				return (false);
+		}
+		
+		// TODO:do all tags fit
+		
+		// TODO:is rating true
+		
+		// TODO:do all genres fit
+		
+		// if got here everything fits and movie exists
+		return (true);
+	}
+
+	public static boolean did_actor_play_in_movie(int movie_id, int actor_id) 
+			throws SQLException
+	{
+		String whereClause = "idMovie = '" + movie_id + "' AND idActor = '" + actor_id + "'";
+		ResultSet result = select("idMovie", "actormovie" , whereClause);
 		
 		// did select find souch user
-		if (rows_effected > 0)
+		if (result.next())
 			return (true);
 		else
 			return (false);
 	}
-
-	public static boolean rank_movie(Integer user_id, Integer movie_id, Integer rank)
+	
+// ID GETTERS
+	
+	private static int get_movie_id(String movie_name, String director) 
+			throws NumberFormatException, SQLException 
 	{
-		int rows_effected = insert("user_ranks", "`user_id`, `movie_id`, `rank`" , user_id.toString(), movie_id.toString(), rank.toString());
+		String whereClause = 	"movieName = '" + movie_name + "' AND " +
+								"director = '" + director + "'";
+		ResultSet results = select("idMovie", "movie" , whereClause);
 		
 		// did select find souch user
-		if (rows_effected > 0)
-			return (true);
+		if (results.next())
+			return (Integer.parseInt(results.getString("idMovie")));
 		else
-			return (false);
+			return (0);
 	}
 
 	// return - if not exists retutn 0, else return 
-	public static int get_movie_id_by_name(String movie_name) 
+	public static int get_movie_id(String movie_name) 
 			throws NumberFormatException, SQLException
 	{
 		String whereClause = "movieName = '" + movie_name + "'";
@@ -133,7 +217,7 @@ public abstract class db_queries extends db_operations
 	}
 
 	// return - if not exists retutn 0, else return 
-	public static int get_person_id_by_name(String person_name) 
+	public static int get_person_id(String person_name) 
 			throws NumberFormatException, SQLException
 	{
 		String whereClause = "personName = '" + person_name + "'";
@@ -145,5 +229,21 @@ public abstract class db_queries extends db_operations
 		else
 			return (0);
 	}
+
+	// return - if not exists retutn 0, else return 
+	public static int get_actor_id(String actor_name) 
+			throws NumberFormatException, SQLException
+	{
+		String whereClause = 	"person.idPerson = actor.idPerson AND " +
+								"personName = '" + actor_name + "'";
+		ResultSet results = select("idActor", "person, actor" , whereClause);
+		
+		// did select find souch user
+		if (results.next())
+			return (Integer.parseInt(results.getString("idActor")));
+		else
+			return (0);
+	}
+
 }
 
