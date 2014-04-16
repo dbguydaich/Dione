@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -15,9 +17,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import bl.verifier;
 import config.config;
+import db.db_queries;
 
 
 //////// functions the tab is waiting for: ////////
@@ -36,7 +41,7 @@ import config.config;
 public class search_movie_tab extends Composite
 {
 
-	public search_movie_tab(Display display, Composite parent, int style)
+	public search_movie_tab(final Display display, Composite parent, int style)
 	{
 		super(parent, style);
 		
@@ -44,11 +49,11 @@ public class search_movie_tab extends Composite
 		List<Label> tags_labels = new ArrayList<Label>();	
 		List<Label> actors_labels = new ArrayList<Label>();
 		
-		List<Text> tags_texts = new ArrayList<Text>();
-		List<Text> actors_texts = new ArrayList<Text>();
+		final List<Text> tags_texts = new ArrayList<Text>();
+		final List<Text> actors_texts = new ArrayList<Text>();
 		
-		List<Button> rating_radios = new ArrayList<Button>();
-		List<Button> genres_checkboxes;
+		final List<Button> rating_radios = new ArrayList<Button>();
+		final List<Button> genres_checkboxes;
 		
 		List<String> genres;
 		
@@ -92,13 +97,13 @@ public class search_movie_tab extends Composite
 		
 		
 		//title text
-		Text title_text = new Text(left_area, SWT.BORDER);
+		final Text title_text = new Text(left_area, SWT.BORDER);
 		GridData grid_data_title_text = new GridData();
 		grid_data_title_text.verticalIndent = 0;
 		grid_data_title_text.horizontalIndent = 15;
 		title_text.setLayoutData(grid_data_title_text);
 		title_text.setBounds(100, 300, 50, 100);
-		
+
 		
 		//director label
 		Label director_label = new Label(left_area, SWT.NONE);
@@ -110,7 +115,7 @@ public class search_movie_tab extends Composite
 		
 		
 		//director text
-		Text director_text = new Text(left_area, SWT.BORDER);
+		final Text director_text = new Text(left_area, SWT.BORDER);
 		GridData grid_data_director_text = new GridData();
 		grid_data_director_text.verticalIndent = 20;
 		grid_data_director_text.horizontalIndent = 15;
@@ -343,9 +348,72 @@ public class search_movie_tab extends Composite
 		search_button.setText("Search");
 		search_button.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
 		
+		//Listener
+		search_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+//				if(!verifier.verifyname(search_text.getText())){ 
+//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+//					alertBox.setText("Illegal Username");
+//					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
+//					alertBox.open();
+//				}
+				String title = title_text.getText();
+				String director =  director_text.getText();
+				
+				List<String> actor_list = new  ArrayList<String>();
+				get_text(actors_texts, actor_list);
+				
+				List<String> tags_list = new  ArrayList<String>();
+				get_text(tags_texts, tags_list);
+				
+				
+				List<Boolean> rating_radios_text = new ArrayList<Boolean>();
+				get_text_button(rating_radios, rating_radios_text);
+				
+	
+
+	
+			
+				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
+				get_text_button (genres_checkboxes, genres_numbers );
+//				else if(db_queries.does_movie_exists(title,director,actor_list,tags_list,
+//							rating_radios_text,genres_numbers)){ //to be implemented next on
+//	
+//		
+//
+//
+//					
+//				}
+//				else //no movie found
+//				{
+//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+//					messageBox.setText("No Movie Found");
+//					messageBox.setMessage("No movie Found. Please try again.");
+//					messageBox.open();
+//				}
+			}
+
+		});
+		
 		
 		
 	}
+	
+	 void get_text(List<Text> from,List<String> to)
+	{
+		for (Text a: from)
+		{
+			to.add((a.getText()));
+		}
+	}
+	 void get_text_button(List<Button> from,List<Boolean> to)
+		{
+			for (Button a: from)
+			{
+				to.add((a.getSelection()));
+			}
+		}
 	
 
 }
