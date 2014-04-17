@@ -11,12 +11,14 @@ public class entity_movie  implements Serializable{
 	/*private members*/
 	private String 						entity_movie_name; 
 	private String 						entity_movie_yago_id;
+	private String 						entity_movie_imdb_name;
 	private String 						entity_movie_length; 
 	private String 						entity_movie_year; 
-	private Set<String> 				entity_movie_genres;
+	private Set<String>					entity_movie_genres;
+	private Set<String> 				entity_movie_tags;
 	private String 						entity_movie_language; 
-	private entity_person 		entity_movie_director;
-	private List<entity_person> 	entity_movie_actors;
+	private entity_person 				entity_movie_director;
+	private List<entity_person> 		entity_movie_actors;
 	private String 						entity_movie_wikipedia_url;
 	private String 						entity_movie_plot; 
 	private String 						entity_movie_youtube_url;
@@ -28,6 +30,7 @@ public class entity_movie  implements Serializable{
 	{
 		entity_movie_genres = new LinkedHashSet<String>();
 		entity_movie_actors = new ArrayList<entity_person>();
+		entity_movie_tags = new LinkedHashSet<String>();
 		this.entity_movie_yago_id = id;
 	}
 
@@ -42,6 +45,20 @@ public class entity_movie  implements Serializable{
 		this.entity_movie_genres.add(movie_genre);
 	}
 	
+	/** adding genre to the genreList */
+	public void remove_from_tags(String movie_tag) {
+		this.entity_movie_tags.remove(movie_tag);
+	}
+	
+	/** adding genre to the genreList */
+	public Set<String> get_movie_tags() {
+		return entity_movie_tags;
+	}	
+	
+	/** adding genre to the genreList */
+	public void add_to_tags(String movie_tag) {
+		this.entity_movie_tags.add(movie_tag);
+	}
 	
 	@Override
 	public String toString() {
@@ -49,7 +66,7 @@ public class entity_movie  implements Serializable{
 				+ "director= " + get_movie_director() +"\n" + "year= " + get_movie_year()
 				+ ", duration= " + get_movie_length() + "\n"+ "wiki= " + get_wikipedia_url() +"\n" +
 				"generes: " + get_movie_genres() + " language: "+ get_movie_language() + "\n"+
-				"Plot: " + get_movie_plot() + "\n";
+				"Plot: " + get_movie_plot() + "\n" + " tags: " + get_movie_tags();
 	}
 
 	/* getters & setters */
@@ -90,7 +107,7 @@ public class entity_movie  implements Serializable{
 		return entity_movie_director;
 	}
 
-	public void setmovie_director(entity_person movie_director) {
+	public void set_movie_director(entity_person movie_director) {
 		this.entity_movie_director = movie_director;
 	}
 
@@ -118,7 +135,7 @@ public class entity_movie  implements Serializable{
 		return entity_movie_year;
 	}
 
-	public void setDateCreated(String movie_year) {
+	public void set_movie_year(String movie_year) {
 		this.entity_movie_year = movie_year;
 	}
 	
@@ -126,7 +143,7 @@ public class entity_movie  implements Serializable{
 		return entity_movie_plot;
 	}
 	
-	public void setPlot(String movie_plot) {
+	public void set_movie_plot(String movie_plot) {
 		this.entity_movie_plot = movie_plot;
 	}
 
@@ -134,7 +151,7 @@ public class entity_movie  implements Serializable{
 		return entity_movie_yago_id;
 	}
 
-	public void setId(String movie_yago_id) {
+	public void set_movie_yago_id(String movie_yago_id) {
 		this.entity_movie_yago_id = movie_yago_id;
 	}
 
@@ -152,6 +169,14 @@ public class entity_movie  implements Serializable{
 
 	public void setGrade(double movie_rating) {
 		this.entity_movie_rating = movie_rating;
+	}
+	
+	public void set_imdb_name(String imdb_movie_name) {
+		this.entity_movie_imdb_name = imdb_movie_name;
+	}
+	
+	public String get_imdb_name() {
+		return entity_movie_imdb_name;
 	}
 
 }
