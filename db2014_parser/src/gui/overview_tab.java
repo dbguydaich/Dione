@@ -53,6 +53,8 @@ public class overview_tab extends Composite
 		Color color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(color);
 		color.dispose();
+
+		
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
@@ -153,6 +155,8 @@ public class overview_tab extends Composite
 			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
 			color = display.getSystemColor(SWT.COLOR_GRAY);
 			reco_movies_links.get(i).setBackground(color);
+			GridData grid_data_reco_movie = new GridData(200,18);
+			reco_movies_links.get(i).setLayoutData(grid_data_reco_movie);
 			i++;
 		}
 		
@@ -161,7 +165,7 @@ public class overview_tab extends Composite
 		Label reco_buttom_label = new Label(reco_area, SWT.NONE);
 		reco_buttom_label.setText("Click on a Movie Name For Movie Details");
 		GridData grid_data_reco_buttom_label = new GridData();
-		grid_data_reco_buttom_label.verticalIndent = 6;
+		grid_data_reco_buttom_label.verticalIndent = 0;
 		reco_buttom_label.setFont(new Font(display, "Ariel",10, java.awt.Font.PLAIN ));
 		reco_buttom_label.setLayoutData(grid_data_reco_buttom_label);
 		
