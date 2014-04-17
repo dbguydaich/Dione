@@ -51,6 +51,7 @@ public class search_movie_tab extends Composite
 		
 		final List<Text> tags_texts = new ArrayList<Text>();
 		final List<Text> actors_texts = new ArrayList<Text>();
+				
 		
 		final List<Button> rating_radios = new ArrayList<Button>();
 		final List<Button> genres_checkboxes;
@@ -78,12 +79,14 @@ public class search_movie_tab extends Composite
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		FormData form_data_left_area = new FormData(165, 350); 
+		FormData form_data_left_area = new FormData(180, 350); 
 		form_data_left_area.top = new FormAttachment(0, 40);
 		form_data_left_area.left = new FormAttachment(0, 30);
 		left_area.setLayoutData(form_data_left_area);
 		GridLayout grid_layout_left_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_left_area);
+		
+		
 		
 		
 		
@@ -109,7 +112,7 @@ public class search_movie_tab extends Composite
 		Label director_label = new Label(left_area, SWT.NONE);
 		director_label.setText("Director");
 		GridData grid_data_director_label = new GridData();
-		grid_data_director_label.verticalIndent = 20;
+		grid_data_director_label.verticalIndent = 10;
 		director_label.setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
 		director_label.setLayoutData(grid_data_director_label);
 		
@@ -117,16 +120,33 @@ public class search_movie_tab extends Composite
 		//director text
 		final Text director_text = new Text(left_area, SWT.BORDER);
 		GridData grid_data_director_text = new GridData();
-		grid_data_director_text.verticalIndent = 20;
+		grid_data_director_text.verticalIndent = 10;
 		grid_data_director_text.horizontalIndent = 15;
 		director_text.setLayoutData(grid_data_director_text);
+		
+		
+		//language label
+		Label language_label = new Label(left_area, SWT.NONE);
+		language_label.setText("Language");
+		GridData grid_data_language_label = new GridData();
+		grid_data_language_label.verticalIndent = 10;
+		language_label.setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		language_label.setLayoutData(grid_data_language_label);
+		
+		
+		//language text
+		final Text language_text = new Text(left_area, SWT.BORDER);
+		GridData grid_data_language_text = new GridData();
+		grid_data_language_text.verticalIndent = 10;
+		grid_data_language_text.horizontalIndent = 15;
+		language_text.setLayoutData(grid_data_language_text);
 		
 		
 		//actor1 label
 		actors_labels.add(new Label(left_area, SWT.NONE));
 		actors_labels.get(0).setText("Actor1");
 		GridData grid_data_actor0_label = new GridData();
-		grid_data_actor0_label.verticalIndent = 20;
+		grid_data_actor0_label.verticalIndent = 10;
 		actors_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
 		actors_labels.get(0).setLayoutData(grid_data_actor0_label);
 		
@@ -134,7 +154,7 @@ public class search_movie_tab extends Composite
 		//actor1 text
 		actors_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_actor0_text = new GridData();
-		grid_data_actor0_text.verticalIndent = 20;
+		grid_data_actor0_text.verticalIndent = 10;
 		grid_data_actor0_text.horizontalIndent = 15;
 		actors_texts.get(0).setLayoutData(grid_data_actor0_text);
 		
@@ -178,7 +198,7 @@ public class search_movie_tab extends Composite
 		tags_labels.add(new Label(left_area, SWT.NONE));
 		tags_labels.get(0).setText("Tag1");
 		GridData grid_data_tag0_label = new GridData();
-		grid_data_tag0_label.verticalIndent = 20;
+		grid_data_tag0_label.verticalIndent = 10;
 		tags_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
 		tags_labels.get(0).setLayoutData(grid_data_tag0_label);
 				
@@ -186,7 +206,7 @@ public class search_movie_tab extends Composite
 		//tag1 text
 		tags_texts.add(new Text(left_area, SWT.BORDER));
 		GridData grid_data_tag0_text = new GridData();
-		grid_data_tag0_text.verticalIndent = 20;
+		grid_data_tag0_text.verticalIndent = 10;
 		grid_data_tag0_text.horizontalIndent = 15;
 		tags_texts.get(0).setLayoutData(grid_data_tag0_text);
 		
@@ -370,11 +390,7 @@ public class search_movie_tab extends Composite
 				
 				List<Boolean> rating_radios_text = new ArrayList<Boolean>();
 				get_text_button(rating_radios, rating_radios_text);
-				
-	
-
-	
-			
+						
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
 				get_text_button (genres_checkboxes, genres_numbers );
 //				else if(db_queries.does_movie_exists(title,director,actor_list,tags_list,
