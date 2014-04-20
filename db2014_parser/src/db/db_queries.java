@@ -245,5 +245,91 @@ public abstract class db_queries extends db_operations
 			return (0);
 	}
 
+	/*parser functions*/
+	
+	public static boolean genre_exists(String genre_name)
+	{
+		return false; 
+	}
+	
+	
+	public static Integer get_genre_id(String genre_name)
+	{
+		return new Integer(0); 
+	}
+	
+	public static Integer create_genre(String genre_name)
+	{
+		return new Integer(0); 
+	}
+	
+	public static boolean language_exists(String language_name)
+	{
+		return false; 
+	}
+	
+	public static Integer get_language_id(String language_name)
+	{
+		return new Integer(0); 
+	}
+	
+	public static Integer create_language(String language_name)
+	{
+		return new Integer(0); 
+	}
+	
+	public static boolean tag_exists(String tag_name)
+	{
+		return false; 
+	}
+
+	public static Integer get_tag_id(String tag_name)
+	{
+		return new Integer(0); 
+	}
+	
+	public static Integer create_tag(String tag_name)
+	{
+		return new Integer(0); 
+	}
+
+	public static HashMap <String,Integer> get_movie_names_and_ids()
+	{
+		return new HashMap <String,Integer>();
+	}
+	
+	public static HashMap <String,Integer> get_actor_names_and_ids()
+	{
+		return new HashMap <String,Integer>();
+	}
+	
+	public static HashMap <String,Integer> get_director_names_and_ids()
+	{
+		return new HashMap <String,Integer>();
+	}
+	
+	public static HashMap <Integer,Integer> get_movie_id_tag_count()
+	{
+		return new HashMap <Integer,Integer>();
+	}
+	
+	/*remove movie_actors relation*/
+	public static void clear_movie_actors()
+	{
+		
+	}
+	
+	/*removie movie_genre relation*/
+	public static void clear_movie_genres()
+	{
+	
+	}
+	
+	public static boolean does_movie_exist(String movie_name, String movie_year, String movie_director)
+	{
+		return false;
+		
+	}
+	
 }
 

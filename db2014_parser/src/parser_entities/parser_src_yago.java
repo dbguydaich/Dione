@@ -57,6 +57,18 @@ public class parser_src_yago {
 		return this.parser_map_movie;
 	}
 	
+	public HashMap<String, entity_person> get_yag_actor_map()
+	{
+		return this.parser_map_actor;
+	}
+	
+	public HashMap<String, entity_person> get_yag_director_map()
+	{
+		return this.parser_map_actor;
+	}
+	
+	
+	
 	/**general parsing function**/
 	public void parse()
 	{
@@ -65,7 +77,7 @@ public class parser_src_yago {
 		if (properties.get_yago_simple_types_path() != null)
 			parse_src_yago_types(properties.get_yago_simple_types_path(),yago_types_params);
 		
-			 	if (properties.get_yago_facts_path() != null)
+		if (properties.get_yago_facts_path() != null)
 			parse_src_yago_facts(properties.get_yago_facts_path(),yago_facts_params);
 		
 		if (properties.get_yago_literal_facts_path() != null)
@@ -439,7 +451,7 @@ public class parser_src_yago {
 		entity_movie movie = this.parser_map_movie.get(movie_name);
 		if (movie == null)
 			return; 
-		movie.set_wikipedia_url(fact_name);
+		movie.set_movie_wikipedia_url(fact_name);
 
 	}
 

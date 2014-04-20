@@ -64,7 +64,7 @@ public class entity_movie  implements Serializable{
 	public String toString() {
 		return "id= " + get_movie_yago_id() + ",   name=" + get_movie_name() + "\n" + "actors= " + entity_movie_actors +"\n"
 				+ "director= " + get_movie_director() +"\n" + "year= " + get_movie_year()
-				+ ", duration= " + get_movie_length() + "\n"+ "wiki= " + get_wikipedia_url() +"\n" +
+				+ ", duration= " + get_movie_length() + "\n"+ "wiki= " + get_movie_wikipedia_url() +"\n" +
 				"generes: " + get_movie_genres() + " language: "+ get_movie_language() + "\n"+
 				"Plot: " + get_movie_plot() + "\n" + " tags: " + get_movie_tags();
 	}
@@ -111,15 +111,15 @@ public class entity_movie  implements Serializable{
 		this.entity_movie_director = movie_director;
 	}
 
-	public List<entity_person> getActorsLst() {
+	public List<entity_person> get_movie_actors() {
 		return entity_movie_actors;
 	}
 
-	public String get_wikipedia_url() {
+	public String get_movie_wikipedia_url() {
 		return entity_movie_wikipedia_url;
 	}
 
-	public void set_wikipedia_url(String movie_wikipedia_url) {
+	public void set_movie_wikipedia_url(String movie_wikipedia_url) {
 		this.entity_movie_wikipedia_url = movie_wikipedia_url;
 	}
 
