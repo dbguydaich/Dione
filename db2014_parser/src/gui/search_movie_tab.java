@@ -53,7 +53,7 @@ public class search_movie_tab extends Composite
 		final List<Text> actors_texts = new ArrayList<Text>();
 				
 		
-		final List<Button> rating_radios = new ArrayList<Button>();
+		final List<Button> rating_checkboxes = new ArrayList<Button>();
 		final List<Button> genres_checkboxes;
 		
 		List<String> genres;
@@ -302,15 +302,14 @@ public class search_movie_tab extends Composite
 		
 		
 		//rating radios
-		GridData grid_data_rating_radios = new GridData();
-		grid_data_rating_radios.horizontalIndent = 5;
+		GridData grid_data_rating_checkbox = new GridData();
+		grid_data_rating_checkbox.horizontalIndent = 5;
 		for(int i = 0; i < 5; i++)
 		{
-			rating_radios.add(new Button(rating_area, SWT.RADIO));
-			rating_radios.get(i).setText(Integer.toString(i+1));
-			rating_radios.get(i).setLayoutData(grid_data_rating_radios);
+			rating_checkboxes.add(new Button(rating_area, SWT.CHECK));
+			rating_checkboxes.get(i).setText(Integer.toString(i+1));
+			rating_checkboxes.get(i).setLayoutData(grid_data_rating_checkbox);
 		}
-		
 		
 		
 		
@@ -389,7 +388,7 @@ public class search_movie_tab extends Composite
 				
 				
 				List<Boolean> rating_radios_text = new ArrayList<Boolean>();
-				get_text_button(rating_radios, rating_radios_text);
+				get_text_button(rating_checkboxes, rating_radios_text);
 						
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
 				get_text_button (genres_checkboxes, genres_numbers );
