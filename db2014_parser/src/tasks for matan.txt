@@ -1,0 +1,11 @@
+// List<String> get_user_popular_tags()
+// List<String> get_user_most_recommended_movies()
+// List<String> get_user_recent_activities()
+// List<String> get_friends_recent_activities()
+
+// List<String> get_genres()
+
+//List<String> get_user_friends()
+//List<String> get_user_recent_social_activity()
+//List<String> get_friends_recent_activities()
+//List<String> get_user_recent_social_activities()
