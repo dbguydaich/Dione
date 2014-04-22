@@ -21,13 +21,25 @@ INSERT INTO `dbmysql05`.`actor` (`idActor`, `idPerson`) VALUES ('2', '3');
 -- Movies
 INSERT INTO `dbmysql05`.`movie` (`idMovie`, `idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('1', '1', '1', 'Pulp fiction', '1995', 'a@a.com', '150', 'aaasdf');
 INSERT INTO `dbmysql05`.`movie` (`idMovie`, `idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('2', '1', '2', 'E.T', '1989', 'et@movies.com', '135', 'fasdfsa');
-
+INSERT INTO `dbmysql05`.`movie` (`idMovie`, `idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('3', '2', '1', 'Resorvior dogs', '1992', 'RD@movies.com', '135', 'WooHoo');
 -- Users
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('shachar the I', '123123');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('shachar the II', '321321');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('Matan', '1');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('Guy', '1');
 
+-- Tags
+INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('1', 'drama');
+INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('2', 'comedy');
+INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('3', 'horor');
+
+-- movie_tags
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '1');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '2');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '1');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '3');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '3');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('3', '2');
 
 -- Commit
 commit;

@@ -38,7 +38,8 @@ public class jdbc_connection_pooling implements Runnable
 		}
 	}
 
-	public static jdbc_connection_pooling get_conn()
+	public static jdbc_connection_pooling get_conn() 
+			throws SQLException
 	{
 		if (instance == null)
 		{
@@ -48,7 +49,9 @@ public class jdbc_connection_pooling implements Runnable
 			} 
 			catch (SQLException e) 
 			{
-				return (null);
+				System.out.println("Could not connect to db, check configuration");
+				
+				throw (e);
 			}
 		}
 		

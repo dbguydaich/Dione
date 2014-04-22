@@ -142,6 +142,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`friend_relation` (
   `friend1` INT(11) NOT NULL,
   `friend2` INT(11) NOT NULL,
+  `friendshipDate` DATETIME NOT NULL,
   PRIMARY KEY (`friend1`, `friend2`),
   CONSTRAINT `friend1_fk`
     FOREIGN KEY (`friend1`)
@@ -227,6 +228,7 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_rank` (
   `idUser` INT(11) NOT NULL,
   `idMovie` INT(11) NOT NULL,
   `rank` INT(11) NULL DEFAULT NULL,
+  `rankDate` DATETIME NOT NULL,
   PRIMARY KEY (`idUser`, `idMovie`),
   INDEX `movie_fk_idx` (`idMovie` ASC),
   CONSTRAINT `movie_fk`
@@ -250,6 +252,7 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_tag_movie` (
   `idTag` INT(11) NOT NULL,
   `idMovie` INT(11) NOT NULL,
   `rate` INT(11) NOT NULL,
+  `reteDate` DATETIME NOT NULL,
   PRIMARY KEY (`idUser`, `idTag`, `idMovie`),
   INDEX `movie_fk_user_tags_movie_rating_idx` (`idMovie` ASC),
   INDEX `tag_fk_user_tags_movie_rating_idx` (`idTag` ASC),

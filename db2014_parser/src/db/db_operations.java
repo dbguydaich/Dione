@@ -20,48 +20,42 @@ public abstract class db_operations
 	/** insert tuple
 	 * @param table - the table name we want to insert to
 	 * @param values - the values to insert in the correct order
+	 * @throws SQLException 
 	 */
-	protected static int insert(String table, String... values) {
+	protected static int insert(String table, String... values) 
+			throws SQLException {
 
 		int i;
 
 		String state = "INSERT INTO " + table + " VALUES (";
 
-		for (i = 0; i < Array.getLength(values); i++) {
-			state = state+values[i];
+		for (i = 0; i < values.length; i++) 
+		{
+			state = state + values[i];
 
-			if (i != Array.getLength(values) - 1)
+			if (i != values.length - 1)
 				state = state + ",";
 		}
 		state += ")";
 
 		System.out.println(state);
 		Connection conn = null;
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
-			Statement stmt = null;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
-			stmt = conn.createStatement();
+		Statement stmt = null;
 
-			stmt.executeUpdate(state);
-		}
+		stmt = conn.createStatement();
 
-		catch (SQLException e) {
-			System.out
-			.println("Check that the number of values matches the number of coulmns in the table+ "
-					+ table);
+		stmt.executeUpdate(state);
 
-			e.printStackTrace();
-			return ERR;
-		}
 		jdbc_connection_pooling.get_conn().close(conn);
 		return OK;
-
 	}
 
 	// columns needs to look like "'col1', 'col2', 'col3'..."
-	protected static int insert_columns(String table,String columns, String... values) {
+	protected static int insert_columns(String table,String columns, String... values) 
+			throws SQLException {
 
 		int i;
 
@@ -77,24 +71,15 @@ public abstract class db_operations
 
 		System.out.println(state);
 		Connection conn = null;
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
 
-			Statement stmt = null;
+		Statement stmt = null;
 
-			stmt = conn.createStatement();
+		stmt = conn.createStatement();
 
-			stmt.executeUpdate(state);
-		}
-
-		catch (SQLException e) {
-			System.out
-			.println("Check that the number of values matches the number of coulmns in the table+ "
-					+ table);
-
-			e.printStackTrace();
-			return ERR;
-		}
+		stmt.executeUpdate(state);
+			
 		jdbc_connection_pooling.get_conn().close(conn);
 		return OK;
 
@@ -105,34 +90,39 @@ public abstract class db_operations
 	 * @param from- the string that should come after "FROM"
 	 * @param where- the string that should come after "WHER"
 	 * @return ResultSet with the result to that query
+	 * @throws SQLException 
 	 */
-	protected static ResultSet select(String select, String from, String where) {
+	protected static ResultSet select(String select, String from, String where) 
+			throws SQLException 
+	{
 
 		ResultSet result = null;
 		Connection conn = null;
 		Statement stmt = null;
-
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
-			stmt = conn.createStatement();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-
-		try {
-			if (where == "")
-				result = stmt.executeQuery("SELECT " + select + " FROM " + from);
-			else
-				result = stmt.executeQuery("SELECT " + select + " FROM " + from
-						+ " WHERE " + where);
-		} catch (SQLException e) {
-			System.out.println("Select Error");
-			e.printStackTrace();
-		}
+		jdbc_connection_pooling connPool;
+		
+		// Get connection pool
+		connPool = jdbc_connection_pooling.get_conn();
+		if (connPool == null)
+			return (null);
+		
+		// confirm connection
+		conn = connPool.connectionCheck();
+		if (conn == null)
+			return (null);
+		
+		// Start the statment
+		stmt = conn.createStatement();
+			
+		if (where == "")
+			result = stmt.executeQuery("SELECT " + select + " FROM " + from);
+		else
+			result = stmt.executeQuery("SELECT " + select + " FROM " + from + " WHERE " + where);
+		
+		// Close connection
 		jdbc_connection_pooling.get_conn().close(conn);
-		return result;
+		
+		return (result);
 	}
 
 	/** update tuple
@@ -158,7 +148,12 @@ public abstract class db_operations
 			e.printStackTrace();
 			return ERR;
 		}
-		jdbc_connection_pooling.get_conn().close(conn);
+		
+		try {
+			jdbc_connection_pooling.get_conn().close(conn);
+		} catch (SQLException e) {
+			System.out.println("An opened connection could not be closed");
+		}
 		return OK;
 
 	}
@@ -166,8 +161,13 @@ public abstract class db_operations
 	/** delete tuple
 	 * @param tableName- the name of the table we want to delete from
 	 * @param whereCol- string that comes after "WHERE"- tells which tuple to delete
+	 * @return -1 for error, else the number of rows efected
 	 */
-	protected static int delete(String tableName, String whereCol) {
+	protected static int delete(String tableName, String whereCol) 
+	{
+		if (tableName == null)
+			return (0);
+		
 		Connection conn = null;
 		try {
 			conn = jdbc_connection_pooling.get_conn().connectionCheck();
@@ -175,15 +175,20 @@ public abstract class db_operations
 			Statement stmt = null;
 
 			stmt = conn.createStatement();
-
-			stmt.executeUpdate("DELETE FROM " + tableName + " WHERE "
-					+ whereCol );
+			
+			if (whereCol != null && whereCol != "")
+			{
+				stmt.executeUpdate("DELETE FROM " + tableName + " WHERE " + whereCol );
+			}
+			else
+			{
+				stmt.executeUpdate("DELETE FROM " + tableName);
+			}
 		}
 
-		catch (SQLException e) {
-
-			e.printStackTrace();
-			return ERR;
+		catch (SQLException e) 
+		{
+			return (-1);
 		}
 
 		return OK;
@@ -221,75 +226,6 @@ public abstract class db_operations
 				System.out.println(resources + "was closed safely");
 			}
 			catch (Exception e) {
-			}
-		}
-	}
-
-	/** check for updates made by users and update the tables accordingly */
-	protected void commitUpdates(Statement stmt) {
-
-		ResultSet updateSet = null;
-		// get All the tuples from the Update table
-		updateSet = select("*", "Updates", "");
-		String tableName=null;
-		String columnValue=null;
-		int newVal=0;
-		int key1=0;
-		int key2=0;
-		String str = null, str2=null;
-
-		try{
-			while (updateSet.next()) {
-
-				tableName=updateSet.getString(1);
-				columnValue=updateSet.getString(2);
-				newVal=updateSet.getInt(3);
-				key1=updateSet.getInt(4);
-				key2=updateSet.getInt(5);
-
-
-				if ((newVal==0) && !(tableName.equals("Movie")) ){ // Delete operation- Table
-					// name, key1, key2 - only
-					// for ActorMovie,
-					// GenreMovie
-					if (tableName.equals("ActorMovie"))
-						str= "idActor="+key2+" AND idMovie="+key1;
-					else str= "idGenre="+key2+" AND idMovie="+key1;
-					delete(tableName,str);
-
-
-				}
-				else if ((key2==0) && !(tableName.equals("Movie")))  // Insert operation -
-					// Table name, key1,
-					// key2- only for
-					// ActorMovie,GenreMovie
-					insert(tableName, Integer.toString(key1), Integer.toString(newVal));
-
-				else{
-					str=columnValue+"="+newVal;
-
-					if (tableName.equals("Movie"))
-						str2="idMovie="+key1;
-
-
-					else if (tableName.equals("ActorMovie"))
-						str2="idMovie="+key1+" AND "+ "idActor="+key2;
-					else
-						str2="idMovie="+key1+" AND "+ "idGenre="+key2;
-					update(tableName, str,
-							str2);
-				}
-			}
-		}
-		catch (SQLException e) {
-			System.out.println("Failed to merge the users Updates");
-			e.printStackTrace();
-		}
-		finally{
-			try {
-				updateSet.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 		}
 	}
