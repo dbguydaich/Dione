@@ -50,7 +50,7 @@ public class all_tabs_window extends Shell
 	    
 	  
 	   
-	    //tab4j
+	    //tab4
 	    TabItem tab4 = new TabItem(tab_folder, SWT.NONE);
 	    tab4.setText("Tab 4");
 	    
