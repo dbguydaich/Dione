@@ -13,6 +13,9 @@ import org.eclipse.swt.widgets.Text;
 import config.config;
 
 
+
+
+
 public class all_tabs_window extends Shell
 {
 	
@@ -47,7 +50,7 @@ public class all_tabs_window extends Shell
 	    
 	  
 	   
-	    //tab4
+	    //tab4j
 	    TabItem tab4 = new TabItem(tab_folder, SWT.NONE);
 	    tab4.setText("Tab 4");
 	    
@@ -58,8 +61,11 @@ public class all_tabs_window extends Shell
 	    search_movie_tab search_movie_tab = new search_movie_tab(display, tab_folder, SWT.NONE);
 	    tab2.setControl(search_movie_tab);
 	    
-	    search_friends_window search_friends_tab = new search_friends_window(display, tab_folder, SWT.NONE);
+	    social_tab search_friends_tab = new social_tab(display, tab_folder, SWT.NONE);
 	    tab3.setControl(search_friends_tab);
+	    
+	    recommendation_tab recommendation_tab_wndow = new recommendation_tab(display, tab_folder, SWT.NONE);
+	    tab4.setControl(recommendation_tab_wndow);
 	}
 	
 	public static void main(String args[])

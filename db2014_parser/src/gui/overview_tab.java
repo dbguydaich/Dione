@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -152,6 +153,17 @@ public class overview_tab extends Composite
 		{
 			reco_movies_links.add(new Link(reco_area, SWT.BORDER));
 			reco_movies_links.get(i).setText(reco_movies_string.get(i));
+			
+			
+			reco_movies_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+			
 			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
 			color = display.getSystemColor(SWT.COLOR_GRAY);
 			reco_movies_links.get(i).setBackground(color);

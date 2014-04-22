@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -104,6 +106,19 @@ public class recommendation_tab extends Composite
 		{
 			movies_my_taste_links.add(new Link(area1, SWT.BORDER));
 			movies_my_taste_links.get(i).setText(str);
+			
+			
+			movies_my_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+			
+			
+			
 			GridData grid_data_my_taste = new GridData(200, 18);
 			grid_data_my_taste.verticalIndent = 3;
 			movies_my_taste_links.get(i).setLayoutData(grid_data_my_taste);
@@ -148,6 +163,20 @@ public class recommendation_tab extends Composite
 		{
 			movies_friends_taste_links.add(new Link(area2, SWT.BORDER));
 			movies_friends_taste_links.get(i).setText(str);
+			
+	
+			
+			
+			movies_friends_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+			
+			
 			GridData grid_data_friends_taste = new GridData(200, 18);
 			grid_data_friends_taste.verticalIndent = 3;
 			movies_friends_taste_links.get(i).setLayoutData(grid_data_friends_taste);
@@ -192,6 +221,17 @@ public class recommendation_tab extends Composite
 		{
 			movies_similar_to_me_taste_links.add(new Link(area3, SWT.BORDER));
 			movies_similar_to_me_taste_links.get(i).setText(str);
+			movies_similar_to_me_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+			
+			
+			
 			GridData grid_data_similar_to_me_taste = new GridData(200, 18);
 			grid_data_similar_to_me_taste.verticalIndent = 3;
 			movies_similar_to_me_taste_links.get(i).setLayoutData(grid_data_similar_to_me_taste);
