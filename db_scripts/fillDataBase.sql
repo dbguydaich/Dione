@@ -41,5 +41,11 @@ INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '3');
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '3');
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('3', '2');
 
+--friend_relation
+INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('1', '2', '2014-04-27 16:19:47');
+INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('1', '3', '2014-04-24 16:19:47');
+INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('4', '1', '2014-04-27 10:19:47');
+INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('2', '5', '2014-04-26 16:19:47');
+
 -- Commit
 commit;

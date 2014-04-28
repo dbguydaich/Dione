@@ -1,0 +1,3 @@
+// List<String> get_user_most_recommended_movies()
+
+//List<String> get_friends_recent_activities()

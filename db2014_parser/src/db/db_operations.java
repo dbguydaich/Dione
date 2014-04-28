@@ -1,10 +1,14 @@
 package db;
 
-import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
 import java.sql.Connection;
+
+import com.mysql.jdbc.StringUtils;
 
 /**
  * The communication with the db is being made
@@ -12,221 +16,237 @@ import java.sql.Connection;
  */
 public abstract class db_operations
 {
-	private static final int OK = 1;
-	private static final int ERR = 0;
-
-	
-	//*** db operations- select, insert, update, delete ***//
 	/** insert tuple
 	 * @param table - the table name we want to insert to
-	 * @param values - the values to insert in the correct order
+	 * @param 	values 	- the values to insert in the correct order
+	 * 					- for the time stamp insert the string "TimeStamp"
+	 * @return -1 error, else number of rows efected
 	 * @throws SQLException 
 	 */
-	protected static int insert(String table, String... values) 
-			throws SQLException {
-
-		int i;
-
-		String state = "INSERT INTO " + table + " VALUES (";
-
-		for (i = 0; i < values.length; i++) 
-		{
-			state = state + values[i];
-
-			if (i != values.length - 1)
-				state = state + ",";
-		}
-		state += ")";
-
-		System.out.println(state);
-		Connection conn = null;
-
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
-
-		Statement stmt = null;
-
-		stmt = conn.createStatement();
-
-		stmt.executeUpdate(state);
-
-		jdbc_connection_pooling.get_conn().close(conn);
-		return OK;
-	}
-
-	// columns needs to look like "'col1', 'col2', 'col3'..."
-	protected static int insert_columns(String table,String columns, String... values) 
-			throws SQLException {
-
-		int i;
-
-		String state = "INSERT INTO " + table + " (" + columns + ") VALUES (";
-
-		for (i = 0; i < Array.getLength(values); i++) {
-			state = state+values[i];
-
-			if (i != Array.getLength(values) - 1)
-				state = state + ",";
-		}
-		state += ")";
-
-		System.out.println(state);
-		Connection conn = null;
-		
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
-
-		Statement stmt = null;
-
-		stmt = conn.createStatement();
-
-		stmt.executeUpdate(state);
-			
-		jdbc_connection_pooling.get_conn().close(conn);
-		return OK;
-
-	}
-	
-	/** select query 
-	 * @param select- the string that should come after "SELECT"
-	 * @param from- the string that should come after "FROM"
-	 * @param where- the string that should come after "WHER"
-	 * @return ResultSet with the result to that query
-	 * @throws SQLException 
-	 */
-	protected static ResultSet select(String select, String from, String where) 
+	protected static int insert(String table, String columns, Object... values) 
 			throws SQLException 
 	{
-
-		ResultSet result = null;
+		if (table == null || values == null || values.length == 0)
+			return (-1);
+		
+		// Set the connection
 		Connection conn = null;
-		Statement stmt = null;
-		jdbc_connection_pooling connPool;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
 		
-		// Get connection pool
-		connPool = jdbc_connection_pooling.get_conn();
-		if (connPool == null)
-			return (null);
-		
-		// confirm connection
-		conn = connPool.connectionCheck();
-		if (conn == null)
-			return (null);
-		
-		// Start the statment
-		stmt = conn.createStatement();
-			
-		if (where == "")
-			result = stmt.executeQuery("SELECT " + select + " FROM " + from);
+		// Build insert string
+		String insert_string;
+		if 	(columns == null  || columns == "")
+			insert_string = "INSERT INTO " + table + " VALUES (";
 		else
-			result = stmt.executeQuery("SELECT " + select + " FROM " + from + " WHERE " + where);
+			insert_string = "INSERT INTO " + table + " (" + columns + ") VALUES (";
+		
+		// Isert the currect number of '?' for values to be inserted
+		for (int i = 0 ; i < values.length - 1 ; i++)
+			insert_string += "?, ";
+		insert_string += "?)";
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(insert_string);
+
+		for (int i = 0; i < values.length; i++) 
+		{
+			if (values[i] instanceof Integer)
+			{
+				stmt.setInt((i + 1), (int) values[i]);
+				continue;
+			} 
+			if (values[i] instanceof String)
+			{
+				// when the current time is needed
+				if ((String)values[i] == "TimeStamp")
+				{
+					stmt.setTimestamp((i + 1), new Timestamp((new Date()).getTime()));
+					continue;
+				}
+				
+				stmt.setString((i + 1), (String) values[i]);
+				continue;
+			}
+		}
+		
+		// execute insert SQL stetement
+		int rows_effected = stmt.executeUpdate();
 		
 		// Close connection
 		jdbc_connection_pooling.get_conn().close(conn);
-		
-		return (result);
-	}
-
-	/** update tuple
-	 * @param tablrNamr- the table name as appear in the db. Comes after "UODATE"
-	 * @param columnSet- string that should come after "SET"
-	 * @param predicatesSet - string that should come after "WHERE"
-	 */
-	protected static int update(String tableName, String columnSet, String predicatesSet) {
-		Connection conn = null;
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
-
-			Statement stmt = null;
-
-			stmt = conn.createStatement();
-
-			stmt.executeUpdate("UPDATE " + tableName + " SET " + columnSet
-					+" WHERE "+ predicatesSet);
-		}
-
-		catch (SQLException e) {
-
-			e.printStackTrace();
-			return ERR;
-		}
-		
-		try {
-			jdbc_connection_pooling.get_conn().close(conn);
-		} catch (SQLException e) {
-			System.out.println("An opened connection could not be closed");
-		}
-		return OK;
-
-	}
-
-	/** delete tuple
-	 * @param tableName- the name of the table we want to delete from
-	 * @param whereCol- string that comes after "WHERE"- tells which tuple to delete
-	 * @return -1 for error, else the number of rows efected
-	 */
-	protected static int delete(String tableName, String whereCol) 
-	{
-		if (tableName == null)
-			return (0);
-		
-		Connection conn = null;
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
-
-			Statement stmt = null;
-
-			stmt = conn.createStatement();
-			
-			if (whereCol != null && whereCol != "")
-			{
-				stmt.executeUpdate("DELETE FROM " + tableName + " WHERE " + whereCol );
-			}
-			else
-			{
-				stmt.executeUpdate("DELETE FROM " + tableName);
-			}
-		}
-
-		catch (SQLException e) 
-		{
-			return (-1);
-		}
-
-		return OK;
-	}
-
-	//*** helper function ***//
-
-	/** get a connection */
-	protected Connection getConnection() {
-		Connection conn = null;
-		try {
-			conn = jdbc_connection_pooling.get_conn().connectionCheck();
-		} catch (SQLException e1) {			
-			e1.printStackTrace();
-		}
-		return conn;
-	}
-
-	/** get statement from the conn */
-	protected Statement getStatement(Connection conn) {
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
-		} catch (SQLException e) {			
-			e.printStackTrace();
-		}
-		return stmt;
+		return (rows_effected);
 	}
 	
-	/** close safely the resources */
-	protected void safelyClose(AutoCloseable... resources) {
-		for (AutoCloseable resource : resources) {
-			try {
-				resource.close();
-				System.out.println(resources + "was closed safely");
+	/** delete tuple/s
+	 * @param tableName	- the name of the table we want to delete from
+	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."
+	 * @param values	- the objects to switch '?' in the where clause 
+	 * @throws SQLException 
+	 */
+	protected static int delete(String table, String whereClause, Object... values) throws SQLException 
+	{
+		if (table == null)
+			return (-1);
+		
+		// Does value count match the number of "?"
+		if (values != null)
+			if (StringUtils.indexOfIgnoreCase(whereClause, "?") == values.length)
+				return (-1);
+		
+		// Set the connection
+		Connection conn = null;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		
+		// Build insert string
+		String delete_string;
+		if 	(whereClause == null || whereClause == "")
+			delete_string = "DELETE FROM " + table;
+		else
+			delete_string = "DELETE FROM " + table + " WHERE " + whereClause;
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(delete_string);
+
+		// Fill the question marks
+		if (values != null)
+		{
+			for (int i = 0; i < values.length; i++) 
+			{
+				if (values[i] instanceof Integer)
+				{
+					stmt.setInt((i+1), (int) values[i]);
+					continue;
+				} 
+				if (values[i] instanceof String)
+				{	
+					stmt.setString((i+1), (String) values[i]);
+					continue;
+				}
 			}
-			catch (Exception e) {
+		}
+		
+		// execute insert SQL stetement
+		int rows_effected = stmt.executeUpdate();
+		
+		// Close connection
+		jdbc_connection_pooling.get_conn().close(conn);
+		return (rows_effected);
+	}
+
+	/** select tuple/s
+	 * @param tableName	- the name of the table we want to delete from
+	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."
+	 * @param values	- the objects to switch '?' in the where clause 
+	 * @throws SQLException 
+	 */
+	protected static ResultSet select(String select, String table , String whereClause, Object... values) throws SQLException 
+	{
+		if (table == null)
+			throw (new SQLException("null table name"));
+		
+		// Does value count match the number of "?"
+		if (values != null)
+			if (StringUtils.indexOfIgnoreCase(whereClause, "?") == values.length)
+				throw (new SQLException("wrong number of values entered"));
+		
+		// Set the connection
+		Connection conn = null;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		
+		// Build insert string
+		String insert_string;
+		if 	(whereClause == null || whereClause == "")
+			insert_string = "SELECT " + select + " FROM " + table;
+		else
+			insert_string = "SELECT " + select + " FROM " + table + " WHERE " + whereClause;
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(insert_string);
+
+		// Fill the question marks
+		if (values != null)
+		{
+			for (int i = 0; i < values.length; i++) 
+			{
+				if (values[i] instanceof Integer)
+				{
+					stmt.setInt((i+1), (int) values[i]);
+					continue;
+				} 
+				if (values[i] instanceof String)
+				{	
+					stmt.setString((i+1), (String) values[i]);
+					continue;
+				}
 			}
+		}
+		
+		// execute insert SQL stetement
+		ResultSet rows_effected = stmt.executeQuery();
+		
+		// Close connection
+		jdbc_connection_pooling.get_conn().close(conn);
+		return (rows_effected);
+	}
+
+// GENERICS
+
+	/** internaly used in functions that retrieve HM<Str, Int>
+	 * @param table		- table name
+	 * @param values	- "IntegerVal, StringVal", exactly these values!
+	 * @return a HashMap of wanted values from the table
+	 * @throws SQLException 
+	 */
+	protected static HashMap <String,Integer> generic_get_two_values(String values, String table, String where) 
+			throws SQLException
+	{
+		ResultSet result = select(values, table, where);
+		
+		// is table empty
+		if (!result.next())
+			return (null);
+		
+		// Enumerate all movies
+		HashMap <String,Integer> retMap =  new HashMap<String,Integer>(); 
+		
+		do
+		{
+			Integer id = result.getInt(1);
+			String name = result.getString(2);
+			
+			retMap.put(name,id);
+		} while (result.next());
+		
+		return (retMap);
+	}
+	
+	/** internally used by functions that exchange name for id
+	 * @param value 		- name of table with capital first latter
+	 * @param value_name	- actual content of string you wish to get
+	 * @return 				- the ID of what you wanted
+	 * @throws SQLException
+	 */
+	protected static int generic_id_getter(String value, String value_name) 
+			throws SQLException
+	{
+		if (value == null)
+			return (-1);
+		
+		String whereClause = value.toLowerCase() + "Name = '" + value_name + "'";
+		ResultSet results = select("id"+ value, value.toLowerCase() , whereClause);
+		
+		try{
+		// did select find souch user
+		if (results.next())
+			return (Integer.parseInt(results.getString("id" + value)));
+		else
+			return (0);
+		} catch (NumberFormatException e)
+		{
+			return (-1);
 		}
 	}
 
