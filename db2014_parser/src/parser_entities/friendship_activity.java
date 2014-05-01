@@ -1,11 +1,27 @@
 package parser_entities;
 
-public class friendship_activity extends abstract_activity {
-	private String friend;
+import java.sql.Date;
+
+public class friendship_activity extends abstract_activity 
+{
+	private String 	friendName;
 	
+	public friendship_activity(String user, String name, Date date) 
+	{
+		super("friending", user, date);
+		
+		this.friendName = name;
+	}
+
 	public String get_friend()
 	{
-		return friend;
+		return friendName;
+	}
+	
+	public String toString()
+	{
+		return ("On the " + get_activity_time() + " " + get_activity_user() + " and " + get_friend() +
+				" became friends"); 
 	}
 
 }

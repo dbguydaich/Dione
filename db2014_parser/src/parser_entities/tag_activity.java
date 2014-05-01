@@ -1,12 +1,23 @@
 package parser_entities;
 
-public class tag_activity extends abstract_activity {
-	
-	private String rating;
+import java.sql.Date;
+
+public class tag_activity extends abstract_activity 
+{
+	private int rating;
 	private String movie;
 	private String tag;
 	
-	public String get_rating()
+	public tag_activity(String user, int rating, String movie, String tag, Date date)
+	{
+		super("tagging", user, date);
+		
+		this.rating = rating;
+		this.movie = movie;
+		this.tag = tag;
+	}
+	
+	public int get_rating()
 	{
 		return rating;
 	}
@@ -20,6 +31,10 @@ public class tag_activity extends abstract_activity {
 	{
 		return tag;
 	}
-	
 
+	public String toString()
+	{
+		return ("On the " + get_activity_time() + " " + get_activity_user() + " rated the tag " + get_tag() + 
+				" of the movie " + get_movie() + " with the score " + get_rating()); 
+	}
 }

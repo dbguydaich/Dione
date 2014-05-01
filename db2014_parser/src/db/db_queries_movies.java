@@ -216,7 +216,7 @@ public abstract class db_queries_movies extends db_operations
 		
 		return (true);
 	}
-
+	
 // GETTERS
 
 	/**
@@ -312,31 +312,50 @@ public abstract class db_queries_movies extends db_operations
 			List<String> tags_list, List<Boolean> rating_radios_text, List<Boolean> genres) 
 					throws NumberFormatException, SQLException 
 	{
-		// TODO: implement
-		/*int movie_id = get_movie_id(title, director);
+		String from	 = "movie";
+		String where = "1=1";
+		List<Object> values = new ArrayList<Object>();
 		
-		// Does movie title exists
-		if (movie_id == 0)
-			return (false);
-		
-		// did all actors play in this title
-		for (String actor_name : actor_list)
+		// Title filter
+		if (title != null && title != "")
 		{
-			if (!did_actor_play_in_movie(movie_id, get_actor_id(actor_name)))
-				return (false);
+			where += " AND (movie.name like '%?%')";
+			values.add(title);
 		}
 		
-		// do all tags fit
-		if (!is_movie_of_tags(movie_id, tags_list))
-			return (false);
+		// Director filter
+		if (director != null && director != "")
+		{
+			where += " AND (movie.director like '%?%')";
+			values.add(director);
+		}
+			
+		// Actor filter
+		if (actor_list != null && actor_list.size() > 0)
+		{
+			where += "idMovie IN (SELECT idMovie FROM actor, actor_movie " +
+								 "WHERE actor.idActor = id.person)" + 
+						"";
+		}
 		
-		// is movie of rating
+		// Make the querey
+		ResultSet result = select("idMovie", from, where, values);
 		
-		// TODO:do all genres fit
+		// is table empty
+		if (result == null)
+			return (null);
 		
-		// if got here everything fits and movie exists
-		return (true);*/
-		return (null);
+		List<Integer> returnedList = new ArrayList<Integer>();
+		
+		// Add all values to the return list
+		while (result.next())
+		{
+			Integer movie_id = result.getInt("idMovie");
+			
+			returnedList.add(movie_id);
+		} 
+		
+		return (returnedList);
 	}
 	
 	public static List<String> get_movie_geners(int movie_id) 
@@ -360,6 +379,40 @@ public abstract class db_queries_movies extends db_operations
 		} 
 		
 		return (returnedList);
+	}
+	
+	/** get a list of movies that you think a user would love
+	 * @param id_user	- the user you want to get a list of
+	 * @param limit		- maximum length of the movie list
+	 * @return			- list of movie IDs
+	 * @throws SQLException 
+	 */
+	public static List<Integer> get_movies_prefered_by_user(int id_user, int limit) throws SQLException
+	{
+		String where = "(user_prefence.idTag = movie_tag.idTag AND idUser = ?)" +
+						"GROUP BY idMovie " +
+						"ORDER BY like_score DESC " +
+						"LIMIT " + limit;
+				
+		ResultSet result = select("idMovie, SUM(tag_user_rate) as like_score", 
+									"user_prefence, movie_tag", where, id_user);
+		
+		// is table empty
+		if (result == null)
+			return (null);
+		
+		// Enumerate all movies
+		List<Integer> returnedList = new ArrayList<Integer>();
+		
+		while (result.next())
+		{
+			int movie_id = result.getInt("idMovie");
+			
+			returnedList.add(movie_id);
+		} 
+		
+		return (returnedList);
+
 	}
 	
 // ID GETTERS

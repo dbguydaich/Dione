@@ -12,12 +12,14 @@ import db.db_queries_user;
 /**
  * this is the module to get user related data
  * every "user_loics" holds one current user, but has data on all users
+ *
+ * @NOTE 	-	before you use any method that uses current_user_id you are expected to login_user!
  * @author Matan Poleg
  *
  */
 public class user_logics 
 {
-	private int current_user_id;
+	private int current_user_id = 0;
 
 // BASICS
 	
@@ -87,7 +89,92 @@ public class user_logics
 		return (remove_friendship(current_user, friend_id));
 	}
 	
-//SOCIACLS
+	/**
+	 * get current user's id
+	 * @return the user id as saved in "current_user_id"
+	 */
+	public int get_current_user_id() 
+	{
+		return (current_user_id);
+	}
+	
+//ACTIVITIES
+
+	/**
+	 * get a list of IDs of a user's friends
+	 * @param user_id
+	 * @throws SQLException 
+	 */
+	public List<Integer> get_user_friends_ids(int user_id) 
+			throws SQLException
+	{
+		return (db_queries_user.get_user_friends_ids(user_id));
+	}
+	
+	/**
+	 * get a list a of at most limit of user's friends recent activities
+	 * @return activity list
+	 * @throws SQLException 
+	 */
+	public List<abstract_activity> get_friends_recent_activities(int user_id, int limit) 
+			throws SQLException
+	{
+		// Get a list of friend's IDs
+		List<Integer> friends = get_user_friends_ids(user_id);
+		
+		// Init a list of activities
+		List<abstract_activity> activities = new  ArrayList<abstract_activity>();
+		
+		// Iterate all of user's friends
+		for (Integer friend : friends)
+		{
+			// Add the current friend's activities
+			activities.addAll(get_user_recent_social_activities(friend, limit));
+			
+			// Sort and trim the list
+			Collections.sort(activities);
+			activities = activities.subList(0, limit);
+		}
+		
+		return (null);
+	}
+	
+	/**
+	 * get_friends_recent_activities
+	 * @return
+	 * @throws SQLException 
+	 */
+	List<abstract_activity> get_friends_recent_activities() 
+			throws SQLException
+	{
+		config settings = new config();
+		int limit = settings.get_default_activity_limit();
+		
+		
+		return (get_friends_recent_activities(current_user_id, limit));
+	}
+	
+	/**
+	 * get string representation of friends recent activities
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> get_friends_recent_string_activities() throws SQLException
+	{
+		return (list_activity_to_list_string(get_friends_recent_activities()));
+	}
+	
+	/**
+	 * get the string representation of social activities
+	 * @param limit - max length of the List
+	 * @return - pretty much List<abstract_activities>.toString()
+	 * @throws SQLException 
+	 */
+	public List<String> get_user_recent_string_activities(int user, int limit) 
+			throws SQLException
+	{
+		return (list_activity_to_list_string(get_user_recent_social_activities(user, limit)));
+	}
 	
 	/** get the recent activity of the current user
 	 * @return		- list of at most 'limit' activities
@@ -106,7 +193,7 @@ public class user_logics
 			return (null);
 	}
 	
-	
+
 	/** get the recent activities of the current user and the default limit
 	 * @return		- list of at most 'limit' activities
 	 * @throws SQLException 
@@ -146,6 +233,19 @@ public class user_logics
 		return (returnedList);
 	}
 	
+	/**
+	 * get the current user's most recomended movies
+	 * 		this according to the tags he like from the user_preference
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> get_user_most_recommended_movies(int user_id) 
+			throws SQLException
+	{
+		List<String> tags = db_queries_user.get_prefered_tags(user_id, 10);
+		return (null);
+	}
+	
 	/** get list of strings represanting tags
 	 * @param limit - max tags you want to see 
 	 * @return		- a list of the tags, ordered by popularity
@@ -167,12 +267,28 @@ public class user_logics
 		return (db_queries_user.get_prefered_tags(current_user_id, 5));
 	}
 	
+// INTERNALS
+	
 	/**
-	 * get current user's id
-	 * @return the user id as saved in "current_user_id"
+	 * just get the toString of each activity
+	 * implemented to avoid code duplication
+	 * @param activity_list
+	 * @return - null if activity_list is empty
 	 */
-	public int get_current_user_id() 
+	private List<String> list_activity_to_list_string(List<abstract_activity> activity_list)
 	{
-		return (current_user_id);
+		if (activity_list == null || activity_list.size() == 0)
+			return (null);
+		
+		// Init the return list
+		List<String> retList = new ArrayList<String>();
+		
+		// Go over all activities and add their string representation
+		for(abstract_activity act : activity_list)
+		{
+			retList.add(act.toString());
+		}
+		
+		return (retList);
 	}
 }

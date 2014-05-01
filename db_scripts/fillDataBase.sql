@@ -32,6 +32,7 @@ INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('Guy', '1')
 INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('1', 'drama');
 INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('2', 'comedy');
 INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('3', 'horor');
+INSERT INTO `dbmysql05`.`tag` (`idTag`, `tagName`) VALUES ('4', 'chick flick');
 
 -- movie_tags
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '1');
@@ -40,12 +41,23 @@ INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '1');
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('2', '3');
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '3');
 INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('3', '2');
+INSERT INTO `dbmysql05`.`movie_tag` (`idMovie`, `idTag`) VALUES ('1', '4');
 
 --friend_relation
 INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('1', '2', '2014-04-27 16:19:47');
 INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('1', '3', '2014-04-24 16:19:47');
 INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('4', '1', '2014-04-27 10:19:47');
 INSERT INTO `dbmysql05`.`friend_relation` (`friend1`, `friend2`, `friendshipDate`) VALUES ('2', '5', '2014-04-26 16:19:47');
+
+--user_prefence
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('1', '1', '5');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('1', '2', '0');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('1', '3', '-1');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('1', '4', '-5');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('2', '2', '4');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('2', '1', '0');
+INSERT INTO `dbmysql05`.`user_prefence` (`idUser`, `idTag`, `tag_user_rate`) VALUES ('2', '4', '-3');
+
 
 -- Commit
 commit;
