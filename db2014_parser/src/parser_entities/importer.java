@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import db.db_operations;
-import db.db_queries;
+import db.db_queries_movies;
+import db.db_queries_persons;
 import db.jdbc_connection_pooling;
 
 /** A Bussiness Logic class for import of data. 
@@ -28,11 +29,12 @@ public class importer extends db_operations{
 	HashMap<String, Integer> languages_table;
 	
 	public importer()
+			throws SQLException
 	{
 		/*get current database image*/
-		movie_table = db_queries.get_movie_names_and_ids();
-		actors_table = db_queries.get_movie_names_and_ids();
-		directors_table = db_queries.get_movie_names_and_ids();
+		movie_table = db_queries_movies.get_movie_names_and_ids();
+		actors_table = db_queries_persons.get_actor_names_and_ids();
+		directors_table = db_queries_persons.get_director_names_and_ids();
 	}
 	
 	/** updates movie tables, with new movies. 
@@ -46,12 +48,11 @@ public class importer extends db_operations{
 		/*we update existing movies, so as to keep user rating, etc.*/
 		PreparedStatement movie_insert_stmt, movie_update_stmt;
 		/*sync tables with db*/
-		movie_table = db_queries.get_movie_names_and_ids();
-		actors_table = db_queries.get_movie_names_and_ids();
-		directors_table = db_queries.get_movie_names_and_ids();
-		
+		movie_table = db_queries_movies.get_movie_names_and_ids();
+		actors_table = db_queries_persons.get_actor_names_and_ids();
+		directors_table = db_queries_persons.get_director_names_and_ids();
+				
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 		
 		movie_update_stmt = db_conn.prepareStatement("UPDATE Movie SET idLanguage=?,idDirector=?,movieName=?,year=?,wiki=?,duration=?,plot=? WHERE idMovie=?) VALUES(?,?,?,?,?,?,?,?)");
 		movie_insert_stmt = db_conn.prepareStatement("INSERT INTO Movie(idLanguage,idDirector,movieName,year,wiki,duration,plot) VALUES(?,?,?,?,?,?,?,?)");
@@ -59,7 +60,7 @@ public class importer extends db_operations{
 		for (entity_movie movie : movies_map.values())
 		{
 			/*if movie exists, add an update to the batch*/
-			if (db_queries.does_movie_exist(movie.get_movie_name(), movie.get_movie_year(), movie.get_movie_director().get_person_name()))
+			if (db_queries_movies.movie_exist(movie.get_movie_name(), movie.get_movie_year(), movie.get_movie_director().get_person_name()))
 			{	
 				movie_insert_stmt = set_values_movie_insert(movie_insert_stmt, movie);
 				movie_insert_stmt.addBatch(); 
@@ -87,17 +88,16 @@ public class importer extends db_operations{
 	public void update_movies_genres_table(HashMap<String,entity_movie> movies_map) throws SQLException
 	{
 		/*sync tables*/
-		movie_table = db_queries.get_movie_names_and_ids();
+		movie_table = db_queries_movies.get_movie_names_and_ids();
 		int batch_count = 0;
 		
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 		
 		PreparedStatement genre_movie_insert_stmt;
 		genre_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO GenreMovie(idMovie, idGenre) VALUES(?,?)");
 		
 		/*delete movie-genre table*/
-		db_queries.clear_movie_genres();
+		db_queries_movies.clear_movie_genres();
 		
 		for (entity_movie movie : movies_map.values())
 		{
@@ -130,14 +130,13 @@ public class importer extends db_operations{
 	public void update_movies_tags_table(HashMap<String,entity_movie> movies_map) throws SQLException
 	{
 		/*sync tables*/
-		movie_table = db_queries.get_movie_names_and_ids();
+		movie_table = db_queries_movies.get_movie_names_and_ids();
 		
 		/*helper map to determine if movie alread has tags*/
-		HashMap <Integer, Integer> movie_tag_count = db_queries.get_movie_id_tag_count();
+		HashMap <Integer, Integer> movie_tag_count = db_queries_movies.get_movie_id_tag_count();
 		int batch_count = 0;
 		
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 		
 		PreparedStatement tag_movie_insert_stmt;
 		tag_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO tag_movie(idMovie, idTag, scoreTag) VALUES(?,?,?)");
@@ -185,10 +184,9 @@ public class importer extends db_operations{
 		PreparedStatement actor_inser_stmt;
 
 		/*sync tables with db*/
-		actors_table = db_queries.get_movie_names_and_ids();
+		actors_table = db_queries_persons.get_actor_names_and_ids();
 		
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 				
 		actor_inser_stmt = db_conn.prepareStatement("Insert INTO actor(actorName) VALUES (?)");			
 		
@@ -222,10 +220,9 @@ public class importer extends db_operations{
 		PreparedStatement director_insert_stmt;
 
 		/*sync tables with db*/
-		directors_table = db_queries.get_movie_names_and_ids();
+		directors_table = db_queries_persons.get_director_names_and_ids();
 		
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 				
 		director_insert_stmt = db_conn.prepareStatement("Insert INTO director(directorName) VALUES (?)");			
 		
@@ -256,19 +253,18 @@ public class importer extends db_operations{
 	public void update_movie_actors_tabls(HashMap<String,entity_movie> movies_map) throws SQLException
 	{
 		/*sync tables*/
-		movie_table = db_queries.get_movie_names_and_ids();
-		actors_table = db_queries.get_actor_names_and_ids();
+		movie_table = db_queries_movies.get_movie_names_and_ids();
+		actors_table = db_queries_persons.get_actor_names_and_ids();
 		
 		int batch_count = 0;
 		
 		Connection db_conn = getConnection();
-		Statement db_gen_stmt = getStatement(db_conn);
 		
 		PreparedStatement actor_movie_insert_stmt;
 		actor_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO actormovie(idMovie, idGenre) VALUES(?,?)");
 		
 		/*delete movie-actor table*/
-		db_queries.clear_movie_actors();
+		db_queries_persons.clear_movie_actors();
 		
 		for (entity_movie movie : movies_map.values())
 		{
@@ -304,7 +300,7 @@ public class importer extends db_operations{
 	public PreparedStatement set_values_movie_update(PreparedStatement movie_update_stmt, entity_movie movie)
 	{
 		try {
-			Integer movie_id = db_queries.get_movie_id(movie.get_movie_name());
+			Integer movie_id = db_queries_movies.get_movie_id(movie.get_movie_name());
 			/*set statment parameters*/
 			if (languages_table.get(movie.get_movie_language()) != null)
 				movie_update_stmt.setInt(0, languages_table.get(movie.get_movie_language()));
@@ -401,21 +397,23 @@ public class importer extends db_operations{
 	/**
 	 * @param genre_set a set of genres to load
 	 * checks which genres exist in db, and load the new ones
+	 * @throws SQLException 
 	 */
-	public void update_genres(HashSet<String> genre_set)
+	public void update_genres(HashSet<String> genre_set) 
+			throws SQLException
 	{
 		for (String genre : genre_set)
 		{
 			Integer genre_id = new Integer(0);
 			/*if exists, add to table*/
-			if (db_queries.genre_exists(genre))
+			if (db_queries_movies.genre_exists(genre))
 			{
-				genre_id = db_queries.get_genre_id(genre);
+				genre_id = db_queries_movies.get_genre_id(genre);
 				this.genres_table.put(genre, genre_id);
 				continue;
 			}
 			/*create and add*/
-			genre_id = db_queries.create_genre(genre);
+			genre_id = db_queries_movies.create_genre(genre);
 			this.genres_table.put(genre,genre_id);
 		}
 	}
@@ -424,21 +422,23 @@ public class importer extends db_operations{
 	/**
 	 * @param language_set a set of languages to load
 	 * checks which languages exist in db, and load the new ones
+	 * @throws SQLException 
 	 */
-	public void update_languages(HashSet<String> language_set)
+	public void update_languages(HashSet<String> language_set) 
+			throws SQLException
 	{
 		for (String language : language_set)
 		{
 			Integer language_id = new Integer(0);
 			/*if exists, add to table*/
-			if (db_queries.language_exists(language))
+			if (db_queries_movies.language_exists(language))
 			{
-				language_id = db_queries.get_language_id(language);
+				language_id = db_queries_movies.get_language_id(language);
 				this.languages_table.put(language, language_id);
 				continue;
 			}
 			/*create and add*/
-			language_id = db_queries.create_language(language);
+			language_id = db_queries_movies.create_language(language);
 			this.languages_table.put(language,language_id);
 		}
 	}
@@ -446,21 +446,23 @@ public class importer extends db_operations{
 	/**
 	 * @param tag_set a set of tags to load
 	 * checks which tags exist in db, and load the new ones
+	 * @throws SQLException 
 	 */
-	public void update_tags(HashSet<String> tag_set)
+	public void update_tags(HashSet<String> tag_set) 
+			throws SQLException
 	{
 		for (String tag : tag_set)
 		{
 			Integer tag_id = new Integer(0);
 			/*if exists, add to table*/
-			if (db_queries.tag_exists(tag))
+			if (db_queries_movies.tag_exists(tag))
 			{
-				tag_id = db_queries.get_tag_id(tag);
+				tag_id = db_queries_movies.get_tag_id(tag);
 				this.tags_table.put(tag, tag_id);
 				continue;
 			}
 			/*create and add*/
-			tag_id = db_queries.create_tag(tag);
+			tag_id = db_queries_movies.create_tag(tag);
 			this.tags_table.put(tag, tag_id);
 		}
 	}

@@ -17,7 +17,7 @@ import db.db_queries_user;
  * @author Matan Poleg
  *
  */
-public class user_logics 
+public class user_logics implements Runnable
 {
 	private int current_user_id = 0;
 
@@ -290,5 +290,13 @@ public class user_logics
 		}
 		
 		return (retList);
+	}
+
+	
+	@Override
+	public void run() 
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

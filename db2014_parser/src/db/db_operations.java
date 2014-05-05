@@ -1,12 +1,15 @@
 package db;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
-import java.sql.Connection;
+
+
 
 import com.mysql.jdbc.StringUtils;
 
@@ -250,4 +253,26 @@ public abstract class db_operations
 		}
 	}
 
+	
+	/** get a connection 
+	 * @throws SQLException */
+	protected Connection getConnection() 
+			throws SQLException 
+	{
+		jdbc_connection_pooling jdbc_conn = jdbc_connection_pooling.get_conn();
+
+		return (jdbc_conn.connectionCheck());
+	}
+	
+	/** get statement from the conn 
+	 * @throws SQLException */
+	protected Statement getStatement() 
+			throws SQLException 
+	{
+		jdbc_connection_pooling jdbc_con = jdbc_connection_pooling.get_conn();
+		Connection conn = jdbc_con.connectionCheck();
+		
+		return (conn.createStatement());
+	}
+	
 }

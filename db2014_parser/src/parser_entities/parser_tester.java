@@ -1,7 +1,7 @@
 package parser_entities;
 import java.util.HashMap;
 import java.util.HashSet;
-import db.db_queries; 
+import db.db_queries_persons; 
 
 import config.config; 
 
