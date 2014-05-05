@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import bl.verifier;
 import config.config;
 
 //import bl.verifier;
@@ -161,34 +162,43 @@ public class log_in_window extends Shell
 		GridData grid_data_log_in_button = new GridData();
 		grid_data_log_in_button.horizontalIndent = 80;
 		log_in_button.setLayoutData(grid_data_log_in_button);
+		//////
+		log_in_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				final String username = username_text.getText();
+				final String pass = password_text.getText();
+				if(!verifier.verifyname(username)){ // illegal user name
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("Illegal Username");
+					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
+					alertBox.open();
+				}else if(!verifier.verifyPass( pass)){ // invalid password
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Illegal Password");
+					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox.open();
+				}
+
+				else if( db_queries.authenticate_user(username,pass)){
+					
+					//implement
+				}
+				else{ //no user found
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Error");
+					messageBox.setMessage("Password and username do not match. Try again.");
+					messageBox.open();
+				}
+				
 		
-//		log_in_button.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				if(!verifier.verifyname(username_text.getText())){ // illegal user name
-//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					alertBox.setText("Illegal Username");
-//					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
-//					alertBox.open();
-//				}else if(!verifier.verifyname( password_text.getText())){ // invalid password
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Illegal Password");
-//					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
-//					messageBox.open();
-//				}
-//
-//
-//				else //passwords not identical
-//				{
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Warning");
-//					messageBox.setMessage("Passwords are not identical");
-//					messageBox.open();
-//				}
-//			}
-//
-//		});
+			
 		
+			}
+
+		});
+		//////
+
 		
 		
 		
@@ -199,24 +209,38 @@ public class log_in_window extends Shell
 		GridData grid_data_sign_up_button = new GridData();
 		grid_data_sign_up_button.horizontalIndent = 10;
 		sign_up_button.setLayoutData(grid_data_sign_up_button);
-//		sign_up_button.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				if(!verifier.verifyname(username_text.getText())){ // illegal user name
-//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					alertBox.setText("Illegal Username");
-//					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
-//					alertBox.open();
-//				}else if(!verifier.verifyname( password_text.getText())){ // invalid password
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Illegal Password");
-//					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
-//					messageBox.open();
-//				}
-		
-		
+		sign_up_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				final String username = username_text.getText();
+				final String pass = password_text.getText();
+				if(!verifier.verifyname(username)){ // illegal user name
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("Illegal Username");
+					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
+					alertBox.open();
+				}else if(!verifier.verifyname( pass)){ // invalid password
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Illegal Password");
+					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox.open();
+				}
+				else if ( db_queries.add_user(username, pass))
+				{
+					///implement
+				}
+				else {  //there was error during registration
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Error");
+					messageBox.setMessage("There was an error during signup. Sorry.");
+					messageBox.open();
+				}
+			}
+		});
 	}
+
 		
+	
 	
 	protected void checkSubclass()
 	{
