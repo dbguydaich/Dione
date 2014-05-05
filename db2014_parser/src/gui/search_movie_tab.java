@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -59,12 +61,27 @@ public class search_movie_tab extends Composite
 		List<String> genres;
 		
 		
-		//this.setSize(window_width, window_height);
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		Color color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color);
-		color.dispose();
+		final Color color_window = display.getSystemColor(SWT.COLOR_GRAY);
+		this.setBackground(color_window);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				color_window.dispose();
+			}		
+		});
+		
+		
+		final Font font_left_labels = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_left_labels.dispose();
+			}		
+		});
 		
 		
 		//headline
@@ -73,8 +90,17 @@ public class search_movie_tab extends Composite
 		FormData form_data_headline_label = new FormData();
 		form_data_headline_label.top = new FormAttachment(0,0);
 		form_data_headline_label.left = new FormAttachment(0,200);
-		headline_label.setFont(new Font(display, "Ariel",20, java.awt.Font.PLAIN ));
+		final Font font_headline_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
+		headline_label.setFont(font_headline_label);
 		headline_label.setLayoutData(form_data_headline_label);		
+		headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_headline_label.dispose();
+			}		
+		});
+		
 		
 		
 		//left area
@@ -95,8 +121,9 @@ public class search_movie_tab extends Composite
 		title_label.setText("Title");
 		GridData grid_data_title_label = new GridData();
 		grid_data_title_label.verticalIndent = 0;
-		title_label.setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		title_label.setFont(font_left_labels);
 		title_label.setLayoutData(grid_data_title_label);
+		
 		
 		
 		//title text
@@ -108,13 +135,15 @@ public class search_movie_tab extends Composite
 		title_text.setBounds(100, 300, 50, 100);
 
 		
+		
 		//director label
 		Label director_label = new Label(left_area, SWT.NONE);
 		director_label.setText("Director");
 		GridData grid_data_director_label = new GridData();
 		grid_data_director_label.verticalIndent = 10;
-		director_label.setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		director_label.setFont(font_left_labels);
 		director_label.setLayoutData(grid_data_director_label);
+		
 		
 		
 		//director text
@@ -130,7 +159,7 @@ public class search_movie_tab extends Composite
 		language_label.setText("Language");
 		GridData grid_data_language_label = new GridData();
 		grid_data_language_label.verticalIndent = 10;
-		language_label.setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		language_label.setFont(font_left_labels);
 		language_label.setLayoutData(grid_data_language_label);
 		
 		
@@ -147,7 +176,7 @@ public class search_movie_tab extends Composite
 		actors_labels.get(0).setText("Actor1");
 		GridData grid_data_actor0_label = new GridData();
 		grid_data_actor0_label.verticalIndent = 10;
-		actors_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(0).setFont(font_left_labels);
 		actors_labels.get(0).setLayoutData(grid_data_actor0_label);
 		
 		
@@ -164,7 +193,7 @@ public class search_movie_tab extends Composite
 		actors_labels.get(1).setText("Actor2");
 		GridData grid_data_actor1_label = new GridData();
 		grid_data_actor1_label.verticalIndent = 5;
-		actors_labels.get(1).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(1).setFont(font_left_labels);
 		actors_labels.get(1).setLayoutData(grid_data_actor1_label);
 				
 				
@@ -181,7 +210,7 @@ public class search_movie_tab extends Composite
 		actors_labels.get(2).setText("Actor3");
 		GridData grid_data_actor2_label = new GridData();
 		grid_data_actor2_label.verticalIndent = 5;
-		actors_labels.get(2).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		actors_labels.get(2).setFont(font_left_labels);
 		actors_labels.get(2).setLayoutData(grid_data_actor2_label);
 				
 				
@@ -199,7 +228,7 @@ public class search_movie_tab extends Composite
 		tags_labels.get(0).setText("Tag1");
 		GridData grid_data_tag0_label = new GridData();
 		grid_data_tag0_label.verticalIndent = 10;
-		tags_labels.get(0).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(0).setFont(font_left_labels);
 		tags_labels.get(0).setLayoutData(grid_data_tag0_label);
 				
 				
@@ -216,7 +245,7 @@ public class search_movie_tab extends Composite
 		tags_labels.get(1).setText("Tag2");
 		GridData grid_data_tag1_label = new GridData();
 		grid_data_tag1_label.verticalIndent = 5;
-		tags_labels.get(1).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(1).setFont(font_left_labels);
 		tags_labels.get(1).setLayoutData(grid_data_tag1_label);
 						
 						
@@ -233,7 +262,7 @@ public class search_movie_tab extends Composite
 		tags_labels.get(2).setText("Tag3");
 		GridData grid_data_tag2_label = new GridData();
 		grid_data_tag2_label.verticalIndent = 5;
-		tags_labels.get(2).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(2).setFont(font_left_labels);
 		tags_labels.get(2).setLayoutData(grid_data_tag2_label);
 						
 						
@@ -250,7 +279,7 @@ public class search_movie_tab extends Composite
 		tags_labels.get(3).setText("Tag4");
 		GridData grid_data_tag3_label = new GridData();
 		grid_data_tag3_label.verticalIndent = 5;
-		tags_labels.get(3).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(3).setFont(font_left_labels);
 		tags_labels.get(3).setLayoutData(grid_data_tag3_label);
 						
 						
@@ -267,7 +296,7 @@ public class search_movie_tab extends Composite
 		tags_labels.get(4).setText("Tag5");
 		GridData grid_data_tag4_label = new GridData();
 		grid_data_tag4_label.verticalIndent = 5;
-		tags_labels.get(4).setFont(new Font(display, "Ariel",12, java.awt.Font.PLAIN ));
+		tags_labels.get(4).setFont(font_left_labels);
 		tags_labels.get(4).setLayoutData(grid_data_tag4_label);
 						
 						
@@ -298,7 +327,15 @@ public class search_movie_tab extends Composite
 		GridData grid_data_rating_label = new GridData();
 		grid_data_rating_label.horizontalSpan = 5;
 		rating_label.setLayoutData(grid_data_rating_label);
-		rating_label.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+		final Font font_rating_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
+		rating_label.setFont(font_rating_label);
+		rating_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_rating_label.dispose();
+			}		
+		});
 		
 		
 		//rating radios
@@ -330,7 +367,15 @@ public class search_movie_tab extends Composite
 		grid_data_genres_label.horizontalSpan = 2;
 		grid_data_genres_label.horizontalAlignment = SWT.CENTER;
 		genres_label.setLayoutData(grid_data_genres_label);
-		genres_label.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+		final Font font_genres_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		genres_label.setFont(font_genres_label);
+		genres_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_genres_label.dispose();
+			}		
+		});
 		
 		
 		//genres check-boxes
@@ -365,7 +410,16 @@ public class search_movie_tab extends Composite
 		form_data_search_button.left = new FormAttachment(0, 460);
 		search_button.setLayoutData(form_data_search_button);
 		search_button.setText("Search");
-		search_button.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+		final Font font_search_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
+		search_button.setFont(font_search_button);
+		search_button.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_search_button.dispose();
+			}		
+		});
+		
 		
 		//Listener
 		search_button.addSelectionListener(new SelectionAdapter() {

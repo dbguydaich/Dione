@@ -13,6 +13,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,6 +42,7 @@ import org.eclipse.swt.layout.GridLayout;
 
 
 
+
 import config.config;
 //import db.db_queries;
 import bl.verifier;
@@ -54,7 +57,7 @@ public class social_tab extends Composite
 		super(parent, style);
 		
 		
-		final List<String> user_friends;
+		List<String> user_friends;
 		List<String> friends_activities_strings;
 		List<Label> friends_activities_labels = new ArrayList<Label>();
 		List<String> user_social_activities_strings;
@@ -63,10 +66,16 @@ public class social_tab extends Composite
 		
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		Color color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color);
-		color.dispose();
-		
+		final Color color_window = display.getSystemColor(SWT.COLOR_GRAY);
+		this.setBackground(color_window);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				color_window.dispose();
+			}		
+		});
+
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
@@ -74,8 +83,17 @@ public class social_tab extends Composite
 		FormData form_data_headline_label = new FormData();
 		form_data_headline_label.top = new FormAttachment(0,2);
 		form_data_headline_label.left = new FormAttachment(0,257);
-		headline_label.setFont(new Font(display, "Ariel",15, java.awt.Font.PLAIN ));
-		headline_label.setLayoutData(form_data_headline_label);	
+		final Font font_headline_label = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
+		headline_label.setFont(font_headline_label);
+		headline_label.setLayoutData(form_data_headline_label);
+		headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_headline_label.dispose();
+			}		
+		});
+		
 		
 		
 		//add friend area
@@ -93,8 +111,16 @@ public class social_tab extends Composite
 		add_friend_headline.setText("Add a Friend");
 		GridData grid_data_add_friend_headline = new GridData();
 		grid_data_add_friend_headline.horizontalIndent = 75;
-		add_friend_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_friend_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		add_friend_headline.setFont(font_friend_headline);
 		add_friend_headline.setLayoutData(grid_data_add_friend_headline);
+		add_friend_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_friend_headline.dispose();
+			}		
+		});
 		
 		
 		//add friend text
@@ -160,14 +186,21 @@ public class social_tab extends Composite
 		GridData grid_data_remove_friend_headline = new GridData();
 		grid_data_remove_friend_headline.horizontalIndent = 55;
 		grid_data_remove_friend_headline.horizontalSpan = 2;
-		remove_friend_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_remove_friend_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN ); 
+		remove_friend_headline.setFont(font_remove_friend_headline);
 		remove_friend_headline.setLayoutData(grid_data_remove_friend_headline);
-		
+		remove_friend_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_remove_friend_headline.dispose();
+			}		
+		});
 		
 		
 		
 		//remove friend combo
-		final Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
+		Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
 		GridData grid_data_remove_friend_combo = new GridData(100, 15);
 		grid_data_remove_friend_combo.horizontalIndent = 30;
 		grid_data_remove_friend_combo.verticalIndent = 25;
@@ -194,51 +227,6 @@ public class social_tab extends Composite
 		remove_friend_button.setLayoutData(grid_data_remove_friend_button);
 		
 		
-		remove_friend_button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				
-				
-				if( remove_friend_combo.getItems().length==0){ 
-					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-					alertBox.setText("No friends");
-					alertBox.setMessage("You have no friends!");
-					alertBox.open();
-				}
-				
-				else if( remove_friend_combo.getText()==""){ 
-					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-					alertBox.setText("Illegal Username");
-					alertBox.setMessage("Please select a friend");
-					alertBox.open();
-				}
-
-
-			//	else if(remove_friend( get_current_user_id(),remove_friend_combo.getText())){ //to be implemented next on
-//				MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//				alertBox.setText("Success");
-//				alertBox.setMessage("Friend has been removed!");
-//				alertBox.open();
-//						
-				
-//
-//
-//					});
-//				}
-//				else //error during removing
-//				{
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Error");
-//					messageBox.setMessage("Couldn't remove friend!");
-//					messageBox.open();
-//				}
-			}
-
-		});
-
-		
-		
-		
 		
 		//user recent social activity area
 		Composite user_social_activity_area = new Composite(this, SWT.NONE);
@@ -249,14 +237,22 @@ public class social_tab extends Composite
 		GridLayout grid_layout_user_social_activity_area = new GridLayout(1, false);
 		user_social_activity_area.setLayout(grid_layout_user_social_activity_area);
 		
+		
 		//user recent activity headline
 		Label user_social_activity_headline = new Label(user_social_activity_area, SWT.NONE);
 		user_social_activity_headline.setText("Your Recent Social Activity");
 		GridData grid_data_user_social_activity_headline = new GridData();
 		grid_data_user_social_activity_headline.verticalIndent = 0;
-		user_social_activity_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_user_social_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN ); 
+		user_social_activity_headline.setFont(font_user_social_activity_headline);
 		user_social_activity_headline.setLayoutData(grid_data_user_social_activity_headline);
-		
+		user_social_activity_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_user_social_activity_headline.dispose();
+			}		
+		});
 		
 		
 		//user recent social activities labels
@@ -273,14 +269,30 @@ public class social_tab extends Composite
 		user_social_activities_strings.add("recent activity 6");
 		//
 				
+		final Font font_user_social_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		int i = 0;
 		for(String str: user_social_activities_strings)
 		{
 			user_social_activities_labels.add(new Label(user_social_activity_area, SWT.NONE));
-			user_social_activities_labels.get(i).setText(user_social_activities_strings.get(i));
-			user_social_activities_labels.get(i).setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+			user_social_activities_labels.get(i).setText(str);
+			user_social_activities_labels.get(i).setFont(font_user_social_activities_labels);
+			
+			if(i == 0)
+			{
+				user_social_activities_labels.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						font_user_social_activities_labels.dispose();
+					}		
+				});
+			}
+			
 			i++;
 		}
+		
+		if(i == 0)
+			font_user_social_activities_labels.dispose();
 		
 		
 		
@@ -300,9 +312,16 @@ public class social_tab extends Composite
 		friends_activity_headline.setText("Your Friends Recent Activity");
 		GridData grid_data_friends_activity_headline = new GridData();
 		grid_data_friends_activity_headline.verticalIndent = 0;
-		friends_activity_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_friends_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		friends_activity_headline.setFont(font_friends_activity_headline);
 		friends_activity_headline.setLayoutData(grid_data_friends_activity_headline);
-		
+		friends_activity_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_friends_activity_headline.dispose();
+			}		
+		});
 		
 		
 		//friends recent activities labels
@@ -319,15 +338,29 @@ public class social_tab extends Composite
 		friends_activities_strings.add("friend recent activity 6");
 		//
 		
+		final Font font_friends_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		i = 0;
 		for(String str: friends_activities_strings)
 		{
 			friends_activities_labels.add(new Label(friends_activity_area, SWT.NONE));
-			friends_activities_labels.get(i).setText(friends_activities_strings.get(i));
-			friends_activities_labels.get(i).setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+			friends_activities_labels.get(i).setText(str);
+			friends_activities_labels.get(i).setFont(font_friends_activities_labels);
+			if(i == 0)
+			{
+				friends_activities_labels.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						font_friends_activities_labels.dispose();
+					}		
+				});
+			}
+			
 			i++;
 		}
 		
+		if(i == 0)
+			font_friends_activities_labels.dispose();
 		
 	}
 	

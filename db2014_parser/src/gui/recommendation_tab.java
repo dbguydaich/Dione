@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -54,9 +54,16 @@ public class recommendation_tab extends Composite
 		
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		Color color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color);
-		color.dispose();
+		final Color color_form_layout_tab = display.getSystemColor(SWT.COLOR_GRAY);
+		this.setBackground(color_form_layout_tab);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				color_form_layout_tab.dispose();
+			}		
+		});
+		
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
@@ -64,9 +71,16 @@ public class recommendation_tab extends Composite
 		FormData form_data_headline_label = new FormData();
 		form_data_headline_label.top = new FormAttachment(0,2);
 		form_data_headline_label.left = new FormAttachment(0,140);
-		headline_label.setFont(new Font(display, "Ariel",15, java.awt.Font.PLAIN ));
+		final Font font_headline_label = new Font(display, "Ariel",15, java.awt.Font.PLAIN ); 
+		headline_label.setFont(font_headline_label);
 		headline_label.setLayoutData(form_data_headline_label);	
-		
+		headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_headline_label.dispose();
+			}		
+		});
 		
 		
 		//based on what we have learned about you AREA
@@ -79,13 +93,22 @@ public class recommendation_tab extends Composite
 		area1.setLayout(grid_layout_area1);
 		
 		
+		
 		//based on what we have learned about you HEADLINE
 		Label area1_headline = new Label(area1, SWT.NONE);
 		area1_headline.setText("Based On What We have Learned About You");
 		GridData grid_data_area1_headline = new GridData();
 		grid_data_area1_headline.horizontalIndent = 0;
-		area1_headline.setFont(new Font(display, "Ariel",10, java.awt.Font.PLAIN ));
+		final Font font_area1_headline = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		area1_headline.setFont(font_area1_headline);
 		area1_headline.setLayoutData(grid_data_area1_headline);
+		area1_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_area1_headline.dispose();
+			}		
+		});
 		
 		
 		//based on what we have learned about you LINKS
@@ -106,19 +129,6 @@ public class recommendation_tab extends Composite
 		{
 			movies_my_taste_links.add(new Link(area1, SWT.BORDER));
 			movies_my_taste_links.get(i).setText(str);
-			
-			
-			movies_my_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
-			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
-
-			});
-			
-			
-			
 			GridData grid_data_my_taste = new GridData(200, 18);
 			grid_data_my_taste.verticalIndent = 3;
 			movies_my_taste_links.get(i).setLayoutData(grid_data_my_taste);
@@ -141,8 +151,17 @@ public class recommendation_tab extends Composite
 		area2_headline.setText("Based On Your Friends Taste");
 		GridData grid_data_area2_headline = new GridData();
 		grid_data_area2_headline.horizontalIndent = 0;
-		area2_headline.setFont(new Font(display, "Ariel",11, java.awt.Font.PLAIN ));
+		final Font font_area2_headline = new Font(display, "Ariel",11, java.awt.Font.PLAIN ); 
+		area2_headline.setFont(font_area2_headline);
 		area2_headline.setLayoutData(grid_data_area2_headline);
+		area2_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_area2_headline.dispose();
+			}		
+		});
+		
 		
 		
 		//based on my friends LINKS
@@ -163,20 +182,6 @@ public class recommendation_tab extends Composite
 		{
 			movies_friends_taste_links.add(new Link(area2, SWT.BORDER));
 			movies_friends_taste_links.get(i).setText(str);
-			
-	
-			
-			
-			movies_friends_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
-			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
-
-			});
-			
-			
 			GridData grid_data_friends_taste = new GridData(200, 18);
 			grid_data_friends_taste.verticalIndent = 3;
 			movies_friends_taste_links.get(i).setLayoutData(grid_data_friends_taste);
@@ -194,13 +199,22 @@ public class recommendation_tab extends Composite
 		area3.setLayout(grid_layout_area3);
 		
 		
+		
 		//based on similar to me headline
 		Label area3_headline = new Label(area3, SWT.NONE);
 		area3_headline.setText("Based On Users With Similar Taste");
 		GridData grid_data_area3_headline = new GridData();
 		grid_data_area3_headline.horizontalIndent = 0;
-		area3_headline.setFont(new Font(display, "Ariel",11, java.awt.Font.PLAIN ));
+		final Font font_area3_headline = new Font(display, "Ariel",11, java.awt.Font.PLAIN ); 
+		area3_headline.setFont(font_area3_headline);
 		area3_headline.setLayoutData(grid_data_area3_headline);
+		area3_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_area3_headline.dispose();
+			}		
+		});
 		
 		
 		//based on similar to me LINKS
@@ -221,17 +235,6 @@ public class recommendation_tab extends Composite
 		{
 			movies_similar_to_me_taste_links.add(new Link(area3, SWT.BORDER));
 			movies_similar_to_me_taste_links.get(i).setText(str);
-			movies_similar_to_me_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
-			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
-
-			});
-			
-			
-			
 			GridData grid_data_similar_to_me_taste = new GridData(200, 18);
 			grid_data_similar_to_me_taste.verticalIndent = 3;
 			movies_similar_to_me_taste_links.get(i).setLayoutData(grid_data_similar_to_me_taste);

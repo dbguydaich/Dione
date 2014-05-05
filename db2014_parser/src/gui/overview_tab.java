@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -51,9 +52,17 @@ public class overview_tab extends Composite
 		
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		Color color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color);
-		color.dispose();
+		
+		final Color color_window = display.getSystemColor(SWT.COLOR_GRAY);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				color_window.dispose();
+			}		
+		});
+		
+		this.setBackground(color_window);
 
 		
 		
@@ -63,7 +72,15 @@ public class overview_tab extends Composite
 		FormData form_data_headline_label = new FormData();
 		form_data_headline_label.top = new FormAttachment(0,2);
 		form_data_headline_label.left = new FormAttachment(0,257);
-		headline_label.setFont(new Font(display, "Ariel",15, java.awt.Font.PLAIN ));
+		final Font font_headline = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
+		headline_label.setFont(font_headline);
+		headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_headline.dispose();
+			}		
+		});
 		headline_label.setLayoutData(form_data_headline_label);	
 		
 		
@@ -82,7 +99,15 @@ public class overview_tab extends Composite
 		taste_headline.setText("We Found Out You Like Movies Tagged As:");
 		GridData grid_data_taste_headline = new GridData();
 		grid_data_taste_headline.verticalIndent = 0;
-		taste_headline.setFont(new Font(display, "Ariel",11, java.awt.Font.PLAIN ));
+		final Font font_taste_headline = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		taste_headline.setFont(font_taste_headline);
+		taste_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_taste_headline.dispose();
+			}		
+		});
 		taste_headline.setLayoutData(grid_data_taste_headline);
 		
 		
@@ -103,14 +128,29 @@ public class overview_tab extends Composite
 		user_tags_string.add("tag7");
 		//
 		
+		final Font font_user_tags_label = new Font(display, "Ariel", 11, java.awt.Font.PLAIN);
 		int i = 0;
 		for(String str: user_tags_string)
 		{
 			user_tags_labels.add(new Label(taste_area, SWT.NONE));
-			user_tags_labels.get(i).setText(user_tags_string.get(i));
-			user_tags_labels.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
+			user_tags_labels.get(i).setText(str);
+			user_tags_labels.get(i).setFont(font_user_tags_label);
+			if(i == 0)
+			{
+				user_tags_labels.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						font_user_tags_label.dispose();
+					}		
+				});
+			}
+			
 			i++;
 		}
+		
+		if(i == 0)
+			font_user_tags_label.dispose();
 		
 		
 		
@@ -124,13 +164,22 @@ public class overview_tab extends Composite
 		reco_area.setLayout(grid_layout_reco_area);
 		
 		
+		
 		//recommendation headline
 		Label reco_headline = new Label(reco_area, SWT.NONE);
 		reco_headline.setText("Recommended Movies");
 		GridData grid_data_reco_headline = new GridData();
 		grid_data_reco_headline.verticalIndent = 0;
-		reco_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_reco_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		reco_headline.setFont(font_reco_headline);
 		reco_headline.setLayoutData(grid_data_reco_headline);
+		reco_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_reco_headline.dispose();
+			}		
+		});
 		
 		
 		
@@ -148,39 +197,49 @@ public class overview_tab extends Composite
 		reco_movies_string.add("movie number 5");
 		//
 		
+		final Color color_reco_movie_link = display.getSystemColor(SWT.COLOR_GRAY);
 		i = 0;
 		for(String str: reco_movies_string)
 		{
 			reco_movies_links.add(new Link(reco_area, SWT.BORDER));
-			reco_movies_links.get(i).setText(reco_movies_string.get(i));
-			
-			
-			reco_movies_links.get(i).addSelectionListener(new SelectionAdapter() {
-			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
-
-			});
-			
+			reco_movies_links.get(i).setText(str);
 			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
-			color = display.getSystemColor(SWT.COLOR_GRAY);
-			reco_movies_links.get(i).setBackground(color);
+			if(i == 0)
+			{
+				reco_movies_links.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						color_reco_movie_link.dispose();
+					}		
+				});
+			}
+			
+			reco_movies_links.get(i).setBackground(color_reco_movie_link);
 			GridData grid_data_reco_movie = new GridData(200,18);
 			reco_movies_links.get(i).setLayoutData(grid_data_reco_movie);
 			i++;
 		}
 		
+		if( i == 0)
+			color_reco_movie_link.dispose();
+		
 		
 		//recommendation buttom label
-		Label reco_buttom_label = new Label(reco_area, SWT.NONE);
-		reco_buttom_label.setText("Click on a Movie Name For Movie Details");
-		GridData grid_data_reco_buttom_label = new GridData();
-		grid_data_reco_buttom_label.verticalIndent = 0;
-		reco_buttom_label.setFont(new Font(display, "Ariel",10, java.awt.Font.PLAIN ));
-		reco_buttom_label.setLayoutData(grid_data_reco_buttom_label);
-		
+		Label reco_bottom_label = new Label(reco_area, SWT.NONE);
+		reco_bottom_label.setText("Click on a Movie Name For Movie Details");
+		GridData grid_data_reco_bottom_label = new GridData();
+		grid_data_reco_bottom_label.verticalIndent = 0;
+		final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		reco_bottom_label.setFont(font_reco_bottom_label);
+		reco_bottom_label.setLayoutData(grid_data_reco_bottom_label);
+		reco_bottom_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_reco_bottom_label.dispose();
+			}		
+		});
 		
 		
 		
@@ -193,12 +252,22 @@ public class overview_tab extends Composite
 		GridLayout grid_layout_user_activity_area = new GridLayout(1, false);
 		user_activity_area.setLayout(grid_layout_user_activity_area);
 		
+		
 		//user recent activity headline
 		Label user_activity_headline = new Label(user_activity_area, SWT.NONE);
 		user_activity_headline.setText("Your Recent Activity");
 		GridData grid_data_user_activity_headline = new GridData();
 		grid_data_user_activity_headline.verticalIndent = 0;
-		user_activity_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_user_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		user_activity_headline.setFont(font_user_activity_headline);
+		user_activity_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_user_activity_headline.dispose();
+			}		
+		});
+		
 		user_activity_headline.setLayoutData(grid_data_user_activity_headline);
 		
 		
@@ -218,14 +287,29 @@ public class overview_tab extends Composite
 		user_activities_strings.add("recent activity 6");
 		//
 		
+		final Font font_user_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		i = 0;
 		for(String str: user_activities_strings)
 		{
 			user_activities_labels.add(new Label(user_activity_area, SWT.NONE));
-			user_activities_labels.get(i).setText(user_activities_strings.get(i));
-			user_activities_labels.get(i).setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+			user_activities_labels.get(i).setText(str);
+			if (i == 0)
+			{
+				user_activities_labels.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						font_user_activities_labels.dispose();
+					}		
+				});
+			}
+			
+			user_activities_labels.get(i).setFont(font_user_activities_labels);
 			i++;
 		}
+		
+		if(i == 0)
+			font_user_activities_labels.dispose();
 		
 		
 		
@@ -245,7 +329,15 @@ public class overview_tab extends Composite
 		friends_activity_headline.setText("Your Friends Recent Activity");
 		GridData grid_data_friends_activity_headline = new GridData();
 		grid_data_friends_activity_headline.verticalIndent = 0;
-		friends_activity_headline.setFont(new Font(display, "Ariel",14, java.awt.Font.PLAIN ));
+		final Font font_friends_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		friends_activity_headline.setFont(font_friends_activity_headline);
+		friends_activity_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_friends_activity_headline.dispose();
+			}		
+		});
 		friends_activity_headline.setLayoutData(grid_data_friends_activity_headline);
 		
 		
@@ -264,14 +356,28 @@ public class overview_tab extends Composite
 		friends_activities_strings.add("friend recent activity 6");
 		//
 		
+		final Font font_friends_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		i = 0;
 		for(String str: friends_activities_strings)
 		{
 			friends_activities_labels.add(new Label(friends_activity_area, SWT.NONE));
-			friends_activities_labels.get(i).setText(friends_activities_strings.get(i));
-			friends_activities_labels.get(i).setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+			friends_activities_labels.get(i).setText(str);
+			friends_activities_labels.get(i).setFont(font_friends_activities_labels);
+			if (i == 0)
+			{
+				friends_activities_labels.get(i).addDisposeListener(new DisposeListener()
+				{
+					public void widgetDisposed(DisposeEvent e) 
+					{
+						font_friends_activities_labels.dispose();
+					}		
+				});
+			}
 			i++;
 		}
+		
+		if(i == 0)
+			font_friends_activities_labels.dispose();
 		
 		
 		

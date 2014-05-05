@@ -6,6 +6,8 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -62,10 +64,31 @@ public class movie_details_window extends Shell
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 		
-		Color color = display.getSystemColor(SWT.COLOR_GRAY);
+		final Color color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(color);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				color.dispose();
+			}		
+		});
 		
-		Font font_ariel_11 = new Font(display, "Ariel",10, java.awt.Font.PLAIN ); //free resource ?
+		
+		
+		this.setLayout(new FormLayout());
+		
+		final Font font_ariel_11 = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_ariel_11.dispose();
+			}		
+		});
+		
+		
+		this.setLayout(new FormLayout());
 		
 		this.setSize(window_width, window_height);
 		this.setText("Movie Details");
@@ -84,9 +107,18 @@ public class movie_details_window extends Shell
 		form_data_headline_label.left = new FormAttachment(0,50);
 		form_data_headline_label.width = 530;
 		headline_label.setAlignment(SWT.CENTER);
-		headline_label.setFont(new Font(display, "Ariel",15, java.awt.Font.PLAIN ));
+		final Font font1 = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
+		headline_label.setFont(font1);
 		headline_label.setLayoutData(form_data_headline_label);	
+		headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font1.dispose();
+			}		
+		});
 
+		
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
@@ -254,8 +286,15 @@ public class movie_details_window extends Shell
 		grid_data_headline_tags.horizontalSpan = 2;
 		grid_data_headline_tags.horizontalIndent = 95;
 		headline_tags.setLayoutData(grid_data_headline_tags);
-		Font font_tags = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
+		final Font font_tags = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
 		headline_tags.setFont(font_tags);
+		headline_tags.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_tags.dispose();
+			}		
+		});
 		
 		
 		
@@ -317,8 +356,16 @@ public class movie_details_window extends Shell
 		GridData grid_data_tags_bottom_label = new GridData();
 		grid_data_tags_bottom_label.horizontalSpan = 2;
 		tags_bottom_label.setLayoutData(grid_data_tags_bottom_label);
-		Font font_bottom_tags = new Font(display, "Ariel",8, java.awt.Font.PLAIN );
+		final Font font_bottom_tags = new Font(display, "Ariel",8, java.awt.Font.PLAIN );
 		tags_bottom_label.setFont(font_bottom_tags);
+		tags_bottom_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_bottom_tags.dispose();
+			}		
+		});
+		
 		
 		
 		

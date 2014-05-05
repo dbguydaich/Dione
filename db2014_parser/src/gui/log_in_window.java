@@ -2,6 +2,8 @@ package gui;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -56,8 +58,15 @@ public class log_in_window extends Shell
 		super(display);
 		
 		this.setSize(window_width, window_height);
-		Color log_in_window_color = display.getSystemColor(SWT.COLOR_DARK_CYAN);
+		final Color log_in_window_color = display.getSystemColor(SWT.COLOR_DARK_CYAN);
 		this.setBackground(log_in_window_color);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				log_in_window_color.dispose();
+			}		
+		});
 		
 		this.setLayout(new FormLayout());
 		
@@ -80,7 +89,15 @@ public class log_in_window extends Shell
 		grid_data_log_in_label.horizontalAlignment = SWT.CENTER;
 		grid_data_log_in_label.verticalAlignment = SWT.CENTER;
 		log_in_label.setLayoutData(grid_data_log_in_label);
-		log_in_label.setFont(new Font(display, "Ariel",20, java.awt.Font.PLAIN ));
+		final Font font_log_in_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
+		log_in_label.setFont(font_log_in_label);
+		log_in_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_log_in_label.dispose();
+			}		
+		});
 		
 		
 		
@@ -89,8 +106,16 @@ public class log_in_window extends Shell
 		username_label.setText("Username:");
 		GridData grid_data_username_label = new GridData();
 		grid_data_username_label.horizontalIndent = 40;
-		username_label.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+		final Font font_username_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		username_label.setFont(font_username_label);
 		username_label.setLayoutData(grid_data_username_label);
+		username_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_username_label.dispose();
+			}		
+		});
 		
 		
 		
@@ -102,13 +127,23 @@ public class log_in_window extends Shell
 		username_text.setTextLimit(10);
 		
 		
+		
 		//label password
 		Label password_label = new Label(area, SWT.NONE);
 		password_label.setText("Password:");
 		GridData grid_data_password_label = new GridData();
 		grid_data_password_label.horizontalIndent = 40;
-		password_label.setFont(new Font(display, "Ariel", 12, java.awt.Font.PLAIN));
+		final Font font_password_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		password_label.setFont(font_password_label);
 		password_label.setLayoutData(grid_data_password_label);
+		password_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_password_label.dispose();
+			}		
+		});
+		
 		
 		
 		//text password
@@ -117,6 +152,8 @@ public class log_in_window extends Shell
 		grid_data_password_text.horizontalIndent = 0;
 		password_text.setLayoutData(grid_data_password_text);
 		password_text.setTextLimit(6);
+		
+		
 		
 		//log in button
 		Button log_in_button = new Button(area, SWT.PUSH);
@@ -151,6 +188,9 @@ public class log_in_window extends Shell
 //			}
 //
 //		});
+		
+		
+		
 		
 		
 		//sign up button
