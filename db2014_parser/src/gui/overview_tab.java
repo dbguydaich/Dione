@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -214,6 +215,16 @@ public class overview_tab extends Composite
 					}		
 				});
 			}
+			
+			reco_movies_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+
 			
 			reco_movies_links.get(i).setBackground(color_reco_movie_link);
 			GridData grid_data_reco_movie = new GridData(200,18);

@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -132,6 +133,18 @@ public class recommendation_tab extends Composite
 			GridData grid_data_my_taste = new GridData(200, 18);
 			grid_data_my_taste.verticalIndent = 3;
 			movies_my_taste_links.get(i).setLayoutData(grid_data_my_taste);
+			
+			movies_my_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+			
+
+			
 			i++;
 		}
 		
@@ -185,6 +198,18 @@ public class recommendation_tab extends Composite
 			GridData grid_data_friends_taste = new GridData(200, 18);
 			grid_data_friends_taste.verticalIndent = 3;
 			movies_friends_taste_links.get(i).setLayoutData(grid_data_friends_taste);
+			
+			
+			movies_friends_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+
+			
 			i++;
 		}
 		
@@ -238,6 +263,17 @@ public class recommendation_tab extends Composite
 			GridData grid_data_similar_to_me_taste = new GridData(200, 18);
 			grid_data_similar_to_me_taste.verticalIndent = 3;
 			movies_similar_to_me_taste_links.get(i).setLayoutData(grid_data_similar_to_me_taste);
+			
+			movies_similar_to_me_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			//	@Override
+//				public void widgetSelected(SelectionEvent arg0) {
+//				open_movie_details(str);
+//
+//				}
+
+			});
+
+			
 			i++;
 		}
 		

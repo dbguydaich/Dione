@@ -200,7 +200,7 @@ public class social_tab extends Composite
 		
 		
 		//remove friend combo
-		Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
+		final Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
 		GridData grid_data_remove_friend_combo = new GridData(100, 15);
 		grid_data_remove_friend_combo.horizontalIndent = 30;
 		grid_data_remove_friend_combo.verticalIndent = 25;
@@ -226,6 +226,48 @@ public class social_tab extends Composite
 		remove_friend_button.setText("Remove");
 		remove_friend_button.setLayoutData(grid_data_remove_friend_button);
 		
+		remove_friend_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+				
+				if( remove_friend_combo.getItems().length==0){ 
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("No friends");
+					alertBox.setMessage("You have no friends!");
+					alertBox.open();
+				}
+				
+				else if( remove_friend_combo.getText()==""){ 
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("Illegal Username");
+					alertBox.setMessage("Please select a friend");
+					alertBox.open();
+				}
+
+
+			//	else if(remove_friend( get_current_user_id(),remove_friend_combo.getText())){ //to be implemented next on
+//				MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+//				alertBox.setText("Success");
+//				alertBox.setMessage("Friend has been removed!");
+//				alertBox.open();
+//						
+				
+//
+//
+//					});
+//				}
+//				else //error during removing
+//				{
+//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+//					messageBox.setText("Error");
+//					messageBox.setMessage("Couldn't remove friend!");
+//					messageBox.open();
+//				}
+			}
+
+		});
+
 		
 		
 		//user recent social activity area
