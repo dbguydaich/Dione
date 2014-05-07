@@ -32,6 +32,23 @@ public class parser_src_yago {
 	public static final int yago_literal_params = 5;
 	public static final int yago_wiki_params = 3;
 	
+	/* counters */
+	private int c_movies = 0; 
+	private int c_actors = 0;
+	private int c_directors = 0;
+	private int c_actor_movie = 0;
+	private int c_director_movie = 0;
+	private int c_wiki_movie = 0;
+	private int c_year_movie = 0;
+	private int c_length_movie = 0;
+	
+	public void print_parse_stats()
+	{
+		System.out.println("Created Objects:\n\t Movies:" + c_movies +  "\n\t Actors:" + c_actors +
+				"\n\t Driectors:" + c_directors );
+		System.out.println("Enrichments (entities) :\n\t Actors in Movies:" + c_actor_movie +  "\n\t Directors of Movies:" + c_director_movie);
+		System.out.println("Enrichments (facts) :\n\t Lengths:" + c_length_movie +  "\n\t Years:" + c_year_movie + "\n\t Wiki:" + c_wiki_movie);
+	}
 	/*config*/
 	config properties; 
 	
@@ -64,7 +81,7 @@ public class parser_src_yago {
 	
 	public HashMap<String, entity_person> get_yag_director_map()
 	{
-		return this.parser_map_actor;
+		return this.parser_map_director;
 	}
 	
 	
@@ -131,6 +148,8 @@ public class parser_src_yago {
 			} 
 			catch(Exception ex)
 			{
+				System.out.println("ERROR parsing Yago types:" );
+				ex.printStackTrace();
 				fr.close();
 				br.close();
 			}
@@ -153,6 +172,7 @@ public class parser_src_yago {
 		entity_movie movie = new entity_movie(clean_name);
 		movie.set_movie_name(clean_name);
 		this.parser_map_movie.put(movie_name, movie);
+		c_movies++;
 	}
 	
 	/** creates a new actor in map **/
@@ -161,6 +181,7 @@ public class parser_src_yago {
 		entity_person person = new entity_person(person_name);
 		person.set_person_name(person_name);
 		this.parser_map_actor.put(person_name, person);
+		c_actors++;
 	}
 	
 	/** creates a new director in map **/
@@ -169,6 +190,7 @@ public class parser_src_yago {
 		entity_person person = new entity_person(person_name);
 		person.set_person_name(person_name);
 		this.parser_map_director.put(person_name, person);
+		c_directors++;
 	}
 	
 	
@@ -204,14 +226,14 @@ public class parser_src_yago {
 				return; 
 			}
 			catch(Exception ex){
+				System.out.println("ERROR parsing Yago facts:" );
+				ex.printStackTrace();
 				fr.close();
 				br.close();
-				System.out.println(ex.toString());
 			}
 		}
 		catch(Exception ex)
 		{
-			System.out.println(ex.toString());
 		}
 	}
 	
@@ -222,7 +244,9 @@ public class parser_src_yago {
 		String line;
 		int i;
 		try{
-			if((line = br.readLine()) != null) 
+			
+			if((line = br.readLine()) != null)
+				
 			{ 
 				/*split next line*/
 				line = line.trim();
@@ -281,9 +305,11 @@ public class parser_src_yago {
 				return; 
 			}
 			catch(Exception ex){
+				System.out.println("ERROR parsing Yago literal facts:" );
+				ex.printStackTrace();
 				fr.close();
 				br.close();
-				System.out.println(ex.toString());
+				
 			}
 		}
 		catch(Exception ex)
@@ -327,9 +353,10 @@ public class parser_src_yago {
 					return; 
 				}
 				catch(Exception ex){
+					System.out.println("ERROR parsing Yago wiki:" );
+					ex.printStackTrace();
 					fr.close();
 					br.close();
-					System.out.println(ex.toString());
 				}
 			}
 			catch(Exception ex)
@@ -369,12 +396,14 @@ public class parser_src_yago {
 		{
 			entity_person actor = this.parser_map_actor.get(person_name);
 			movie.add_to_actors(actor);
+			c_actor_movie++;
 		}
 		/*set director of movie*/
 		else if (fact_name.equals(properties.get_yago_tag_directed()))
 		{
 			entity_person director = this.parser_map_director.get(person_name);
 			movie.set_movie_director(director);
+			c_director_movie++;
 		}
 	}
 		
@@ -399,15 +428,17 @@ public class parser_src_yago {
 		if (movie == null)
 			return; 
 		
-		/*add actor to movie*/
+		/*add length to movie*/
 		if (fact_name.equals(properties.get_yago_tag_length()))
 		{
 			movie.set_movie_length(parse_movie_length(fact_value));
+			c_length_movie++;
 		}
-		/*set director of movie*/
+		/*set year of movie*/
 		else if (fact_name.equals(properties.get_yago_tag_year()))
 		{
 			movie.set_movie_year(parse_movie_year(fact_value));
+			c_year_movie++;
 		}
 	}
 	
@@ -451,7 +482,10 @@ public class parser_src_yago {
 		entity_movie movie = this.parser_map_movie.get(movie_name);
 		if (movie == null)
 			return; 
+		
 		movie.set_movie_wikipedia_url(fact_name);
+		c_wiki_movie++; 
+		
 
 	}
 

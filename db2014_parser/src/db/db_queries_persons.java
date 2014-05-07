@@ -59,6 +59,37 @@ public abstract class db_queries_persons extends db_operations
 		return (returnedSet);
 	}
 
+	
+	/**
+	 * ID as listed on the DB
+	 * @return - returnes HM<personId, personName>
+	 * @throws SQLException
+	 */
+	public static HashMap<String, Integer> get_person_names_and_ids() 
+			throws SQLException 
+	{
+		ResultSet result = select("idPerson, personName", "person", "");
+		
+		// is table empty
+		if (result == null)
+			return (null);
+		
+		// Enumerate all movies
+		HashMap<String, Integer> returnedSet = new HashMap<String, Integer>();
+		
+		while (result.next())
+		{
+			String name = result.getString("personName");
+			Integer id = result.getInt("idPerson");
+			
+			returnedSet.put(name,id);
+		}
+
+		return (returnedSet);
+	}
+	
+
+
 	/** get actor names and IDs
 	 * NOTE! 	theIDs are idActor, not idPerson
 	 * @throws SQLException 

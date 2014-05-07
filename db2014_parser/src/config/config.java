@@ -31,27 +31,32 @@ public class config {
 	}
 
 	/** get the path of the file yagoLiteralFacts.ttl */
-	public String get_yago_literalFacts(){
+	public String get_yago_literal_facts_path(){
 		return configFile.getProperty("YagoLiteralFactsFilePath");
 	}
 	
 	/** get the path of the file yagoWikipediaInfo.ttl */
-	public String getYagoWikipediaInfo(){
+	public String get_yago_wikipedia_path(){
 		return configFile.getProperty("YagoWikipediaInfoFilePath");
 	}
 	
-	public String get_imdb_genres(){
+	public String get_imdb_genres_path(){
 		return configFile.getProperty("IMDBgenreListFilePath");
 	}
 	
 	/** get the path of the file plot.list provided by IMDB */
-	public String get_imdb_plots(){
+	public String get_imdb_plots_path(){
 		return configFile.getProperty("IMDBplotListFilePath");
 	}
 	
 	/** get the path of the file l.list provided by IMDB */
-	public String get_imdb_languages(){
+	public String get_imdb_languages_path(){
 		return configFile.getProperty("IMDBlanguageFilePat");
+	}
+	
+	/** get the path of the file l.list provided by IMDB */
+	public String get_imdb_tags_path(){
+		return configFile.getProperty("IMDB_KEYWORD_FILE_PATH");
 	}
 	
 	/** get the server address */
@@ -84,6 +89,51 @@ public class config {
 		return Integer.parseInt(configFile.getProperty("NumOfConnections"));
 	}
 	
+	/*parsing*/
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_actedin(){
+		return configFile.getProperty("ACTED_IN");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_directed(){
+		return configFile.getProperty("DIRECTED");
+	}
+ 
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_movie(){
+		return configFile.getProperty("YAGO_TYPES_MOVIE");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_actor(){
+		return configFile.getProperty("YAGO_TYPES_ACTOR");
+	}
+
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_director(){
+		return configFile.getProperty("YAGO_TYPES_DIRECTOR");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_year(){
+		return configFile.getProperty("YAGO_LITERAL_YEAR");
+	}
+
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_length(){
+		return configFile.getProperty("YAGO_LITERAL_LENGTH");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_wikipedia(){
+		return configFile.getProperty("YAGO_WIKI_TAG");
+	}
+	
+	public String get_imdb_directors_path(){
+		return configFile.getProperty("IMDB_DIRECTOR_FILE_PATH");
+	}
 	/** get number of connections to create **/
 	public  int get_window_height(){
 		return Integer.parseInt(configFile.getProperty("WINDOW_HEIGHT"));
@@ -97,7 +147,4 @@ public class config {
 		return Integer.parseInt(configFile.getProperty("DEFAULT_ACTIVITY_LIMIT"));
 	}
 	
-
-
- 
 }

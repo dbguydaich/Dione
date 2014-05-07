@@ -51,6 +51,17 @@ public class praser_src_imdb {
 	
 	config properties = new config();
 	
+	/* counters */
+	private int c_plots = 0; 
+	private int c_tags = 0;
+	private int c_genres = 0;
+	private int c_languages = 0;
+	
+	
+	public void print_imdb_stats()
+	{
+		System.out.println("IMDB enrichment\n\t plots: " + c_plots + "\n\t tags: " + c_tags + "\n\t genres: " + c_genres + "\n\t languages: " + c_languages);
+	}
 	public HashSet<String> get_parser_languages()
 	{
 		return this.parser_language_set;
@@ -75,6 +86,9 @@ public class praser_src_imdb {
 		this.imdb_to_yago = new HashMap<String,String>();
 		this.parser_tag_count_map = new HashMap<String,Integer>();
 		this.imdb_name_to_director = new HashMap<String,String>();
+		this.parser_genre_set = new HashSet<String>();
+		this.parser_language_set = new HashSet<String>();
+		this.parser_tag_set = new HashSet<String>();
 		
 		get_imdb_directors();
 		
@@ -192,7 +206,7 @@ public class praser_src_imdb {
 	/*remove bad characters from movie names*/
 	private String clean_imdb_name (String imdb_movie_name)
 	{
-		imdb_movie_name =imdb_movie_name.replaceAll("\"", "");
+		imdb_movie_name =imdb_movie_name.replaceAll("\"", "");		
 		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
 		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
 		imdb_movie_name = imdb_movie_name.substring(0,imdb_movie_name.indexOf(")")+1);
@@ -250,13 +264,12 @@ public class praser_src_imdb {
 					movie.add_to_genres(splitted_line[splitted_line.length -1]);
 					this.parser_movie_map.put(yago_name, movie);
 					parser_genre_set.add(splitted_line[splitted_line.length -1]);
-					genre_count++;
+					c_genres++;
 				}
 			}catch (Exception ex){
 			}
 		}
 		catch (Exception ex){}
-		System.out.println("added genres to:" + genre_count);
 	}
 	
 	/**
@@ -375,6 +388,7 @@ public class praser_src_imdb {
 								movie.remove_from_tags(tag);
 								/*update movie in map and look for next line*/
 								this.parser_movie_map.put(yago_name, movie);
+								c_tags++;
 								break;
 							}
 						}
@@ -441,7 +455,7 @@ public class praser_src_imdb {
 						movie.set_movie_plot(plot);
 						plot_count++;
 						this.parser_movie_map.put(yago_name, movie);
-						
+						c_plots++;
 					}
 				}
 			}catch (Exception ex){}
@@ -495,6 +509,7 @@ public class praser_src_imdb {
 						parser_language_set.add(splitted_line[1]);
 						language_count++;
 						this.parser_movie_map.put(yago_name, movie);
+						c_languages++;
 					}
 				}catch (Exception ex){}
 			}

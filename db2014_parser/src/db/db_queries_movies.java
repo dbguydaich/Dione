@@ -25,7 +25,7 @@ public abstract class db_queries_movies extends db_operations
 	public static Integer create_language(String language_name)
 	{
 		try {
-			insert("language", "'languageName'", language_name);
+			insert("language", "`languageName`", language_name);
 		} catch (SQLException e) 
 		{
 			return (-1);
@@ -46,7 +46,7 @@ public abstract class db_queries_movies extends db_operations
 	public static Integer create_tag(String tag_name)
 	{
 		try {
-			insert("tag", "'tagName'", tag_name);
+			insert("tag", "`tagName`", tag_name);
 		} catch (SQLException e) 
 		{
 			return (-1);
