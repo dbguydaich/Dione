@@ -53,8 +53,12 @@ public class all_tabs_window extends Shell
 	    tab4.setText("Reccomended Movies");
 	    
 	    
-	    overview_tab overview_tab = new overview_tab(display, tab_folder, SWT.NONE);
-	    tab1.setControl(overview_tab);
+	    //tab5
+	    TabItem tab5 = new TabItem(tab_folder, SWT.NONE);
+	    tab5.setText("Settings");
+	    
+	    overview_tab my_overview_tab = new overview_tab(display, tab_folder, SWT.NONE);
+	    tab1.setControl(my_overview_tab);
 	    
 	    search_movie_tab my_search_movie_tab = new search_movie_tab(display, tab_folder, SWT.NONE);
 	    tab2.setControl(my_search_movie_tab);
@@ -62,22 +66,22 @@ public class all_tabs_window extends Shell
 	    social_tab my_social_tab = new social_tab(display, tab_folder, SWT.NONE);
 	    tab3.setControl(my_social_tab);
 	    
-	    
 	    recommendation_tab my_recommendation_tab = new recommendation_tab(display, tab_folder, SWT.NONE);
 	    tab4.setControl(my_recommendation_tab);
 	    
+	    settings_tab my_settings_tab = new settings_tab(display, tab_folder, SWT.NONE);
+	    tab5.setControl(my_settings_tab);
 	}
 	
 	public static void main(String args[])
 	{
 		Display display = new Display();
-		//Display display2 = new Display();
 	
 		all_tabs_window tabs_win = new all_tabs_window(display);
-		//movie_details_window movie_win = new movie_details_window(display2);
+		movie_details_window movie_win = new movie_details_window(display);
 		
 		tabs_win.open();
-		//movie_win.open();
+		movie_win.open();
 		
 
 		

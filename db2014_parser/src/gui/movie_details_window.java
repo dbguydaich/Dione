@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -12,6 +13,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -44,6 +46,8 @@ import config.config;
 //String get_result_movie_wiki()
 //List<String> get_result_movie_tags()
 
+//// new : ////
+//get_result_movie_plot()
 
 ////////Listeners to be implemented: //////////////
 
@@ -276,7 +280,7 @@ public class movie_details_window extends Shell
 		tags_area.setLayoutData(form_data_tags_area);
 		GridLayout grid_layout_area2 = new GridLayout(2, false);
 		tags_area.setLayout(grid_layout_area2);
-
+		
 		
 		
 		//headline tags
@@ -368,7 +372,52 @@ public class movie_details_window extends Shell
 		
 		
 		
+		//plot headline
+		Label plot_headline_label = new Label(this, SWT.NONE);
+		FormData form_data_plot_headline_label = new FormData(32, 20); 
+		form_data_plot_headline_label.top = new FormAttachment(0, 260);
+		form_data_plot_headline_label.left = new FormAttachment(0, 10);
 		
+		plot_headline_label.setLayoutData(form_data_plot_headline_label);
+		plot_headline_label.setText("Plot:");
+		final Font font_plot_headline_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		plot_headline_label.setFont(font_plot_headline_label);
+		plot_headline_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_plot_headline_label.dispose();
+			}		
+		});
+		
+		
+		
+		//plot scroller
+		ScrolledComposite scroller_plot = new ScrolledComposite(this, SWT.V_SCROLL); 
+		FormData form_data_scroller_plot = new FormData(290, 100); 
+		form_data_scroller_plot.top = new FormAttachment(0, 260);
+		form_data_scroller_plot.left = new FormAttachment(0, 53);
+		scroller_plot.setLayoutData(form_data_scroller_plot);
+		
+		scroller_plot.setExpandHorizontal(true);
+		scroller_plot.setExpandVertical(true);
+		scroller_plot.setAlwaysShowScrollBars(true);
+		scroller_plot.setMinWidth(100);
+		scroller_plot.setMinHeight(260);
+		
+		
+		//plot label
+		Label plot_label = new Label(scroller_plot, SWT.WRAP);
+		plot_label.setText("this is a very long long long long long long long long long long long long long "
+				+ "long long long long long long long long long long long long long long long long long "
+				+ "long long long long long long long long long long long long long long long long long "
+				+ "long long long long long long long long long long long long long long long long long "
+				+ "long long long long long long long long long long long long long long long long long "
+				+ "long long long long long long long long long plot");
+		//plot_label.setText(get_result_movie_plot())   //to be used
+				
+		scroller_plot.setContent(plot_label);
+	
 	}
 	
 	
