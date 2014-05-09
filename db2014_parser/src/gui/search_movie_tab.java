@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 import bl.verifier;
 import config.config;
-import db.db_queries;
+//import db.db_queries_movies;
 
 
 //////// functions the tab is waiting for: ////////
@@ -107,7 +108,7 @@ public class search_movie_tab extends Composite
 		Composite left_area = new Composite(this, SWT.NONE);
 		FormData form_data_left_area = new FormData(180, 350); 
 		form_data_left_area.top = new FormAttachment(0, 40);
-		form_data_left_area.left = new FormAttachment(0, 30);
+		form_data_left_area.left = new FormAttachment(0, 10);
 		left_area.setLayoutData(form_data_left_area);
 		GridLayout grid_layout_left_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_left_area);
@@ -315,7 +316,7 @@ public class search_movie_tab extends Composite
 		Composite rating_area = new Composite(this, SWT.NONE);
 		FormData form_data_rating_area = new FormData(200, 60); 
 		form_data_rating_area.top = new FormAttachment(0, 40);
-		form_data_rating_area.left = new FormAttachment(0, 220);
+		form_data_rating_area.left = new FormAttachment(0, 200);
 		rating_area.setLayoutData(form_data_rating_area);
 		GridLayout grid_layout_rating_area = new GridLayout(5, false);
 		rating_area.setLayout(grid_layout_rating_area);
@@ -352,9 +353,9 @@ public class search_movie_tab extends Composite
 		
 		//genres area
 		Composite genres_area = new Composite(this, SWT.BORDER);
-		FormData form_data_genres_area = new FormData(198, 280); 
+		FormData form_data_genres_area = new FormData(198, 286); 
 		form_data_genres_area.top = new FormAttachment(0, 101);
-		form_data_genres_area.left = new FormAttachment(0, 219);
+		form_data_genres_area.left = new FormAttachment(0, 199);
 		genres_area.setLayoutData(form_data_genres_area);
 		GridLayout grid_layout_genres_area = new GridLayout(2, false);
 		genres_area.setLayout(grid_layout_genres_area);
@@ -404,10 +405,10 @@ public class search_movie_tab extends Composite
 		
 		
 		//search button
-		Button search_button = new Button(this, SWT.PUSH);
+		Button search_button = new Button(this, SWT.PUSH | SWT.WRAP);
 		FormData form_data_search_button = new FormData(80, 50); 
-		form_data_search_button.top = new FormAttachment(0, 330);
-		form_data_search_button.left = new FormAttachment(0, 460);
+		form_data_search_button.top = new FormAttachment(0, 340);
+		form_data_search_button.left = new FormAttachment(0, 420);
 		search_button.setLayoutData(form_data_search_button);
 		search_button.setText("Search");
 		final Font font_search_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
@@ -467,22 +468,97 @@ public class search_movie_tab extends Composite
 		
 		
 		
+		//results area
+		Composite results_area = new Composite(this, SWT.NONE);
+		FormData form_data_results_area = new FormData(190, 290); 
+		form_data_results_area.top = new FormAttachment(0, 40);
+		form_data_results_area.left = new FormAttachment(0, 420);
+		results_area.setLayoutData(form_data_results_area);
+		GridLayout grid_layout_results_area = new GridLayout(1, false);
+		results_area.setLayout(grid_layout_results_area);
+		
+		
+		//results headline
+		Label results_headline = new Label(results_area, SWT.NONE);
+		results_headline.setText("Search Results");
+		GridData grid_data_results_headline = new GridData();
+		grid_data_results_headline.horizontalSpan = 2;
+		grid_data_results_headline.horizontalAlignment = SWT.CENTER;
+		results_headline.setLayoutData(grid_data_results_headline);
+		final Font font_results_headline = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		results_headline.setFont(font_results_headline);
+		results_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_results_headline.dispose();
+			}		
+		});
+		
+		
+//		//results scroller
+//		ScrolledComposite results_scroller = new ScrolledComposite(results_area, SWT.V_SCROLL | SWT.H_SCROLL); 
+//		GridData grid_data_results_scroller = new GridData(165, 240);
+//		grid_data_results_scroller.horizontalSpan = SWT.FILL;
+//		grid_data_results_scroller.horizontalAlignment = SWT.FILL;
+//		results_scroller.setLayoutData(grid_data_results_scroller);
+//		
+//		results_scroller.setExpandHorizontal(true);
+//		results_scroller.setExpandVertical(true);
+//		results_scroller.setAlwaysShowScrollBars(true);
+//		results_scroller.setMinWidth(100);
+//		results_scroller.setMinHeight(260);
+		
+		
+		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+		GridData grid_data_movie_list = new GridData(160, 240);
+		grid_data_movie_list.horizontalSpan = SWT.FILL;
+		grid_data_movie_list.horizontalAlignment = SWT.FILL;
+		movie_list.setLayoutData(grid_data_movie_list);
+		
+		for(int i = 0; i < 100; i ++)
+		{
+			movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
+		}
+
+		
+		movie_list.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+		        int selectedItem = movie_list.getSelectionIndex();
+		        
+		        /* 
+		         * handle selection of movie number selectedItem
+		         */
+		        
+		      }
+		});
+		
 	}
 	
-	 void get_text(List<Text> from,List<String> to)
+	
+	void show_search_results(List<String> movies)
+	{
+		
+	}
+	
+	
+	void get_text(List<Text> from,List<String> to)
 	{
 		for (Text a: from)
 		{
 			to.add((a.getText()));
 		}
 	}
+	 
+	
+	
 	 void get_text_button(List<Button> from,List<Boolean> to)
+	{
+		for (Button a: from)
 		{
-			for (Button a: from)
-			{
-				to.add((a.getSelection()));
-			}
+			to.add((a.getSelection()));
 		}
+	}
 	
 
 }
