@@ -3,13 +3,57 @@ package gui;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Display;
+
 
 public class gui_utils
 {
 	
+	static int RESULTS_OPEN = 0;
+	static all_tabs_window tabs_win = null;
+	
+	
+	
+	
+	
+	
+	
+	public static void main(String args[])
+	{
+
+		Display display = Display.getDefault();
+
+		
+		log_in_window log_in_win = new log_in_window(display);
+		movie_details_window movie_win = new movie_details_window(display);
+		tabs_win = new all_tabs_window(display);
+		
+		log_in_win.open();
+		movie_win.open();
+		tabs_win.open();
+		
+		
+		while (!display.isDisposed()) 
+		{
+			 if (!display.readAndDispatch())
+			 {
+				 display.sleep();
+			 }
+		}
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 	/*
 	 * -1 for disabling any parameter
 	 */
+
 	public static GridData grid_data_factory(int width, int height, int horizontalIndent, int verticalIndent, int horizontalSpan, int verticalSpan, 
 											int horizontalAlignment, int verticalAlignment)
 	{

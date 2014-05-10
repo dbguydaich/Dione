@@ -67,6 +67,8 @@ public class movie_details_window extends Shell
 	public movie_details_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
+	
+		gui_utils.RESULTS_OPEN++;
 		
 		final Color color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(color);
@@ -390,6 +392,17 @@ public class movie_details_window extends Shell
 				
 		scroller_plot.setContent(plot_label);
 	
+		
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				gui_utils.RESULTS_OPEN --;
+				if(gui_utils.RESULTS_OPEN == 0 && gui_utils.tabs_win.isDisposed())
+					display.dispose();
+			}		
+		});
+		
 	}
 	
 	

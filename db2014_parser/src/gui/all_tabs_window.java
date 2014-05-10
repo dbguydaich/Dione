@@ -1,5 +1,7 @@
 package gui;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Font;
@@ -72,37 +74,19 @@ public class all_tabs_window extends Shell
 	    
 	    settings_tab my_settings_tab = new settings_tab(display, tab_folder, SWT.NONE);
 	    tab5.setControl(my_settings_tab);
-	}
-	
-	public static void main(String args[])
-	{
-		//DeviceData data = new DeviceData();
-	   // data.tracking = true;
-		
-		Display display = Display.getDefault();
-	
-		//Sleak sleak = new Sleak();
-	   // sleak.open();
-		
-		log_in_window log_in_win = new log_in_window(display);
-		movie_details_window movie_win = new movie_details_window(display);
-		all_tabs_window tabs_win = new all_tabs_window(display);
-		
-		log_in_win.open();
-		movie_win.open();
-		tabs_win.open();
-		
-		
-		while (!display.isDisposed()) 
+	    
+	    
+		this.addDisposeListener(new DisposeListener()
 		{
-			 if (!display.readAndDispatch())
-			 {
-				 display.sleep();
-			 }
-		}
-		
-		
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				if(gui_utils.RESULTS_OPEN == 0)
+					display.dispose();
+			}		
+		});
 	}
+	
+	
 
 
 
