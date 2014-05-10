@@ -70,9 +70,7 @@ public class overview_tab extends Composite
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("MovieBook");
-		FormData form_data_headline_label = new FormData();
-		form_data_headline_label.top = new FormAttachment(0,2);
-		form_data_headline_label.left = new FormAttachment(0,257);
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 2, 257));	
 		final Font font_headline = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
 		headline_label.setFont(font_headline);
 		headline_label.addDisposeListener(new DisposeListener()
@@ -82,15 +80,12 @@ public class overview_tab extends Composite
 				font_headline.dispose();
 			}		
 		});
-		headline_label.setLayoutData(form_data_headline_label);	
+	
 		
 		
 		//taste area
 		Composite taste_area = new Composite(this, SWT.NONE);
-		FormData form_data_taste_area = new FormData(295, 185); 
-		form_data_taste_area.top = new FormAttachment(0, 220);
-		form_data_taste_area.left = new FormAttachment(0, 10);
-		taste_area.setLayoutData(form_data_taste_area);
+		taste_area.setLayoutData(gui_utils.form_data_factory(295, 185, 220, 10));	
 		GridLayout grid_layout_taste_area = new GridLayout(1, false);
 		taste_area.setLayout(grid_layout_taste_area);
 		
@@ -98,8 +93,7 @@ public class overview_tab extends Composite
 		//taste_headline
 		Label taste_headline = new Label(taste_area, SWT.NONE);
 		taste_headline.setText("We Found Out You Like Movies Tagged As:");
-		GridData grid_data_taste_headline = new GridData();
-		grid_data_taste_headline.verticalIndent = 0;
+		taste_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		final Font font_taste_headline = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
 		taste_headline.setFont(font_taste_headline);
 		taste_headline.addDisposeListener(new DisposeListener()
@@ -109,7 +103,6 @@ public class overview_tab extends Composite
 				font_taste_headline.dispose();
 			}		
 		});
-		taste_headline.setLayoutData(grid_data_taste_headline);
 		
 		
 		
@@ -157,10 +150,7 @@ public class overview_tab extends Composite
 		
 		//recommendation area
 		Composite reco_area = new Composite(this, SWT.NONE);
-		FormData form_data_reco_area = new FormData(295, 185); 
-		form_data_reco_area.top = new FormAttachment(0, 30);
-		form_data_reco_area.left = new FormAttachment(0, 10);
-		reco_area.setLayoutData(form_data_reco_area);
+		reco_area.setLayoutData(gui_utils.form_data_factory(295, 185, 30, 10));
 		GridLayout grid_layout_reco_area = new GridLayout(1, false);
 		reco_area.setLayout(grid_layout_reco_area);
 		
@@ -169,11 +159,9 @@ public class overview_tab extends Composite
 		//recommendation headline
 		Label reco_headline = new Label(reco_area, SWT.NONE);
 		reco_headline.setText("Recommended Movies");
-		GridData grid_data_reco_headline = new GridData();
-		grid_data_reco_headline.verticalIndent = 0;
+		reco_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		final Font font_reco_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		reco_headline.setFont(font_reco_headline);
-		reco_headline.setLayoutData(grid_data_reco_headline);
 		reco_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -202,7 +190,7 @@ public class overview_tab extends Composite
 		i = 0;
 		for(String str: reco_movies_string)
 		{
-			reco_movies_links.add(new Link(reco_area, SWT.BORDER));
+			reco_movies_links.add(new Link(reco_area, SWT.BORDER ));
 			reco_movies_links.get(i).setText(str);
 			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
 			if(i == 0)
@@ -227,8 +215,7 @@ public class overview_tab extends Composite
 
 			
 			reco_movies_links.get(i).setBackground(color_reco_movie_link);
-			GridData grid_data_reco_movie = new GridData(200,18);
-			reco_movies_links.get(i).setLayoutData(grid_data_reco_movie);
+			reco_movies_links.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, -1, -1, -1, -1, -1));
 			i++;
 		}
 		
@@ -239,11 +226,9 @@ public class overview_tab extends Composite
 		//recommendation buttom label
 		Label reco_bottom_label = new Label(reco_area, SWT.NONE);
 		reco_bottom_label.setText("Click on a Movie Name For Movie Details");
-		GridData grid_data_reco_bottom_label = new GridData();
-		grid_data_reco_bottom_label.verticalIndent = 0;
+		reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
 		reco_bottom_label.setFont(font_reco_bottom_label);
-		reco_bottom_label.setLayoutData(grid_data_reco_bottom_label);
 		reco_bottom_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -256,10 +241,7 @@ public class overview_tab extends Composite
 		
 		//user recent activity area
 		Composite user_activity_area = new Composite(this, SWT.NONE);
-		FormData form_data_user_activity_area = new FormData(295, 185); 
-		form_data_user_activity_area.top = new FormAttachment(0, 30);
-		form_data_user_activity_area.left = new FormAttachment(0, 310);
-		user_activity_area.setLayoutData(form_data_user_activity_area);
+		user_activity_area.setLayoutData(gui_utils.form_data_factory(295, 185, 30, 310));
 		GridLayout grid_layout_user_activity_area = new GridLayout(1, false);
 		user_activity_area.setLayout(grid_layout_user_activity_area);
 		
@@ -267,8 +249,7 @@ public class overview_tab extends Composite
 		//user recent activity headline
 		Label user_activity_headline = new Label(user_activity_area, SWT.NONE);
 		user_activity_headline.setText("Your Recent Activity");
-		GridData grid_data_user_activity_headline = new GridData();
-		grid_data_user_activity_headline.verticalIndent = 0;
+		user_activity_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		final Font font_user_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		user_activity_headline.setFont(font_user_activity_headline);
 		user_activity_headline.addDisposeListener(new DisposeListener()
@@ -278,9 +259,7 @@ public class overview_tab extends Composite
 				font_user_activity_headline.dispose();
 			}		
 		});
-		
-		user_activity_headline.setLayoutData(grid_data_user_activity_headline);
-		
+				
 		
 		
 		
@@ -327,10 +306,7 @@ public class overview_tab extends Composite
 		
 		//friends recent activity area
 		Composite friends_activity_area = new Composite(this, SWT.NONE);
-		FormData form_data_friends_activity_area = new FormData(295, 185); 
-		form_data_friends_activity_area.top = new FormAttachment(0, 220);
-		form_data_friends_activity_area.left = new FormAttachment(0, 310);
-		friends_activity_area.setLayoutData(form_data_friends_activity_area);
+		friends_activity_area.setLayoutData(gui_utils.form_data_factory(295, 185, 220, 310));
 		GridLayout grid_layout_friends_activity_area = new GridLayout(1, false);
 		friends_activity_area.setLayout(grid_layout_friends_activity_area);
 		
@@ -338,8 +314,7 @@ public class overview_tab extends Composite
 		//friends recent activity headline
 		Label friends_activity_headline = new Label(friends_activity_area, SWT.NONE);
 		friends_activity_headline.setText("Your Friends Recent Activity");
-		GridData grid_data_friends_activity_headline = new GridData();
-		grid_data_friends_activity_headline.verticalIndent = 0;
+		friends_activity_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		final Font font_friends_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		friends_activity_headline.setFont(font_friends_activity_headline);
 		friends_activity_headline.addDisposeListener(new DisposeListener()
@@ -349,7 +324,6 @@ public class overview_tab extends Composite
 				font_friends_activity_headline.dispose();
 			}		
 		});
-		friends_activity_headline.setLayoutData(grid_data_friends_activity_headline);
 		
 		
 		

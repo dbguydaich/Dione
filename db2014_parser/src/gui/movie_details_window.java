@@ -93,27 +93,21 @@ public class movie_details_window extends Shell
 		
 		
 		this.setLayout(new FormLayout());
-		
 		this.setSize(window_width, window_height);
 		this.setText("Movie Details");
 		
-		this.setLayout(new FormLayout());
 		
 		List<Label> movie_details_labels = new ArrayList<Label>();
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);	
-		String movie_name = "Best movie everrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr11r"; //just for check
-		//String movie name = get_result_movie_name();  to be used
+		String movie_name = "Movie Name: this is a somewhat long long long movie name"; //just for check
+		//String movie name = "Movie Name: get_result_movie_name();  to be used
 		headline_label.setText(movie_name);
-		FormData form_data_headline_label = new FormData();
-		form_data_headline_label.top = new FormAttachment(0,4);
-		form_data_headline_label.left = new FormAttachment(0,50);
-		form_data_headline_label.width = 530;
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 10, 10));
 		headline_label.setAlignment(SWT.CENTER);
 		final Font font1 = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
-		headline_label.setFont(font1);
-		headline_label.setLayoutData(form_data_headline_label);	
+		headline_label.setFont(font1);	
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -126,10 +120,7 @@ public class movie_details_window extends Shell
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		FormData form_data = new FormData(350, 190); 
-		form_data.top = new FormAttachment(0, 60);
-		form_data.left = new FormAttachment(0, 10);
-		left_area.setLayoutData(form_data);
+		left_area.setLayoutData(gui_utils.form_data_factory(350, 190, 60, 10));
 		GridLayout grid_layout_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_area);
 		
@@ -142,7 +133,7 @@ public class movie_details_window extends Shell
 				 {
 					GridData my_grid_data = new GridData();
 					my_grid_data.verticalIndent = 5;
-					movie_details_labels.get(i).setLayoutData(my_grid_data);
+					movie_details_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
 					 
 				 }
 				 movie_details_labels.get(i).setFont(font_ariel_11);
@@ -253,9 +244,7 @@ public class movie_details_window extends Shell
 		//wiki label
 		Label wiki_label = new Label(left_area, SWT.H_SCROLL);
 		wiki_label.setText("Wiki Link:");
-		GridData grid_data_wiki_label = new GridData();
-		grid_data_wiki_label.verticalIndent = 5;
-		wiki_label.setLayoutData(grid_data_wiki_label);
+		wiki_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
 		wiki_label.setFont(font_ariel_11);
 		
 		
@@ -265,19 +254,14 @@ public class movie_details_window extends Shell
 		//wiki_str = get_result_movie_wiki(); to be used
 		wiki_str = "<a>Best Link Ever</a>";
 		wiki_link.setText(wiki_str);
-		GridData grid_data_wiki_link = new GridData();
-		grid_data_wiki_link.verticalIndent = 5;
-		wiki_link.setLayoutData(grid_data_wiki_link);
+		wiki_link.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
 		wiki_link.setFont(font_ariel_11);
 
 		
 		
 		//tags area
 		Composite tags_area = new Composite(this, SWT.NONE);
-		FormData form_data_tags_area = new FormData(240, 250); 
-		form_data_tags_area.top = new FormAttachment(0, 60);
-		form_data_tags_area.left = new FormAttachment(0, 380);
-		tags_area.setLayoutData(form_data_tags_area);
+		tags_area.setLayoutData(gui_utils.form_data_factory(240, 250, 60, 380));
 		GridLayout grid_layout_area2 = new GridLayout(2, false);
 		tags_area.setLayout(grid_layout_area2);
 		
@@ -286,10 +270,7 @@ public class movie_details_window extends Shell
 		//headline tags
 		Label headline_tags = new Label(tags_area, SWT.NONE);
 		headline_tags.setText("Tags");
-		GridData grid_data_headline_tags = new GridData();
-		grid_data_headline_tags.horizontalSpan = 2;
-		grid_data_headline_tags.horizontalIndent = 95;
-		headline_tags.setLayoutData(grid_data_headline_tags);
+		headline_tags.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1, -1, -1));
 		final Font font_tags = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
 		headline_tags.setFont(font_tags);
 		headline_tags.addDisposeListener(new DisposeListener()
@@ -347,19 +328,14 @@ public class movie_details_window extends Shell
 		//tags rate button
 		Button tags_button = new Button(tags_area, SWT.PUSH);
 		tags_button.setText("Rate");
-		GridData grid_data_tags_button = new GridData();
-		grid_data_tags_button.horizontalSpan = 2;
-		grid_data_tags_button.horizontalIndent = 95;
-		tags_button.setLayoutData(grid_data_tags_button);
+		tags_button.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1, -1, -1));
 		
 		
 		
 		//tags bottom label
 		Label tags_bottom_label = new Label(tags_area, SWT.NONE);
 		tags_bottom_label.setText("Please rate these tags for the movie \n(1=disagree, 5=agree)");
-		GridData grid_data_tags_bottom_label = new GridData();
-		grid_data_tags_bottom_label.horizontalSpan = 2;
-		tags_bottom_label.setLayoutData(grid_data_tags_bottom_label);
+		tags_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, -1, -1));
 		final Font font_bottom_tags = new Font(display, "Ariel",8, java.awt.Font.PLAIN );
 		tags_bottom_label.setFont(font_bottom_tags);
 		tags_bottom_label.addDisposeListener(new DisposeListener()
@@ -374,11 +350,7 @@ public class movie_details_window extends Shell
 		
 		//plot headline
 		Label plot_headline_label = new Label(this, SWT.NONE);
-		FormData form_data_plot_headline_label = new FormData(32, 20); 
-		form_data_plot_headline_label.top = new FormAttachment(0, 260);
-		form_data_plot_headline_label.left = new FormAttachment(0, 10);
-		
-		plot_headline_label.setLayoutData(form_data_plot_headline_label);
+		plot_headline_label.setLayoutData(gui_utils.form_data_factory(32, 20, 260, 10));
 		plot_headline_label.setText("Plot:");
 		final Font font_plot_headline_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
 		plot_headline_label.setFont(font_plot_headline_label);
@@ -397,7 +369,7 @@ public class movie_details_window extends Shell
 		FormData form_data_scroller_plot = new FormData(290, 100); 
 		form_data_scroller_plot.top = new FormAttachment(0, 260);
 		form_data_scroller_plot.left = new FormAttachment(0, 53);
-		scroller_plot.setLayoutData(form_data_scroller_plot);
+		scroller_plot.setLayoutData(gui_utils.form_data_factory(290, 100, 260, 53));
 		
 		scroller_plot.setExpandHorizontal(true);
 		scroller_plot.setExpandVertical(true);

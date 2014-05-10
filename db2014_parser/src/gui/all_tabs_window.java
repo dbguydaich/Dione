@@ -1,6 +1,7 @@
 package gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -75,15 +76,22 @@ public class all_tabs_window extends Shell
 	
 	public static void main(String args[])
 	{
-		Display display = new Display();
+		//DeviceData data = new DeviceData();
+	   // data.tracking = true;
+		
+		Display display = Display.getDefault();
 	
-		all_tabs_window tabs_win = new all_tabs_window(display);
+		//Sleak sleak = new Sleak();
+	   // sleak.open();
+		
+		log_in_window log_in_win = new log_in_window(display);
 		movie_details_window movie_win = new movie_details_window(display);
+		all_tabs_window tabs_win = new all_tabs_window(display);
 		
-		tabs_win.open();
+		log_in_win.open();
 		movie_win.open();
+		tabs_win.open();
 		
-
 		
 		while (!display.isDisposed()) 
 		{
@@ -92,7 +100,8 @@ public class all_tabs_window extends Shell
 				 display.sleep();
 			 }
 		}
-
+		
+		
 	}
 
 

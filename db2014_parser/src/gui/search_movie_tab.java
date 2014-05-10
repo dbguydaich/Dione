@@ -88,12 +88,9 @@ public class search_movie_tab extends Composite
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Search Movie");
-		FormData form_data_headline_label = new FormData();
-		form_data_headline_label.top = new FormAttachment(0,0);
-		form_data_headline_label.left = new FormAttachment(0,200);
 		final Font font_headline_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
 		headline_label.setFont(font_headline_label);
-		headline_label.setLayoutData(form_data_headline_label);		
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 0, 200));		
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -106,10 +103,7 @@ public class search_movie_tab extends Composite
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		FormData form_data_left_area = new FormData(180, 350); 
-		form_data_left_area.top = new FormAttachment(0, 40);
-		form_data_left_area.left = new FormAttachment(0, 10);
-		left_area.setLayoutData(form_data_left_area);
+		left_area.setLayoutData(gui_utils.form_data_factory(180, 250, 40, 10));
 		GridLayout grid_layout_left_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_left_area);
 		
@@ -120,19 +114,14 @@ public class search_movie_tab extends Composite
 		//title label
 		Label title_label = new Label(left_area, SWT.NONE);
 		title_label.setText("Title");
-		GridData grid_data_title_label = new GridData();
-		grid_data_title_label.verticalIndent = 0;
 		title_label.setFont(font_left_labels);
-		title_label.setLayoutData(grid_data_title_label);
+		title_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
 		
 		
 		
 		//title text
 		final Text title_text = new Text(left_area, SWT.BORDER);
-		GridData grid_data_title_text = new GridData();
-		grid_data_title_text.verticalIndent = 0;
-		grid_data_title_text.horizontalIndent = 15;
-		title_text.setLayoutData(grid_data_title_text);
+		title_text.setLayoutData(gui_utils.grid_data_factory(15, 0, -1, -1, -1, -1));
 		title_text.setBounds(100, 300, 50, 100);
 
 		
@@ -140,194 +129,85 @@ public class search_movie_tab extends Composite
 		//director label
 		Label director_label = new Label(left_area, SWT.NONE);
 		director_label.setText("Director");
-		GridData grid_data_director_label = new GridData();
-		grid_data_director_label.verticalIndent = 10;
 		director_label.setFont(font_left_labels);
-		director_label.setLayoutData(grid_data_director_label);
+		director_label.setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
 		
 		
 		
 		//director text
 		final Text director_text = new Text(left_area, SWT.BORDER);
-		GridData grid_data_director_text = new GridData();
-		grid_data_director_text.verticalIndent = 10;
-		grid_data_director_text.horizontalIndent = 15;
-		director_text.setLayoutData(grid_data_director_text);
+		director_text.setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
 		
 		
 		//language label
 		Label language_label = new Label(left_area, SWT.NONE);
 		language_label.setText("Language");
-		GridData grid_data_language_label = new GridData();
-		grid_data_language_label.verticalIndent = 10;
 		language_label.setFont(font_left_labels);
-		language_label.setLayoutData(grid_data_language_label);
+		language_label.setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
 		
 		
 		//language text
 		final Text language_text = new Text(left_area, SWT.BORDER);
-		GridData grid_data_language_text = new GridData();
-		grid_data_language_text.verticalIndent = 10;
-		grid_data_language_text.horizontalIndent = 15;
-		language_text.setLayoutData(grid_data_language_text);
+		language_text.setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
 		
 		
-		//actor1 label
-		actors_labels.add(new Label(left_area, SWT.NONE));
-		actors_labels.get(0).setText("Actor1");
-		GridData grid_data_actor0_label = new GridData();
-		grid_data_actor0_label.verticalIndent = 10;
-		actors_labels.get(0).setFont(font_left_labels);
-		actors_labels.get(0).setLayoutData(grid_data_actor0_label);
 		
 		
-		//actor1 text
-		actors_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_actor0_text = new GridData();
-		grid_data_actor0_text.verticalIndent = 10;
-		grid_data_actor0_text.horizontalIndent = 15;
-		actors_texts.get(0).setLayoutData(grid_data_actor0_text);
+		//actors labels and texts
+		for(int i = 0; i < 3; i++)
+		{
+			actors_labels.add(new Label(left_area, SWT.NONE));
+			actors_labels.get(i).setText("Actor" + (i+1));
+			actors_labels.get(i).setFont(font_left_labels);
+			if(i == 0)
+				actors_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
+			else
+				actors_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
+			
+			actors_texts.add(new Text(left_area, SWT.BORDER));
+			if(i == 0)
+				actors_texts.get(i).setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
+			else
+				actors_texts.get(i).setLayoutData(gui_utils.grid_data_factory(15, 5, -1, -1, -1, -1));
+		}
 		
 		
-		//actor2 label
-		actors_labels.add(new Label(left_area, SWT.NONE));
-		actors_labels.get(1).setText("Actor2");
-		GridData grid_data_actor1_label = new GridData();
-		grid_data_actor1_label.verticalIndent = 5;
-		actors_labels.get(1).setFont(font_left_labels);
-		actors_labels.get(1).setLayoutData(grid_data_actor1_label);
-				
-				
-		//actor2 text
-		actors_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_actor1_text = new GridData();
-		grid_data_actor1_text.verticalIndent = 5;
-		grid_data_actor1_text.horizontalIndent = 15;
-		actors_texts.get(1).setLayoutData(grid_data_actor1_text);
+		
+		//tags area
+		Composite tags_area = new Composite(this, SWT.NONE);
+		tags_area.setLayoutData(gui_utils.form_data_factory(197, 190, 100, 190));
+		GridLayout grid_layout_tags_area = new GridLayout(2, false);
+		tags_area.setLayout(grid_layout_tags_area);
+		
+		
+		
+		//tags labels and texts
+		for(int i = 0; i < 5; i ++)
+		{
+			tags_labels.add(new Label(tags_area, SWT.NONE));
+			tags_labels.get(i).setText("Tag" + (i+1));
+			tags_labels.get(i).setFont(font_left_labels);
+			tags_labels.get(i).setLayoutData(gui_utils.grid_data_factory(10, 5, -1, -1, -1, -1));
+			
+			
+			tags_texts.add(new Text(tags_area, SWT.BORDER));
+			tags_texts.get(i).setLayoutData(gui_utils.grid_data_factory(25, 5, -1, -1, -1, -1));
+		}
 
-		
-		//actor3 label
-		actors_labels.add(new Label(left_area, SWT.NONE));
-		actors_labels.get(2).setText("Actor3");
-		GridData grid_data_actor2_label = new GridData();
-		grid_data_actor2_label.verticalIndent = 5;
-		actors_labels.get(2).setFont(font_left_labels);
-		actors_labels.get(2).setLayoutData(grid_data_actor2_label);
-				
-				
-		//actor3 text
-		actors_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_actor2_text = new GridData();
-		grid_data_actor2_text.verticalIndent = 5;
-		grid_data_actor2_text.horizontalIndent = 15;
-		actors_texts.get(2).setLayoutData(grid_data_actor2_text);
-		
-		
-		
-		//tag1 label
-		tags_labels.add(new Label(left_area, SWT.NONE));
-		tags_labels.get(0).setText("Tag1");
-		GridData grid_data_tag0_label = new GridData();
-		grid_data_tag0_label.verticalIndent = 10;
-		tags_labels.get(0).setFont(font_left_labels);
-		tags_labels.get(0).setLayoutData(grid_data_tag0_label);
-				
-				
-		//tag1 text
-		tags_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_tag0_text = new GridData();
-		grid_data_tag0_text.verticalIndent = 10;
-		grid_data_tag0_text.horizontalIndent = 15;
-		tags_texts.get(0).setLayoutData(grid_data_tag0_text);
-		
-		
-		//tag2 label
-		tags_labels.add(new Label(left_area, SWT.NONE));
-		tags_labels.get(1).setText("Tag2");
-		GridData grid_data_tag1_label = new GridData();
-		grid_data_tag1_label.verticalIndent = 5;
-		tags_labels.get(1).setFont(font_left_labels);
-		tags_labels.get(1).setLayoutData(grid_data_tag1_label);
-						
-						
-		//tag2 text
-		tags_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_tag1_text = new GridData();
-		grid_data_tag1_text.verticalIndent = 5;
-		grid_data_tag1_text.horizontalIndent = 15;
-		tags_texts.get(1).setLayoutData(grid_data_tag1_text);
-		
-		
-		//tag3 label
-		tags_labels.add(new Label(left_area, SWT.NONE));
-		tags_labels.get(2).setText("Tag3");
-		GridData grid_data_tag2_label = new GridData();
-		grid_data_tag2_label.verticalIndent = 5;
-		tags_labels.get(2).setFont(font_left_labels);
-		tags_labels.get(2).setLayoutData(grid_data_tag2_label);
-						
-						
-		//tag3 text
-		tags_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_tag2_text = new GridData();
-		grid_data_tag2_text.verticalIndent = 5;
-		grid_data_tag2_text.horizontalIndent = 15;
-		tags_texts.get(2).setLayoutData(grid_data_tag2_text);
-		
-		
-		//tag4 label
-		tags_labels.add(new Label(left_area, SWT.NONE));
-		tags_labels.get(3).setText("Tag4");
-		GridData grid_data_tag3_label = new GridData();
-		grid_data_tag3_label.verticalIndent = 5;
-		tags_labels.get(3).setFont(font_left_labels);
-		tags_labels.get(3).setLayoutData(grid_data_tag3_label);
-						
-						
-		//tag4 text
-		tags_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_tag3_text = new GridData();
-		grid_data_tag3_text.verticalIndent = 5;
-		grid_data_tag3_text.horizontalIndent = 15;
-		tags_texts.get(3).setLayoutData(grid_data_tag3_text);
-		
-		
-		//tag5 label
-		tags_labels.add(new Label(left_area, SWT.NONE));
-		tags_labels.get(4).setText("Tag5");
-		GridData grid_data_tag4_label = new GridData();
-		grid_data_tag4_label.verticalIndent = 5;
-		tags_labels.get(4).setFont(font_left_labels);
-		tags_labels.get(4).setLayoutData(grid_data_tag4_label);
-						
-						
-		//tag5 text
-		tags_texts.add(new Text(left_area, SWT.BORDER));
-		GridData grid_data_tag4_text = new GridData();
-		grid_data_tag4_text.verticalIndent = 5;
-		grid_data_tag4_text.horizontalIndent = 15;
-		tags_texts.get(4).setLayoutData(grid_data_tag4_text);
-		
 	
-		
-		
 		
 		//rating area
 		Composite rating_area = new Composite(this, SWT.NONE);
-		FormData form_data_rating_area = new FormData(200, 60); 
-		form_data_rating_area.top = new FormAttachment(0, 40);
-		form_data_rating_area.left = new FormAttachment(0, 200);
-		rating_area.setLayoutData(form_data_rating_area);
+		rating_area.setLayoutData(gui_utils.form_data_factory(200, 60, 40, 190));
 		GridLayout grid_layout_rating_area = new GridLayout(5, false);
 		rating_area.setLayout(grid_layout_rating_area);
+		
 		
 		
 		//rating label
 		Label rating_label = new Label(rating_area, SWT.NONE);
 		rating_label.setText("Rating (in stars)");
-		GridData grid_data_rating_label = new GridData();
-		grid_data_rating_label.horizontalSpan = 5;
-		rating_label.setLayoutData(grid_data_rating_label);
+		rating_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 5, -1, -1, -1));
 		final Font font_rating_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
 		rating_label.setFont(font_rating_label);
 		rating_label.addDisposeListener(new DisposeListener()
@@ -339,35 +219,29 @@ public class search_movie_tab extends Composite
 		});
 		
 		
+		
 		//rating radios
-		GridData grid_data_rating_checkbox = new GridData();
-		grid_data_rating_checkbox.horizontalIndent = 5;
 		for(int i = 0; i < 5; i++)
 		{
 			rating_checkboxes.add(new Button(rating_area, SWT.CHECK));
 			rating_checkboxes.get(i).setText(Integer.toString(i+1));
-			rating_checkboxes.get(i).setLayoutData(grid_data_rating_checkbox);
+			rating_checkboxes.get(i).setLayoutData(gui_utils.grid_data_factory(5, -1, -1, -1, -1, -1));
 		}
 		
 		
 		
 		//genres area
-		Composite genres_area = new Composite(this, SWT.BORDER);
-		FormData form_data_genres_area = new FormData(198, 286); 
-		form_data_genres_area.top = new FormAttachment(0, 101);
-		form_data_genres_area.left = new FormAttachment(0, 199);
-		genres_area.setLayoutData(form_data_genres_area);
+		Composite genres_area = new Composite(this, SWT.NONE);
+		genres_area.setLayoutData(gui_utils.form_data_factory(220, 250, 40, 387));
 		GridLayout grid_layout_genres_area = new GridLayout(2, false);
 		genres_area.setLayout(grid_layout_genres_area);
+		
 		
 		
 		//genres label
 		Label genres_label = new Label(genres_area, SWT.NONE);
 		genres_label.setText("Genres");
-		GridData grid_data_genres_label = new GridData();
-		grid_data_genres_label.horizontalSpan = 2;
-		grid_data_genres_label.horizontalAlignment = SWT.CENTER;
-		genres_label.setLayoutData(grid_data_genres_label);
+		genres_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
 		final Font font_genres_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		genres_label.setFont(font_genres_label);
 		genres_label.addDisposeListener(new DisposeListener()
@@ -377,6 +251,7 @@ public class search_movie_tab extends Composite
 				font_genres_label.dispose();
 			}		
 		});
+		
 		
 		
 		//genres check-boxes
@@ -389,16 +264,14 @@ public class search_movie_tab extends Composite
 		for(int i = 1; i < 20; i ++)
 		{
 			genres.add("Genre" + i + " ");
-;
 		}
 		//
 		
-		GridData grid_data_genres_checkbox = new GridData();
-		grid_data_genres_checkbox.horizontalIndent = 20;
+		
 		for(int i = 0; i < genres.size(); i++)
 		{
 			Button checkbox = new Button(genres_area, SWT.CHECK);		
-			checkbox.setLayoutData(grid_data_genres_checkbox);
+			checkbox.setLayoutData(gui_utils.grid_data_factory(0, -1, -1, -1, -1, -1));
 			checkbox.setText(genres.get(i));
 			genres_checkboxes.add(checkbox);
 		}
@@ -406,10 +279,7 @@ public class search_movie_tab extends Composite
 		
 		//search button
 		Button search_button = new Button(this, SWT.PUSH | SWT.WRAP);
-		FormData form_data_search_button = new FormData(80, 50); 
-		form_data_search_button.top = new FormAttachment(0, 340);
-		form_data_search_button.left = new FormAttachment(0, 420);
-		search_button.setLayoutData(form_data_search_button);
+		search_button.setLayoutData(gui_utils.form_data_factory(80, 47, 337, 50));
 		search_button.setText("Search");
 		final Font font_search_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
 		search_button.setFont(font_search_button);
@@ -420,6 +290,7 @@ public class search_movie_tab extends Composite
 				font_search_button.dispose();
 			}		
 		});
+		
 		
 		
 		//Listener
@@ -470,21 +341,16 @@ public class search_movie_tab extends Composite
 		
 		//results area
 		Composite results_area = new Composite(this, SWT.NONE);
-		FormData form_data_results_area = new FormData(190, 290); 
-		form_data_results_area.top = new FormAttachment(0, 40);
-		form_data_results_area.left = new FormAttachment(0, 420);
-		results_area.setLayoutData(form_data_results_area);
+		results_area.setLayoutData(gui_utils.form_data_factory(416, 120, 295, 190));
 		GridLayout grid_layout_results_area = new GridLayout(1, false);
 		results_area.setLayout(grid_layout_results_area);
+		
 		
 		
 		//results headline
 		Label results_headline = new Label(results_area, SWT.NONE);
 		results_headline.setText("Search Results");
-		GridData grid_data_results_headline = new GridData();
-		grid_data_results_headline.horizontalSpan = 2;
-		grid_data_results_headline.horizontalAlignment = SWT.CENTER;
-		results_headline.setLayoutData(grid_data_results_headline);
+		results_headline.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
 		final Font font_results_headline = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		results_headline.setFont(font_results_headline);
 		results_headline.addDisposeListener(new DisposeListener()
@@ -511,10 +377,7 @@ public class search_movie_tab extends Composite
 		
 		
 		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
-		GridData grid_data_movie_list = new GridData(160, 240);
-		grid_data_movie_list.horizontalSpan = SWT.FILL;
-		grid_data_movie_list.horizontalAlignment = SWT.FILL;
-		movie_list.setLayoutData(grid_data_movie_list);
+		movie_list.setLayoutData(gui_utils.grid_data_factory(390, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
 		
 		for(int i = 0; i < 100; i ++)
 		{
@@ -525,7 +388,7 @@ public class search_movie_tab extends Composite
 		movie_list.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 		        int selectedItem = movie_list.getSelectionIndex();
-		        
+		       
 		        /* 
 		         * handle selection of movie number selectedItem
 		         */
@@ -533,13 +396,18 @@ public class search_movie_tab extends Composite
 		      }
 		});
 		
+		//movie_list.setVisible(false);
+		
+		
 	}
+	
 	
 	
 	void show_search_results(List<String> movies)
 	{
 		
 	}
+	
 	
 	
 	void get_text(List<Text> from,List<String> to)

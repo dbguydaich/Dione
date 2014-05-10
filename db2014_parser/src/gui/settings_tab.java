@@ -42,12 +42,9 @@ public class settings_tab extends Composite
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Settings");
-		FormData form_data_headline_label = new FormData();
-		form_data_headline_label.top = new FormAttachment(0,2);
-		form_data_headline_label.left = new FormAttachment(0,275);
 		final Font font_headline_label = new Font(display, "Ariel",15, java.awt.Font.PLAIN ); 
 		headline_label.setFont(font_headline_label);
-		headline_label.setLayoutData(form_data_headline_label);	
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 2, 275));	
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -57,12 +54,10 @@ public class settings_tab extends Composite
 		});
 		
 		
+		
 		//update area
 		Composite update_area = new Composite(this, SWT.NONE);
-		FormData form_data_update_area = new FormData(195, 110); 
-		form_data_update_area.top = new FormAttachment(0, 40);
-		form_data_update_area.left = new FormAttachment(0, 40);
-		update_area.setLayoutData(form_data_update_area);
+		update_area.setLayoutData(gui_utils.form_data_factory(195, 110, 40, 40));
 		GridLayout grid_layout_update_area = new GridLayout(1, false);
 		update_area.setLayout(grid_layout_update_area);
 		
@@ -70,23 +65,17 @@ public class settings_tab extends Composite
 		
 		//update button
 		Button update_button = new Button(update_area, SWT.PUSH);
-		GridData grid_data_update_button = new GridData(80, 35);
-		grid_data_update_button.horizontalIndent = 55;
-		grid_data_update_button.verticalIndent = 10;
 		update_button.setText("Data \nUpdate");
-		update_button.setLayoutData(grid_data_update_button);
+		update_button.setLayoutData(gui_utils.grid_data_factory(80, 35, 55, 10, -1, -1, -1, -1));
 		
 		
 		
 		//update label
 		Label update_label = new Label(update_area, SWT.NONE);
-		GridData grid_data_update_label = new GridData(180, 35);
-		//grid_data_update_label.horizontalIndent = 55;
-		//grid_data_update_label.verticalIndent = 10;
 		final Font font_update_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
 		update_label.setFont(font_update_label);
 		update_label.setText("Note: This operation may\n          take a while...");
-		update_label.setLayoutData(grid_data_update_label);
+		update_label.setLayoutData(gui_utils.grid_data_factory(180, 35, -1, -1, -1, -1, -1, -1));
 		update_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -94,7 +83,6 @@ public class settings_tab extends Composite
 				font_update_label.dispose();
 			}		
 		});
-		
 		
 		
 	}
