@@ -1,6 +1,7 @@
 package gui;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,13 @@ import org.eclipse.swt.layout.GridLayout;
 
 
 
+
+
+
+
+import parser_entities.entity_person;
 import config.config;
+import db.db_queries_user;
 //import db.db_queries;
 import bl.verifier;
 
@@ -58,9 +65,9 @@ public class social_tab extends Composite
 		
 		
 		List<String> user_friends;
-		List<String> friends_activities_strings;
+		List<String> friends_activities_strings = null;
 		List<Label> friends_activities_labels = new ArrayList<Label>();
-		List<String> user_social_activities_strings;
+		List<String> user_social_activities_strings = null;
 		List<Label> user_social_activities_labels = new ArrayList<Label>();
 		
 		
@@ -136,22 +143,32 @@ public class social_tab extends Composite
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
-				}
+				} else
+					try {
+						if(log_in_window.user.does_user_exists((friend_name_text.getText()))){ //to be implemented next on
+						
+							Integer friend_id = log_in_window.user.get_user_id(friend_name_text.getText());
+							Integer current_user_id =   log_in_window.user.get_current_user_id() ;
+							log_in_window.user.add_friendship(friend_id, current_user_id);
+						
+						
+						
+						}
 
 
-//				else if(does_user_exists(friend_name_text.getText())){ //to be implemented next on
-//						}
-//
-//
-//					});
-//				}
-				else //no user found
-				{
-					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-					messageBox.setText("No user Found");
-					messageBox.setMessage("No user Found");
-					messageBox.open();
-				}
+							
+						
+						else//no user found
+						{
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("No user Found");
+							messageBox.setMessage("No user Found");
+							messageBox.open();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 
 		});
@@ -187,13 +204,13 @@ public class social_tab extends Composite
 		final Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
 		remove_friend_combo.setLayoutData(gui_utils.grid_data_factory(100, 15, 30, 25, -1, -1, -1, -1));
 		
-		//user_friends = get_user_friends();   will be used when function exists
+		user_friends = log_in_window.user.get_current_user_friends_names();  // will be used when function exists
 		
-		//just for check
-		user_friends = new ArrayList<String>();
-		user_friends.add("user1");
-		user_friends.add("user2");
-		user_friends.add("another user");
+//		//just for check
+//		user_friends = new ArrayList<String>();
+//		user_friends.add("user1");
+//		user_friends.add("user2");
+//		user_friends.add("another user");
 		//
 		
 		String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);
@@ -224,27 +241,40 @@ public class social_tab extends Composite
 				}
 
 
-			//	else if(remove_friend( get_current_user_id(),remove_friend_combo.getText())){ //to be implemented next on
-//				MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//				alertBox.setText("Success");
-//				alertBox.setMessage("Friend has been removed!");
-//				alertBox.open();
-//						
+				else 
+				{
+					
+					Integer friend_id = log_in_window.user.get_user_id(remove_friend_combo.getText());
+					Integer current_user_id =  log_in_window.user.get_current_user_id();
+					try {
+						if(log_in_window.user.remove_friendship( current_user_id, friend_id)) //to be implemented next on
+						{
+							
+							MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							alertBox.setText("Success");
+							alertBox.setMessage("Friend has been removed!");
+							alertBox.open();
+									
+						}
+						
+						
+						
+						
+						else //error during removing
+						{
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("Error");
+							messageBox.setMessage("Couldn't remove friend!");
+							messageBox.open();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				
-//
-//
-//					});
-//				}
-//				else //error during removing
-//				{
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Error");
-//					messageBox.setMessage("Couldn't remove friend!");
-//					messageBox.open();
-//				}
-			}
+				}
 
-		});
+		}});
 
 		
 		
@@ -272,16 +302,21 @@ public class social_tab extends Composite
 		
 		//user recent social activities labels
 		
-		//user_activities_strings = get_user_recent_social_activities(); //to be used when function exists
+		try {
+			List<String> user_activities_strings = log_in_window.user.get_friends_recent_string_activities();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //to be used when function exists
 				
 		//just for check
-		user_social_activities_strings = new ArrayList<String>();
-		user_social_activities_strings.add("recent activity 1");
-		user_social_activities_strings.add("recent activity 2");
-		user_social_activities_strings.add("recent activity 3");
-		user_social_activities_strings.add("recent activity 4");
-		user_social_activities_strings.add("recent activity 5");
-		user_social_activities_strings.add("recent activity 6");
+//		user_social_activities_strings = new ArrayList<String>();
+//		user_social_activities_strings.add("recent activity 1");
+//		user_social_activities_strings.add("recent activity 2");
+//		user_social_activities_strings.add("recent activity 3");
+//		user_social_activities_strings.add("recent activity 4");
+//		user_social_activities_strings.add("recent activity 5");
+//		user_social_activities_strings.add("recent activity 6");
 		//
 				
 		final Font font_user_social_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
@@ -336,16 +371,21 @@ public class social_tab extends Composite
 		
 		//friends recent activities labels
 		
-		//friends_activities_strings = get_friends_recent_activities(); //to be used when function exists
+		try {
+			friends_activities_strings = log_in_window.user.get_friends_recent_string_activities();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} //to be used when function exists
 		
 		//just for check
-		friends_activities_strings = new ArrayList<String>();
-		friends_activities_strings.add("friend recent activity 1");
-		friends_activities_strings.add("friend recent activity 2");
-		friends_activities_strings.add("friend recent activity 3");
-		friends_activities_strings.add("friend recent activity 4");
-		friends_activities_strings.add("friend recent activity 5");
-		friends_activities_strings.add("friend recent activity 6");
+//		friends_activities_strings = new ArrayList<String>();
+//		friends_activities_strings.add("friend recent activity 1");
+//		friends_activities_strings.add("friend recent activity 2");
+//		friends_activities_strings.add("friend recent activity 3");
+//		friends_activities_strings.add("friend recent activity 4");
+//		friends_activities_strings.add("friend recent activity 5");
+//		friends_activities_strings.add("friend recent activity 6");
 		//
 		
 		final Font font_friends_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
@@ -372,7 +412,10 @@ public class social_tab extends Composite
 		if(i == 0)
 			font_friends_activities_labels.dispose();
 		
+	
 	}
+
+	
 	
 	
 	

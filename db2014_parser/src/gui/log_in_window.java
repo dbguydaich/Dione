@@ -1,6 +1,8 @@
 package gui;
 
 
+import java.sql.SQLException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -21,8 +23,10 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import bl.user_logics;
 import bl.verifier;
 import config.config;
+import db.db_queries_user;
 
 //import bl.verifier;
 //import runnableLogic.AddUser;
@@ -31,10 +35,19 @@ import config.config;
 //import db.IdbOparations;
 
 
+
+
+
+
+
 public class log_in_window extends Shell
 {
 	
+
+	///good idea to put it here?
+	public static user_logics user;
 	
+	/////
 	config config = new config();
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
@@ -132,42 +145,48 @@ public class log_in_window extends Shell
 		Button log_in_button = new Button(area, SWT.PUSH);
 		log_in_button.setText("Log In");
 		log_in_button.setLayoutData(gui_utils.grid_data_factory(80, -1, -1, -1, -1, -1));
-		//////
-//		log_in_button.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				final String username = username_text.getText();
-//				final String pass = password_text.getText();
-//				if(!verifier.verifyname(username)){ // illegal user name
-//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					alertBox.setText("Illegal Username");
-//					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
-//					alertBox.open();
-//				}else if(!verifier.verifyPass( pass)){ // invalid password
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Illegal Password");
-//					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
-//					messageBox.open();
-//				}
-//
-//				else if( db_queries.authenticate_user(username,pass)){
-//					
-//					//implement
-//				}
-//				else{ //no user found
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Error");
-//					messageBox.setMessage("Password and username do not match. Try again.");
-//					messageBox.open();
-//				}
-//				
-//		
-//			
-//		
-//			}
-//
-//		});
-		//////
+		////
+		log_in_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				final String username = username_text.getText();
+				final String pass = password_text.getText();
+				if(!verifier.verifyname(username)){ // illegal user name
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("Illegal Username");
+					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
+					alertBox.open();
+				}else if(!verifier.verifyPass( pass)){ // invalid password
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Illegal Password");
+					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox.open();
+				} else
+					try {
+						if( db_queries_user.authenticate_user(username,pass)){
+							user = new user_logics(); //Initializing user to be worked with all session long
+							user.login_user(username, pass) ;
+							all_tabs_window tabs_win = new all_tabs_window(display);
+							tabs_win.open();
+						}
+						else{ //no user found
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("Error");
+							messageBox.setMessage("Password and username do not match. Try again.");
+							messageBox.open();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+		
+			
+		
+			}
+
+		});
+		////
 
 		
 		
@@ -178,34 +197,42 @@ public class log_in_window extends Shell
 		sign_up_button.setText("Sign Up");
 		sign_up_button.setLayoutData(gui_utils.grid_data_factory(10, -1, -1, -1, -1, -1));
 		
-//		sign_up_button.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				final String username = username_text.getText();
-//				final String pass = password_text.getText();
-//				if(!verifier.verifyname(username)){ // illegal user name
-//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					alertBox.setText("Illegal Username");
-//					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
-//					alertBox.open();
-//				}else if(!verifier.verifyname( pass)){ // invalid password
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Illegal Password");
-//					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
-//					messageBox.open();
-//				}
-//				else if ( db_queries.add_user(username, pass))
-//				{
-//					///implement
-//				}
-//				else {  //there was error during registration
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("Error");
-//					messageBox.setMessage("There was an error during signup. Sorry.");
-//					messageBox.open();
-//				}
-//			}
-//		});
+		sign_up_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				final String username = username_text.getText();
+				final String pass = password_text.getText();
+				if(!verifier.verifyname(username)){ // illegal user name
+					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					alertBox.setText("Illegal Username");
+					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
+					alertBox.open();
+				}else if(!verifier.verifyname( pass)){ // invalid password
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Illegal Password");
+					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox.open();
+				} else
+					try {
+						if ( db_queries_user.add_user(username, pass))
+						{
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("SUCCESS");
+							messageBox.setMessage("User "+ username + "has been succesfully signed up");
+							messageBox.open();
+						}
+						else {  //there was error during registration
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("Error");
+							messageBox.setMessage("There was an error during signup. Sorry.");
+							messageBox.open();
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		});
 		
 		
 }

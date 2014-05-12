@@ -7,6 +7,7 @@ import java.util.List;
 
 import config.config;
 import parser_entities.abstract_activity;
+import parser_entities.entity_person;
 import db.db_queries_user;
 
 /**
@@ -49,6 +50,19 @@ public class user_logics implements Runnable
 	 * @return true iff succedded adding the user
 	 * @throws SQLException
 	 */
+	
+	
+	
+	///to be implemented by matan
+	public Integer get_user_id(String user)
+	{
+		return 1;
+	}
+	
+	
+	
+
+
 	public boolean add_user(String user, String pass)
 			throws SQLException
 	{
@@ -100,6 +114,28 @@ public class user_logics implements Runnable
 	
 //ACTIVITIES
 
+	
+	
+	
+	///to be implemented by matan
+	public List<entity_person> get_current_user_friends()
+	{
+		return null;
+	}
+	
+	public List<String> get_current_user_friends_names()
+	{
+		 List<entity_person> persons = get_current_user_friends();
+		 List<String> names = new ArrayList<String>();
+		for(entity_person person: persons)
+		{
+			names.add(person.get_person_name());
+		}
+		
+		return names;
+	}
+		
+	
 	/**
 	 * get a list of IDs of a user's friends
 	 * @param user_id
@@ -232,6 +268,7 @@ public class user_logics implements Runnable
 		
 		return (returnedList);
 	}
+
 	
 	/**
 	 * get the current user's most recomended movies
@@ -299,4 +336,5 @@ public class user_logics implements Runnable
 		// TODO Auto-generated method stub
 		
 	}
+
 }
