@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 
 
+
 import com.mysql.jdbc.StringUtils;
 
 /**
@@ -80,7 +81,74 @@ public abstract class db_operations
 		jdbc_connection_pooling.get_conn().close(conn);
 		return (rows_effected);
 	}
+
+	/** insert tuple
+	 * @param querey - an sql querey fully wrote, using '?' for values
+	 * @param values - an array of values to put where the ?s are
+	 * @throws SQLException 
+	 */
+	protected static int run_querey(String querey, Object... values) 
+			throws SQLException 
+	{
+		if (querey == null || values == null)
+			return (-1);
+		
+		if (charCount(querey, '?') != values.length)
+			throw(new SQLException("wrong number of parameters for querey"));
+		
+		// Set the connection
+		Connection conn = null;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(querey);
+
+		for (int i = 0; i < values.length; i++) 
+		{
+			if (values[i] instanceof Integer)
+			{
+				stmt.setInt((i + 1), (int) values[i]);
+				continue;
+			} 
+			if (values[i] instanceof String)
+			{
+				// when the current time is needed
+				if ((String)values[i] == "TimeStamp")
+				{
+					stmt.setTimestamp((i + 1), new Timestamp((new Date()).getTime()));
+					continue;
+				}
+				
+				stmt.setString((i + 1), (String) values[i]);
+				continue;
+			}
+		}
+		
+		// execute insert SQL stetement
+		int rows_effected = stmt.executeUpdate();
+		
+		// Close connection
+		jdbc_connection_pooling.get_conn().close(conn);
+		return (rows_effected);
+	}
 	
+	/**
+	 *  Count the number of times c appears in str
+	 */
+	private static int charCount(String str, char c) 
+	{
+		int count = 0;
+		
+		for (int i=0;i<str.length();i++)
+		{
+			if (c == str.charAt(i))
+				++count;
+		}
+		
+		return (count);
+	}
+
 	/** delete tuple/s
 	 * @param tableName	- the name of the table we want to delete from
 	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."

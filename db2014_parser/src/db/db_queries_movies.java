@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import parser_entities.entity_movie;
+import parser_entities.*;
 
 /**
  * The communication with the db is being made

@@ -353,6 +353,34 @@ public abstract class db_queries_user extends db_operations
 		
 		return (delete("users", whereCol, userName) > 0);
 	}
+
+	/**
+	 * update a name of user that has that id, only if the pass is correct
+	 * @param pass	- non hashed pass (will hash it here)
+	 * @return 0 if there is no such user or pass is incorect
+	 * @throws SQLException
+	 */
+	public static boolean update_name(String new_name, int id, String pass) 
+			throws SQLException 
+	{
+		String querey = "UPDATE users SET userName = ? WHERE idUsers = ? AND hashPassword = ?;";
+		
+		return (run_querey(querey, new_name, id, Integer.toString(pass.hashCode())) > 0);
+	}
+
+	/**
+	 * update a pass of user that has that id, only if the pass is correct
+	 * @param pass	- non hashed pass (will hash it here)
+	 * @return 0 if there is no such user or pass is incorect
+	 * @throws SQLException
+	 */
+	public static boolean update_pass(String new_pass, int id, String olp_pass) 
+			throws SQLException 
+	{
+		String querey = "UPDATE users SET hashPassword = ? WHERE idUsers = ? AND hashPassword = ?;";
+		
+		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
+	}
 	
 }
 

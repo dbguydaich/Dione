@@ -104,6 +104,18 @@ public class user_logics
 		return (db_queries_user.get_user_id(user));
 	}
 	
+	public boolean update_name(String new_name, int id, String pass) 
+			throws SQLException
+	{
+		return (db_queries_user.update_name(new_name, id, pass));
+	}
+
+	public boolean update_pass(String new_pass, int id, String old_pass) 
+			throws SQLException
+	{
+		return (db_queries_user.update_pass(new_pass, id, old_pass));
+	}
+	
 //ACTIVITIES
 	
 	/**
