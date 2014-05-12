@@ -3,15 +3,11 @@ package parser_entities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import db.db_operations;
-import db.db_queries_movies;
-import db.db_queries_persons;
-import db.jdbc_connection_pooling;
+import db.*;
 
 /** A Bussiness Logic class for import of data. 
  ** Recieves parsed and normalized data in sets and maps,

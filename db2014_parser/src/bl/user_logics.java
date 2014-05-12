@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import config.config;
-import parser_entities.abstract_activity;
-import parser_entities.entity_person;
-import db.db_queries_user;
+import parser_entities.*;
+import db.*;
 
 /**
  * this is the module to get user related data
@@ -18,7 +17,7 @@ import db.db_queries_user;
  * @author Matan Poleg
  *
  */
-public class user_logics implements Runnable
+public class user_logics 
 {
 	private int current_user_id = 0;
 
@@ -44,25 +43,12 @@ public class user_logics implements Runnable
 			return (current_user_id);
 		}
 	}
-	
+					
 	/**
 	 * add user to "users" table
 	 * @return true iff succedded adding the user
 	 * @throws SQLException
 	 */
-	
-	
-	
-	///to be implemented by matan
-	public Integer get_user_id(String user)
-	{
-		return 1;
-	}
-	
-	
-	
-
-
 	public boolean add_user(String user, String pass)
 			throws SQLException
 	{
@@ -112,40 +98,13 @@ public class user_logics implements Runnable
 		return (current_user_id);
 	}
 	
-//ACTIVITIES
-
-	
-	
-	
-	///to be implemented by matan
-	public List<entity_person> get_current_user_friends()
-	{
-		return null;
-	}
-	
-	public List<String> get_current_user_friends_names()
-	{
-		 List<entity_person> persons = get_current_user_friends();
-		 List<String> names = new ArrayList<String>();
-		for(entity_person person: persons)
-		{
-			names.add(person.get_person_name());
-		}
-		
-		return names;
-	}
-		
-	
-	/**
-	 * get a list of IDs of a user's friends
-	 * @param user_id
-	 * @throws SQLException 
-	 */
-	public List<Integer> get_user_friends_ids(int user_id) 
+	public Integer get_user_id(String user) 
 			throws SQLException
 	{
-		return (db_queries_user.get_user_friends_ids(user_id));
+		return (db_queries_user.get_user_id(user));
 	}
+	
+//ACTIVITIES
 	
 	/**
 	 * get a list a of at most limit of user's friends recent activities
@@ -229,7 +188,6 @@ public class user_logics implements Runnable
 			return (null);
 	}
 	
-
 	/** get the recent activities of the current user and the default limit
 	 * @return		- list of at most 'limit' activities
 	 * @throws SQLException 
@@ -269,6 +227,7 @@ public class user_logics implements Runnable
 		return (returnedList);
 	}
 
+// MISC
 	
 	/**
 	 * get the current user's most recomended movies
@@ -279,8 +238,8 @@ public class user_logics implements Runnable
 	public List<String> get_user_most_recommended_movies(int user_id) 
 			throws SQLException
 	{
-		List<String> tags = db_queries_user.get_prefered_tags(user_id, 10);
-		return (null);
+		// Using 10 as default limit value
+		return (db_queries_user.get_prefered_tags(user_id, 10));
 	}
 	
 	/** get list of strings represanting tags
@@ -302,6 +261,47 @@ public class user_logics implements Runnable
 			throws SQLException
 	{
 		return (db_queries_user.get_prefered_tags(current_user_id, 5));
+	}
+		
+	public List<entity_user> get_current_user_friends() 
+			throws SQLException
+	{
+		return (db_queries_user.get_user_friends(current_user_id));
+	}
+	
+	public List<String> get_current_user_friends_names() 
+			throws SQLException
+	{
+		List<entity_user> users = get_current_user_friends();
+		List<String> names = new ArrayList<String>();
+		
+		// Convert entities to Names 
+		for(entity_user user: users)
+		{
+			names.add(user.get_user_name());
+		}
+		
+		return names;
+	}
+		
+	/**
+	 * get a list of IDs of a user's friends
+	 * @param user_id
+	 * @throws SQLException 
+	 */
+	public List<Integer> get_user_friends_ids(int user_id) 
+			throws SQLException
+	{
+		List<entity_user> users = get_current_user_friends();
+		List<Integer> ids = new ArrayList<Integer>();
+		
+		// Convert entities to Names 
+		for(entity_user user: users)
+		{
+			ids.add(user.get_user_id());
+		}
+		
+		return ids;
 	}
 	
 // INTERNALS
@@ -327,14 +327,6 @@ public class user_logics implements Runnable
 		}
 		
 		return (retList);
-	}
-
-	
-	@Override
-	public void run() 
-	{
-		// TODO Auto-generated method stub
-		
 	}
 
 }

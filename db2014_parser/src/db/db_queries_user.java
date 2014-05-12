@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import parser_entities.friendship_activity;
-import parser_entities.rating_activity;
-import parser_entities.tag_activity;
+import parser_entities.*;
 
 /**
  * The communication with the db is being made by this class methods. 
@@ -140,72 +138,37 @@ public abstract class db_queries_user extends db_operations
 	}
 	
 	/**
-	 * get a list of IDs of the user's friends
-	 * @param current_user_id
-	 * @throws SQLException 
-	 */
-	public static List<Integer> get_user_friends_ids(int current_user_id) 
-			throws SQLException 
-	{
-		String where = 	"((users.idUsers = friend_relation.friend1 OR users.idUsers = friend_relation.friend2) AND " +
-						"(friend_relation.friend1 = ? OR friend_relation.friend1 = ?))";
-		ResultSet result = select("friend1, friend2", "users, friend_relation", where, current_user_id, current_user_id);
-		
-		// is table empty
-		if (result == null)
-			return (null);
-		
-		// Enumerate all movies
-		List<Integer> returnedList = new ArrayList<Integer>();
-		
-		while (result.next())
-		{
-			Integer f1_id = Integer.parseInt(result.getString(1));
-			Integer f2_id = Integer.parseInt(result.getString(2));
-			
-			if (f1_id == current_user_id)
-			{
-				if (returnedList.indexOf(f2_id) == -1)
-					returnedList.add(f2_id);
-			}
-			else
-			{
-				if (returnedList.indexOf(f1_id) == -1)
-					returnedList.add(f1_id);
-			}
-		} 
-		
-		return (returnedList);
-	}
-
-	/**
 	 * get a list of names of the user's friends
 	 * @param current_user_id
 	 * @throws SQLException 
 	 */
-	public static List<String> get_user_friends(int current_user_id) 
+	public static List<entity_user> get_user_friends(int current_user_id) 
 			throws SQLException 
 	{
 		String where = 	"((users.idUsers = friend_relation.friend1 OR users.idUsers = friend_relation.friend2) AND " +
 						"(friend_relation.friend1 = ? OR friend_relation.friend1 = ?))";
-		ResultSet result = select("userName", "users, friend_relation", where, current_user_id, current_user_id);
+		ResultSet result = select("idUsers, userName", "users, friend_relation", where, current_user_id, current_user_id);
 		
 		// is table empty
 		if (result == null)
 			return (null);
 		
 		// Enumerate all movies
-		List<String> returnedList = new ArrayList<String>();
+		List<entity_user> returnedList = new ArrayList<entity_user>();
 		String current_user_name = get_name_of_user(current_user_id);
 		
 		while (result.next())
 		{
-			String name = result.getString(1);
+			int id = result.getInt(1);
+			String name = result.getString(2);
+			
+			// Create a user entity
+			entity_user curr = new entity_user(id, name);
 			
 			if (name != current_user_name)
 			{
-				if (returnedList.indexOf(name) == -1)
-					returnedList.add(name);
+				if (returnedList.indexOf(curr) == -1)
+					returnedList.add(curr);
 			}
 		} 
 		
@@ -390,10 +353,6 @@ public abstract class db_queries_user extends db_operations
 		
 		return (delete("users", whereCol, userName) > 0);
 	}
-
-
-
-	
 	
 }
 

@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import parser_entities.entity_movie;
+
 /**
  * The communication with the db is being made
  * by this class methods. All the operation against the DB:
@@ -333,13 +335,31 @@ public abstract class db_queries_movies extends db_operations
 		// Actor filter
 		if (actor_list != null && actor_list.size() > 0)
 		{
+			String actorsCond = "idMovie IN (SELECT idMovie FROM actor, actor_movie " +
+								 "WHERE actor.idActor = id.person ";
+			
+			for (String actor : actor_list)
+			{
+				actorsCond += "AND ";
+			}
+			
+			actorsCond += ")";
+			
+			where += actorsCond;
+		}
+		
+		// Actor filter
+		if (tags_list != null && tags_list.size() > 0)
+		{
 			where += "idMovie IN (SELECT idMovie FROM actor, actor_movie " +
 								 "WHERE actor.idActor = id.person)" + 
 						"";
 		}
 		
+		
+		
 		// Make the querey
-		ResultSet result = select("idMovie", from, where, values);
+		ResultSet result = select("idMovie", from, where + "limit 300;", values);
 		
 		// is table empty
 		if (result == null)
