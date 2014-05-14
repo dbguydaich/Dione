@@ -1,6 +1,7 @@
 package bl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +38,21 @@ public class movie_logics
 	{
 		//TODO:
 		return (null);
+	}
+	
+	
+	/// ADDED BY SHACHAR///
+	public List<String> get_relevant_movies_names(String title,String director,List<String>actor_list,List<String> tags_list, List<Boolean>	rating_radios_text,List<Boolean>genres_numbers) 
+			throws NumberFormatException, SQLException
+	{
+		List<String> result = new ArrayList();
+		List<Integer> ids = get_relevant_movies( title, director,actor_list, tags_list,	rating_radios_text,genres_numbers);
+		
+		for ( int id: ids)
+		{
+			result.add(get_movie_entity_by_id(id).get_movie_name());
+		}
+		return result;
 	}
 
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 

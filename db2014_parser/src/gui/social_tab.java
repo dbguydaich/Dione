@@ -204,7 +204,15 @@ public class social_tab extends Composite
 		final Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
 		remove_friend_combo.setLayoutData(gui_utils.grid_data_factory(100, 15, 30, 25, -1, -1, -1, -1));
 		
-		user_friends = log_in_window.user.get_current_user_friends_names();  // will be used when function exists
+		
+		user_friends = new ArrayList<String>();
+		
+		try {
+			user_friends = log_in_window.user.get_current_user_friends_names();
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}  // will be used when function exists
 		
 //		//just for check
 //		user_friends = new ArrayList<String>();
@@ -244,33 +252,40 @@ public class social_tab extends Composite
 				else 
 				{
 					
-					Integer friend_id = log_in_window.user.get_user_id(remove_friend_combo.getText());
-					Integer current_user_id =  log_in_window.user.get_current_user_id();
+					Integer friend_id;
 					try {
-						if(log_in_window.user.remove_friendship( current_user_id, friend_id)) //to be implemented next on
-						{
+						friend_id = log_in_window.user.get_user_id(remove_friend_combo.getText());
+						Integer current_user_id =  log_in_window.user.get_current_user_id();
+						try {
+							if(log_in_window.user.remove_friendship( current_user_id, friend_id)) //to be implemented next on
+							{
+								
+								MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+								alertBox.setText("Success");
+								alertBox.setMessage("Friend has been removed!");
+								alertBox.open();
+										
+							}
 							
-							MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-							alertBox.setText("Success");
-							alertBox.setMessage("Friend has been removed!");
-							alertBox.open();
-									
+							
+							
+							
+							else //error during removing
+							{
+								MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+								messageBox.setText("Error");
+								messageBox.setMessage("Couldn't remove friend!");
+								messageBox.open();
+							}
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-						
-						
-						
-						
-						else //error during removing
-						{
-							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-							messageBox.setText("Error");
-							messageBox.setMessage("Couldn't remove friend!");
-							messageBox.open();
-						}
-					} catch (SQLException e) {
+					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e1.printStackTrace();
 					}
+	
 				
 				}
 
@@ -301,6 +316,9 @@ public class social_tab extends Composite
 		
 		
 		//user recent social activities labels
+		
+		
+		user_social_activities_strings = new ArrayList<String>();
 		
 		try {
 			List<String> user_activities_strings = log_in_window.user.get_friends_recent_string_activities();
@@ -371,9 +389,17 @@ public class social_tab extends Composite
 		
 		//friends recent activities labels
 		
+		friends_activities_strings = new ArrayList<String>();
+		
 		try {
-			friends_activities_strings = log_in_window.user.get_friends_recent_string_activities();
+			friends_activities_strings = log_in_window.user.get_friends_recent_string_activities(); //////matan///// it returns null
+			if (friends_activities_strings ==null)  // fix meanwhile 
+			{
+
+				friends_activities_strings = new ArrayList<String>();
+			}
 		} catch (SQLException e1) {
+	
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} //to be used when function exists

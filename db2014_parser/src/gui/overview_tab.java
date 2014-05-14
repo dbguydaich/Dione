@@ -1,5 +1,6 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,17 +110,23 @@ public class overview_tab extends Composite
 		
 		//taste_tags
 		
-		//user_tags_string = get_user_popular_tags(); //to be used when function exists
+		try {
+			user_tags_string =log_in_window.user.get_user_popular_tags() ;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			user_tags_string = new ArrayList<String>();
+			e1.printStackTrace();
+		} //to be used when function exists
 		
-		//just for check
-		user_tags_string = new ArrayList<String>();
-		user_tags_string.add("tag1");
-		user_tags_string.add("tag2");
-		user_tags_string.add("tag3");
-		user_tags_string.add("tag4");
-		user_tags_string.add("tag5");
-		user_tags_string.add("tag6");
-		user_tags_string.add("tag7");
+//		//just for check
+//		user_tags_string = new ArrayList<String>();
+//		user_tags_string.add("tag1");
+//		user_tags_string.add("tag2");
+//		user_tags_string.add("tag3");
+//		user_tags_string.add("tag4");
+//		user_tags_string.add("tag5");
+//		user_tags_string.add("tag6");
+//		user_tags_string.add("tag7");
 		//
 		
 		final Font font_user_tags_label = new Font(display, "Ariel", 11, java.awt.Font.PLAIN);
@@ -265,17 +272,24 @@ public class overview_tab extends Composite
 		
 		//user recent activities labels
 		
-		//user_activities_strings = get_user_recent_activities(); //to be used when function exists
+		try {
+			user_activities_strings = log_in_window.user.get_user_recent_string_activities(log_in_window.user.get_current_user_id(), 6);
+			
+		} catch (SQLException e1) {
+			user_activities_strings = new ArrayList<String>();
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
 		
 		//just for check
-		user_activities_strings = new ArrayList<String>();
-		user_activities_strings.add("recent activity 1");
-		user_activities_strings.add("recent activity 2");
-		user_activities_strings.add("recent activity 3");
-		user_activities_strings.add("recent activity 4");
-		user_activities_strings.add("recent activity 5");
-		user_activities_strings.add("recent activity 6");
-		//
+//		user_activities_strings = new ArrayList<String>();
+//		user_activities_strings.add("recent activity 1");
+//		user_activities_strings.add("recent activity 2");
+//		user_activities_strings.add("recent activity 3");
+//		user_activities_strings.add("recent activity 4");
+//		user_activities_strings.add("recent activity 5");
+//		user_activities_strings.add("recent activity 6");
+//		//
 		
 		final Font font_user_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		i = 0;
@@ -329,17 +343,23 @@ public class overview_tab extends Composite
 		
 		//friends recent activities labels
 		
-		//friends_activities_strings = get_friends_recent_activities(); //to be used when function exists
+		try {
+			friends_activities_strings =log_in_window.user.get_friends_recent_string_activities();
+		} catch (SQLException e1) {
+			friends_activities_strings = new ArrayList<String>();
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		//just for check
-		friends_activities_strings = new ArrayList<String>();
-		friends_activities_strings.add("friend recent activity 1");
-		friends_activities_strings.add("friend recent activity 2");
-		friends_activities_strings.add("friend recent activity 3");
-		friends_activities_strings.add("friend recent activity 4");
-		friends_activities_strings.add("friend recent activity 5");
-		friends_activities_strings.add("friend recent activity 6");
-		//
+//		friends_activities_strings = new ArrayList<String>();
+//		friends_activities_strings.add("friend recent activity 1");
+//		friends_activities_strings.add("friend recent activity 2");
+//		friends_activities_strings.add("friend recent activity 3");
+//		friends_activities_strings.add("friend recent activity 4");
+//		friends_activities_strings.add("friend recent activity 5");
+//		friends_activities_strings.add("friend recent activity 6");
+//		//
 		
 		final Font font_friends_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		i = 0;

@@ -1,5 +1,6 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import bl.movie_logics;
 import bl.verifier;
 import config.config;
 //import db.db_queries_movies;
@@ -253,14 +255,20 @@ public class search_movie_tab extends Composite
 		});
 		
 		
-		
+		movie_logics movie = new movie_logics();
 		//genres check-boxes
 
-		//genres = get_genres();  //to be used when function exists
+		try {
+			genres = movie.get_genres();
+		} catch (SQLException e1) {
+			genres = new ArrayList<String>();	
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		//just for check
 		genres_checkboxes = new ArrayList<Button>();
-		genres = new ArrayList<String>();	
+	//	genres = new ArrayList<String>();	
 		for(int i = 1; i < 20; i ++)
 		{
 			genres.add("Genre" + i + " ");
@@ -297,12 +305,7 @@ public class search_movie_tab extends Composite
 		search_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-//				if(!verifier.verifyname(search_text.getText())){ 
-//					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					alertBox.setText("Illegal Username");
-//					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
-//					alertBox.open();
-//				}
+
 				String title = title_text.getText();
 				String director =  director_text.getText();
 				
@@ -318,20 +321,57 @@ public class search_movie_tab extends Composite
 						
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
 				get_text_button (genres_checkboxes, genres_numbers );
-//				else if(db_queries.does_movie_exists(title,director,actor_list,tags_list,
-//							rating_radios_text,genres_numbers)){ //to be implemented next on
-//	
-//		
+				
+				movie_logics movie = new movie_logics();
+				
+			//	 try {
+			//		if(movie.does_movie_exists(title,director,actor_list,tags_list,
+				//				rating_radios_text,genres_numbers)){ //to be implemented next on
+					
+
+
+	
+					//List<String> movie_names = movie.get_relevant_movies_names(title,director,actor_list,tags_list,	rating_radios_text,genres_numbers) 
+				//			
+//							
+//							for(int i = 0; i < 100; i ++)
+//							{
+//								movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
+//							}
+//
+//							
+//							movie_list.addSelectionListener(new SelectionAdapter() {
+//								public void widgetSelected(SelectionEvent event) {
+//							        int selectedItem = movie_list.getSelectionIndex();
+//							       
+//							        /* 
+//							         * handle selection of movie number selectedItem
+//							         */
+//							        
+//							      }
+//							});
+//				 
+//					 
+//					 
+//					if()
+//					 {
 //
 //
-//					
-//				}
-//				else //no movie found
-//				{
-//					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//					messageBox.setText("No Movie Found");
-//					messageBox.setMessage("No movie Found. Please try again.");
-//					messageBox.open();
+//						
+//					}
+//					else //no movie found
+//					{
+//						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+//						messageBox.setText("No Movie Found");
+//						messageBox.setMessage("No movie Found. Please try again.");
+//						messageBox.open();
+//					}
+//				} catch (NumberFormatException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
 //				}
 			}
 
@@ -379,22 +419,27 @@ public class search_movie_tab extends Composite
 		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
 		movie_list.setLayoutData(gui_utils.grid_data_factory(390, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
 		
-		for(int i = 0; i < 100; i ++)
-		{
-			movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
-		}
-
 		
-		movie_list.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-		        int selectedItem = movie_list.getSelectionIndex();
-		       
-		        /* 
-		         * handle selection of movie number selectedItem
-		         */
-		        
-		      }
-		});
+		//// TO BE USED WHEN IMPLEMENTED /////	
+//		List<String> movie_names = get_relevant_movies_names(title,director,actor_list,tags_list,	rating_radios_text,genres_numbers) 
+//		
+//		
+//		for(int i = 0; i < 100; i ++)
+//		{
+//			movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
+//		}
+//
+//		
+//		movie_list.addSelectionListener(new SelectionAdapter() {
+//			public void widgetSelected(SelectionEvent event) {
+//		        int selectedItem = movie_list.getSelectionIndex();
+//		       
+//		        /* 
+//		         * handle selection of movie number selectedItem
+//		         */
+//		        
+//		      }
+//		});
 		
 		//movie_list.setVisible(false);
 		

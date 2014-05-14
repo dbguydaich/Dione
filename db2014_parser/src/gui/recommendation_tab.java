@@ -1,5 +1,6 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,15 +107,21 @@ public class recommendation_tab extends Composite
 		
 		//based on what we have learned about you LINKS
 		
-		//movies_my_taste = get_recommended_movies_my_taste(); //to be used when function exists
+		try {
+			movies_my_taste =log_in_window.user.get_user_most_recommended_movies(log_in_window.user.get_current_user_id()) ;
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			movies_my_taste = new ArrayList<String>();
+			e1.printStackTrace();
+		}
 		
 		//just for check
-		movies_my_taste = new ArrayList<String>();
-		movies_my_taste.add("reco by my taste1");
-		movies_my_taste.add("reco by my taste2");
-		movies_my_taste.add("reco by my taste3");
-		movies_my_taste.add("reco by my taste4");
-		movies_my_taste.add("reco by my taste5");
+//		movies_my_taste = new ArrayList<String>();
+//		movies_my_taste.add("reco by my taste1");
+//		movies_my_taste.add("reco by my taste2");
+//		movies_my_taste.add("reco by my taste3");
+//		movies_my_taste.add("reco by my taste4");
+//		movies_my_taste.add("reco by my taste5");
 		//
 		
 		int i = 0;

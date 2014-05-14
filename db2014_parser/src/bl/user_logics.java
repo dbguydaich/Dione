@@ -143,7 +143,7 @@ public class user_logics
 			activities = activities.subList(0, limit);
 		}
 		
-		return (null);
+		return activities;////////////////////matan/////////
 	}
 	
 	/**
