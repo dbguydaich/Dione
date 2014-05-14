@@ -12,3 +12,6 @@ this funciton return NULL. why? in a case no activity- please return an empty li
 
 
 i think we better change functions in movie_logics to be static. i see no point of creating an instance in order to use the functions..
+
+
+shachar avital - wee need to work together on search movie tab - i ened your help regarding initazlizinght eresults in the scrolling area. all ground moethods for the action are completed.
