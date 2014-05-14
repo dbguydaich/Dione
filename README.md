@@ -15,3 +15,11 @@ i think we better change functions in movie_logics to be static. i see no point 
 
 
 shachar avital - wee need to work together on search movie tab - i ened your help regarding initazlizinght eresults in the scrolling area. all ground moethods for the action are completed.
+
+
+functions we need: (i coudn't find them in user_logics)
+	public List<String> get_user_most_recommended_movies_by_his_friends_tastes(int user_id) 
+		public List<String> get_user_most_recommended_movies_by_other_users_with_same_test(int user_id) 
+		
+		
+		feel free to change the names
