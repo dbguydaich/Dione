@@ -10,10 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 
-
-
-import com.mysql.jdbc.StringUtils;
-
 /**
  * The communication with the db is being made
  * by this class methods. All the operation against the DB:
@@ -162,7 +158,7 @@ public abstract class db_operations
 		
 		// Does value count match the number of "?"
 		if (values != null)
-			if (StringUtils.indexOfIgnoreCase(whereClause, "?") == values.length)
+			if (countChar(whereClause, '?') != values.length)
 				return (-1);
 		
 		// Set the connection
@@ -219,7 +215,7 @@ public abstract class db_operations
 		
 		// Does value count match the number of "?"
 		if (values != null)
-			if (StringUtils.indexOfIgnoreCase(whereClause, "?") == values.length)
+			if (countChar(whereClause, '?') != values.length)
 				throw (new SQLException("wrong number of values entered"));
 		
 		// Set the connection
@@ -320,7 +316,6 @@ public abstract class db_operations
 			return (-1);
 		}
 	}
-
 	
 	/** get a connection 
 	 * @throws SQLException */
@@ -343,4 +338,20 @@ public abstract class db_operations
 		return (conn.createStatement());
 	}
 	
+// Internal usage
+	private static int countChar(String str, char c)
+	{
+		int count = 0;
+		
+		for (int i = 0 ; i < str.length() ; i ++)
+		{
+			if (str.charAt(i) == c)
+				++count;
+		}
+		
+		return (count);
+	}
+	
 }
+
+

@@ -136,12 +136,12 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws NumberFormatException
 	 * @throws SQLException
 	 */
-	public static boolean movie_exists(String title, String director, List<String> actor_list, 
-			List<String> tags_list, List<Boolean> rating_radios_text, List<Boolean> genres) 
+	public static boolean movie_exists(String title, String director, Integer year, List<String> actor_list, 
+			List<Integer> tags_list, boolean[] rating_radios_text, boolean[] genres) 
 					throws NumberFormatException, SQLException 
 	{
 		// Are there more than 0 movies that fits
-		return (get_relevant_movies(title, director, actor_list, tags_list, rating_radios_text, genres).size() != 0);
+		return (false);//get_relevant_movies(title, director, actor_list, tags_list, rating_radios_text, genres).size() != 0);
 	}
 	
 	/**
@@ -310,9 +310,9 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws NumberFormatException
 	 * @throws SQLException
 	 */
-	public static List<light_entity_movie> get_relevant_movies(String title, String director, List<String> actor_list, 
-			List<String> tags_list, List<Boolean> rating_radios_text, List<Boolean> genres) 
-					throws NumberFormatException, SQLException 
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, List<String> actor_list, 
+			List<Integer> tags_list, boolean[] rating_radios_text, boolean[] genres) 
+					throws SQLException 
 	{
 		String select = "idMovie, movieName, year, director, plot";
 		String from	 = "movie, director";
@@ -379,11 +379,11 @@ public abstract class db_queries_movies extends db_operations
 			{
 				int id = result.getInt("idMovie");
 				String name = result.getString("movieName");
-				String year = result.getString("year");
+				String movie_year = result.getString("year");
 				String movie_director = result.getString("personName");
 				String plot = result.getString("plot");
 				
-				light_entity_movie movie = new light_entity_movie(id, name, year, movie_director, plot);
+				light_entity_movie movie = new light_entity_movie(id, name, movie_year, movie_director, plot);
 				
 				returnedList.add(movie);
 			}

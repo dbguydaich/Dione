@@ -230,7 +230,6 @@ public abstract class db_queries_user extends db_operations
 		}
 		
 		return (returnedList);
-
 	}
 	
 // ACTIVITIES	
