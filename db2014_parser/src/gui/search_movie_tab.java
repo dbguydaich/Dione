@@ -255,11 +255,10 @@ public class search_movie_tab extends Composite
 		});
 		
 		
-		movie_logics movie = new movie_logics();
 		//genres check-boxes
 
 		try {
-			genres = movie.get_genres();
+			genres = movie_logics.get_genres();
 		} catch (SQLException e1) {
 			genres = new ArrayList<String>();	
 			// TODO Auto-generated catch block
@@ -321,8 +320,6 @@ public class search_movie_tab extends Composite
 						
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
 				get_text_button (genres_checkboxes, genres_numbers );
-				
-				movie_logics movie = new movie_logics();
 				
 			//	 try {
 			//		if(movie.does_movie_exists(title,director,actor_list,tags_list,

@@ -140,10 +140,17 @@ public class user_logics
 			
 			// Sort and trim the list
 			Collections.sort(activities);
-			activities = activities.subList(0, limit);
+			
+			// Trim and exit if needed
+			if (activities.size() > limit)
+			{
+				activities = activities.subList(0, limit);
+				break;
+			}
 		}
 		
-		return activities;////////////////////matan/////////
+		// Return the list
+		return (activities);
 	}
 	
 	/**
@@ -185,6 +192,7 @@ public class user_logics
 	
 	/** get the recent activity of the current user
 	 * @return		- list of at most 'limit' activities
+	 * 					NULL there is not even ine activity(!!!)
 	 * @throws SQLException 
 	 */
 	public abstract_activity get_user_recent_social_activity() 
@@ -233,13 +241,46 @@ public class user_logics
 		// Sorting by date, using compateTo()
 		Collections.sort(returnedList);
 		
-		// Trim the list to fit the limit
-		returnedList = returnedList.subList(0, limit);
+		// Trim the list to fit the limit (if needed)
+		if (returnedList.size() > limit)
+		{
+			returnedList = returnedList.subList(0, limit);
+		}
 		
 		return (returnedList);
 	}
 
+	
 // MISC
+	
+	/**
+	 * get the user_id's random friends most recomended movies
+	 * 		this according to the tags he like from the user_preference
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<String> get_user_recommended_movies_by_friends(int user_id, int limit) 
+			throws SQLException 
+	{
+		List<Integer> friends = get_user_friends_ids(user_id);
+		List<String> movies = new ArrayList<String>();
+		
+		for (Integer friend : friends)
+		{
+			List<String> friends_movies = get_user_recommended_movie_names(friend);
+			
+			movies.addAll(friends_movies);
+			
+			// Do we have enough recomended
+			if (movies.size() > limit)
+			{
+				movies = movies.subList(0, limit);
+				break;
+			}
+		}
+		
+		return (movies);
+	}
 	
 	/**
 	 * get the current user's most recomended movies
@@ -247,11 +288,30 @@ public class user_logics
 	 * @return
 	 * @throws SQLException 
 	 */
-	public List<String> get_user_most_recommended_movies(int user_id) 
+	public List<String> get_user_recommended_movie_names(int user_id) 
 			throws SQLException
 	{
-		// Using 10 as default limit value
-		return (db_queries_user.get_prefered_tags(user_id, 10));
+		List<light_entity_movie> movies = db_queries_user.get_movies_prefered_by_user(user_id, 50);
+		List<String> names = new ArrayList<String>();
+		
+		for(light_entity_movie movie : movies)
+		{
+			names.add(movie.get_movie_name());
+		}	
+		
+		return (names);
+	}
+	
+	/**
+	 * get the current user's most recomended movies
+	 * 		this according to the tags he like from the user_preference
+	 * @return
+	 * @throws SQLException 
+	 */
+	public List<light_entity_movie> get_user_recommended_movies(int user_id) 
+			throws SQLException
+	{
+		return (db_queries_user.get_movies_prefered_by_user(user_id, 50));
 	}
 	
 	/** get list of strings represanting tags
@@ -327,7 +387,7 @@ public class user_logics
 	private List<String> list_activity_to_list_string(List<abstract_activity> activity_list)
 	{
 		if (activity_list == null || activity_list.size() == 0)
-			return (null);
+			return (new ArrayList<String>());
 		
 		// Init the return list
 		List<String> retList = new ArrayList<String>();

@@ -40,9 +40,6 @@ public class gui_utils
 				 display.sleep();
 			 }
 		}
-		
-		
-		
 	}
 	
 	

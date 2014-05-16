@@ -88,6 +88,19 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 		
+	public static String get_name_of_user(Integer user_id) 
+			throws SQLException
+	{
+		String whereClause = "idUsers = ?";
+	
+		ResultSet results = select("userName" , "users" , whereClause, user_id);
+	
+		if (results.next())
+			return (results.getString(1));
+		else
+			return (null);
+	}
+	
 // GETTERS
 
 	public static List<String> get_prefered_tags(int user_id, int limit) 
@@ -95,21 +108,22 @@ public abstract class db_queries_user extends db_operations
 	{
 		// where string includes "order by" field to get the prefered tags
 		String where = 	"user_prefence.idTag = tag.idTag AND " +
-						"userId = ? ORDER BY tag_user_rate DESC limit " + limit;
+						"idUser = ? ORDER BY tag_user_rate DESC limit " + limit;
 		ResultSet result = select("tagName", "user_prefence, tag", where, user_id);
-		
-		// is table empty
-		if (result == null)
-			return (null);
 		
 		// Enumerate all movies
 		List<String> returnedList = new ArrayList<String>();
-		while (result.next())
+		
+		// is table empty
+		if (result != null)
 		{
-			String name = result.getString("tagName");
-			
-			returnedList.add(name);
-		} 
+			while (result.next())
+			{
+				String name = result.getString("tagName");
+				
+				returnedList.add(name);
+			}
+		}
 		
 		return (returnedList);
 	}
@@ -149,44 +163,77 @@ public abstract class db_queries_user extends db_operations
 						"(friend_relation.friend1 = ? OR friend_relation.friend1 = ?))";
 		ResultSet result = select("idUsers, userName", "users, friend_relation", where, current_user_id, current_user_id);
 		
-		// is table empty
-		if (result == null)
-			return (null);
-		
 		// Enumerate all movies
 		List<entity_user> returnedList = new ArrayList<entity_user>();
 		String current_user_name = get_name_of_user(current_user_id);
 		
-		while (result.next())
+		// is table empty
+		if (result != null)
 		{
-			int id = result.getInt(1);
-			String name = result.getString(2);
-			
-			// Create a user entity
-			entity_user curr = new entity_user(id, name);
-			
-			if (name != current_user_name)
+			while (result.next())
 			{
-				if (returnedList.indexOf(curr) == -1)
-					returnedList.add(curr);
-			}
-		} 
+				int id = result.getInt(1);
+				String name = result.getString(2);
+				
+				// Create a user entity
+				entity_user curr = new entity_user(id, name);
+				
+				if (name.compareTo(current_user_name) != 0)
+				{
+					if (returnedList.indexOf(curr) == -1)
+						returnedList.add(curr);
+				}
+			} 
+		}
 		
 		return (returnedList);
 	}
 	
-	public static String get_name_of_user(Integer user_id) 
-			throws SQLException
+	/** get a list of movies that you think a user would love
+	 * @param id_user	- the user you want to get a list of
+	 * @param limit		- maximum length of the movie list
+	 * @return			- list of movie IDs
+	 * @throws SQLException 
+	 */
+	public static List<light_entity_movie> get_movies_prefered_by_user(int id_user, int limit) throws SQLException
 	{
-		String whereClause = "idUsers = ?";
-	
-		ResultSet results = select("userName" , "users" , whereClause, user_id);
-	
-		if (results.next())
-			return (results.getString(1));
-		else
-			return (null);
+		String where = "user_prefence.idTag = movie_tag.idTag AND " +
+						" movie_tag.idMovie = movie.idMovie AND " +
+						" movie.idDirector = person.idPerson AND " +
+						
+						" (idUser = ?)" +
+						" GROUP BY idMovie " +
+						" ORDER BY like_score DESC " +
+						" LIMIT " + limit;
+				
+		ResultSet result = select("movie.idMovie, movieName, year, personName, plot, SUM(tag_user_rate) as like_score", 
+									"user_prefence, movie_tag, movie, person", where, id_user);
+		
+		// Enumerate all movies
+		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();			
+		
+		// is table empty
+		if (result != null)
+		{
+			while (result.next())
+			{
+				int id = result.getInt("idMovie");
+				String name = result.getString("movieName");
+				String year = result.getString("year");
+				String director = result.getString("personName");
+				String plot = result.getString("plot");
+				
+				light_entity_movie movie = new light_entity_movie(id, name, year, director, plot);
+				
+				returnedList.add(movie);
+			}
+		}
+		
+		return (returnedList);
+
 	}
+	
+// ACTIVITIES	
 	
 	public static List<rating_activity> get_user_recent_rank_activities(int user_id, int limit) 
 			throws SQLException 
@@ -195,17 +242,13 @@ public abstract class db_queries_user extends db_operations
 		
 		ResultSet results = select("idMovie, rank, rankDate" , "user_rank" , whereClause, user_id);
 	
-		if (!results.next())
-		{
-			return (null);
-		}
-		else
+		// Create a list of the recent activities
+					List<rating_activity> retList = new ArrayList<rating_activity>();
+		
+		if (results.next())
 		{
 			// Get the user's name
 			String user_name = get_name_of_user(user_id);
-			
-			// Create a list of the recent activities
-			List<rating_activity> retList = new ArrayList<rating_activity>();
 			
 			do
 			{
@@ -216,9 +259,10 @@ public abstract class db_queries_user extends db_operations
 												results.getDate("rankDate")));
 				
 			} while(results.next());
-			
-			return (retList);
 		}
+		
+		// May be an empty list
+		return (retList);
 	}
 	
 	/** get the latest friendships made
@@ -228,23 +272,19 @@ public abstract class db_queries_user extends db_operations
 	public static List<friendship_activity> get_user_recent_friendship_activities(int user_id, int limit) 
 			throws SQLException 
 	{
-		String whereClause = 	"((idUser <> ?) AND" + 
-								"(friend1 = idUser OR friend2 = idUser) AND  " +
+		String whereClause = 	"((idUsers <> ?) AND" + 
+								"(friend1 = idUsers OR friend2 = idUsers) AND  " +
 								"(friend1 = ? OR friend2 = ?)) ORDER BY friendshipDate LIMIT "+ limit;
 		
-		ResultSet results = select("userName, friendshipDate" , "users, friend_relation" , whereClause, user_id, user_id);
+		ResultSet results = select("userName, friendshipDate" , "users, friend_relation" , whereClause, user_id, user_id, user_id);
 	
-		if (!results.next())
-		{
-			return (null);
-		}
-		else
+		// Create a list of the recent activities
+		List<friendship_activity> retList = new ArrayList<friendship_activity>();
+		
+		if (results.next())
 		{
 			// Get the user's name
 			String user_name = get_name_of_user(user_id);					
-					
-			// Create a list of the recent activities
-			List<friendship_activity> retList = new ArrayList<friendship_activity>();
 			
 			do
 			{
@@ -254,9 +294,9 @@ public abstract class db_queries_user extends db_operations
 													results.getDate("friendshipDate")));
 				
 			} while(results.next());
-			
-			return (retList);
 		}
+		
+		return (retList);
 	}
 
 	/** get the latest tags made by a user
@@ -266,36 +306,34 @@ public abstract class db_queries_user extends db_operations
 	public static List<tag_activity> get_user_recent_tag_activities(int user_id, int limit) 
 			throws SQLException 
 	{
-		String whereClause = 	"((tag.idTag = user_tag_movie.idTag) AND (movie.idMovie = user_tag_movie.idMovie) AND"+
-								"(user_id = ?)) ORDER BY rateDate LIMIT "+ limit;
+		String whereClause = 	"((tag.idTag = user_tag_movie.idTag) AND " + 
+								"(movie.idMovie = user_tag_movie.idMovie) AND "+
+								"(idUser = ?)) ORDER BY reteDate LIMIT "+ limit;
 		
-		ResultSet results = select("userName, friendshipDate" , "tag, movie, user_tag_movie" , whereClause, user_id);
+		ResultSet results = select("rate, movieName, tagName, reteDate" , "user_tag_movie, tag, movie" , whereClause, user_id);
 	
-		if (!results.next())
-		{
-			return (null);
-		}
-		else
+		// Create a list of the recent activities
+		List<tag_activity> retList = new ArrayList<tag_activity>();
+					
+		if (results.next())
 		{
 			// Get the user's name
 			String user_name = get_name_of_user(user_id);
 						
-			// Create a list of the recent activities
-			List<tag_activity> retList = new ArrayList<tag_activity>();
-			
 			do
 			{
 				// create and add the activity
 				retList.add(new tag_activity(user_name, 
-											 results.getInt("rank"),
+											 results.getInt("rate"),
 											 results.getString("movieName"), 
 											 results.getString("tagName"), 
-											 results.getDate("rateDate")));
+											 results.getDate("reteDate")));
 				
 			} while(results.next());
-			
-			return (retList);
 		}
+		
+		// May be an empty list
+		return (retList);
 	}
 	
 // ID GETTERS

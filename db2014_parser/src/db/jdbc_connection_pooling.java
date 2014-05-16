@@ -5,31 +5,45 @@ import java.sql.*;
 
 import config.config;
 
-public class jdbc_connection_pooling implements Runnable 
+public class jdbc_connection_pooling
 {
+	// The singletone connection
 	private static jdbc_connection_pooling instance = null;
 	
-	int initialConnections;
-	Vector<Connection> connectionsAvailable = new Vector<Connection>();
-	Vector<Connection> connectionsUsed = new Vector<Connection>();
+	private int initialConnections;
+	private Vector<Connection> connectionsAvailable = new Vector<Connection>();
+	private Vector<Connection> connectionsUsed = new Vector<Connection>();
 
-	String connectionUrl ;
-	String userName;
-	String userPassword ;
+	private String connectionUrl;
+	private String userName;
+	private String userPassword ;
 
 
-	protected jdbc_connection_pooling() throws SQLException {
-		try {                
+	/**
+	 * A defauld constructor for connection pool, 
+	 * Is private for usage as singeltone 
+	 * @throws SQLException
+	 */
+	private jdbc_connection_pooling() 
+			throws SQLException 
+	{
+		try 
+		{
+			// Import DB configuration
 			config settings = new config();
-			String hostAdd = settings.get_host_address();
+			String hostAddress = settings.get_host_address();
 			String port = settings.get_port();
-			this.connectionUrl = "jdbc:mysql://"+ hostAdd+ ":" + port+ "/"+ settings.get_db_name();
+			
+			// Init the attributes
+			this.connectionUrl = "jdbc:mysql://"+ hostAddress + ":" + port + "/"+ settings.get_db_name();
 			this.userName = settings.get_user_name();
 			this.userPassword = settings.get_password();
 			initialConnections = settings.get_number_connection();
 
+			// ask the driver for a connection
 			Class.forName("com.mysql.jdbc.Driver");
-			for (int count = 0; count < initialConnections; count++) {
+			for (int count = 0 ; count < initialConnections ; count++) 
+			{
 				connectionsAvailable.addElement(getConnection());
 			}
 		} catch (ClassNotFoundException e) 
@@ -38,86 +52,84 @@ public class jdbc_connection_pooling implements Runnable
 		}
 	}
 
+	/**
+	 * a singltone for a pooling connection
+	 * @throws SQLException
+	 */
 	public static jdbc_connection_pooling get_conn() 
 			throws SQLException
 	{
 		if (instance == null)
 		{
-			try 
-			{
-				instance = new jdbc_connection_pooling();
-			} 
-			catch (SQLException e) 
-			{
-				System.out.println("Could not connect to db, check configuration");
-				
-				throw (e);
-			}
+			instance = new jdbc_connection_pooling();
 		}
 		
 		return (instance);
 	}
 	
-	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(connectionUrl, userName,
-				userPassword);
-	}
-
-	public synchronized void close(Connection conn){
-
-		Connection connToRemove = null;
-		int indexToRemove;
+	/**
+	 * Move the conn from the used to the avilable list
+	 * @param conn
+	 */
+	public synchronized void close(Connection conn)
+	{
+		// Is it currently been used
 		if(!connectionsUsed.contains(conn)) 
 			return;
-
-		indexToRemove = connectionsUsed.indexOf(conn);
+		
+		// Remove the connection from the used connection list
+		Connection connToRemove = null;
+		int indexToRemove = connectionsUsed.indexOf(conn);
 		connToRemove = (Connection) connectionsUsed.remove(indexToRemove);
+		
+		// Add it to the avilable list
 		connectionsAvailable.add(connToRemove);
 	}
 
-	public synchronized Connection connectionCheck() throws SQLException {
+	/**
+	 * A bad nameing convention, this is actually the func that returns a Connection
+	 * @return Connection to be used with the DB
+	 * @throws SQLException
+	 */
+	public synchronized Connection connectionCheck() 
+			throws SQLException 
+	{
 		Connection newConnection = null;
-		if (connectionsAvailable.size() == 0) {
-			// creating a new Connection
+		
+		// Is there an avilable connection
+		if (connectionsAvailable.size() == 0) 
+		{
+			// Creating and adding a new Connection
 			newConnection = getConnection();
-			// adding Connection to used list
 			connectionsUsed.addElement(newConnection);
-		} else {
+		} 
+		else 
+		{
+			// Move the last connection to the used list and return it
 			newConnection = (Connection) connectionsAvailable.lastElement();
-
 			connectionsAvailable.removeElement(newConnection);
-
 			connectionsUsed.addElement(newConnection);
 		}
-		return newConnection;
+		
+		return (newConnection);
 	}
 
-	public int availableCount() {
+	/**
+	 * Return the number of currently avilable connections
+	 */
+	public int availableCount() 
+	{
 		return connectionsAvailable.size();
 	}
 	
-	public void stop(){
-		return;
+	/**
+	 * Asks the driver for a connection
+	 * @throws SQLException
+	 */
+	private Connection getConnection() 
+			throws SQLException 
+	{
+		return DriverManager.getConnection(connectionUrl, userName, userPassword);
 	}
 
-	public void run() {
-		try {
-			while (true) {
-				synchronized (this) {
-					while ((connectionsAvailable.size() > 0) &&(connectionsAvailable.size() + connectionsUsed.size() > initialConnections)) {
-						Connection connection = (Connection) connectionsAvailable
-								.lastElement();
-						connectionsAvailable.removeElement(connection);
-
-						connection.close();
-					}
-
-				}
-			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

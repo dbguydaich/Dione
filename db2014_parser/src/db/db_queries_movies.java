@@ -310,12 +310,13 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws NumberFormatException
 	 * @throws SQLException
 	 */
-	public static List<Integer> get_relevant_movies(String title, String director, List<String> actor_list, 
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, List<String> actor_list, 
 			List<String> tags_list, List<Boolean> rating_radios_text, List<Boolean> genres) 
 					throws NumberFormatException, SQLException 
 	{
-		String from	 = "movie";
-		String where = "1=1";
+		String select = "idMovie, movieName, year, director, plot";
+		String from	 = "movie, director";
+		String where = "director.idPerson = movie.director ";
 		List<Object> values = new ArrayList<Object>();
 		
 		// Title filter
@@ -335,45 +336,58 @@ public abstract class db_queries_movies extends db_operations
 		// Actor filter
 		if (actor_list != null && actor_list.size() > 0)
 		{
-			String actorsCond = "idMovie IN (SELECT idMovie FROM actor, actor_movie " +
-								 "WHERE actor.idActor = id.person ";
+			String actorsCond = "idMovie IN (SELECT idMovie FROM movie WHERE 'a' = 'a' ";
 			
+			// For every actor add a constraint
 			for (String actor : actor_list)
 			{
-				actorsCond += "AND ";
+				actorsCond += "AND EXISTS (SELECT * FROM actor_movie WHERE " + 
+								" actor_movie.idMovie = movie.idMovie AND " +
+								" actor_movie.idActor = '?')";
+				
+				// Add it in order 
+				values.add(actor);
 			}
 			
+			// This closes the IN clause
 			actorsCond += ")";
 			
 			where += actorsCond;
 		}
 		
-		// Actor filter
+		// Tag filter
 		if (tags_list != null && tags_list.size() > 0)
 		{
-			where += "idMovie IN (SELECT idMovie FROM actor, actor_movie " +
-								 "WHERE actor.idActor = id.person)" + 
-						"";
+
 		}
 		
-		
+		// Genre filter
+		if (tags_list != null && tags_list.size() > 0)
+		{
+
+		}
 		
 		// Make the querey
-		ResultSet result = select("idMovie", from, where + "limit 300;", values);
+		ResultSet result = select(select, from, where + "limit 50;", values);
 		
-		// is table empty
-		if (result == null)
-			return (null);
-		
-		List<Integer> returnedList = new ArrayList<Integer>();
+		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
 		
 		// Add all values to the return list
-		while (result.next())
+		if (result != null)
 		{
-			Integer movie_id = result.getInt("idMovie");
-			
-			returnedList.add(movie_id);
-		} 
+			while (result.next())
+			{
+				int id = result.getInt("idMovie");
+				String name = result.getString("movieName");
+				String year = result.getString("year");
+				String movie_director = result.getString("personName");
+				String plot = result.getString("plot");
+				
+				light_entity_movie movie = new light_entity_movie(id, name, year, movie_director, plot);
+				
+				returnedList.add(movie);
+			}
+		}
 		
 		return (returnedList);
 	}
@@ -399,40 +413,6 @@ public abstract class db_queries_movies extends db_operations
 		} 
 		
 		return (returnedList);
-	}
-	
-	/** get a list of movies that you think a user would love
-	 * @param id_user	- the user you want to get a list of
-	 * @param limit		- maximum length of the movie list
-	 * @return			- list of movie IDs
-	 * @throws SQLException 
-	 */
-	public static List<Integer> get_movies_prefered_by_user(int id_user, int limit) throws SQLException
-	{
-		String where = "(user_prefence.idTag = movie_tag.idTag AND idUser = ?)" +
-						"GROUP BY idMovie " +
-						"ORDER BY like_score DESC " +
-						"LIMIT " + limit;
-				
-		ResultSet result = select("idMovie, SUM(tag_user_rate) as like_score", 
-									"user_prefence, movie_tag", where, id_user);
-		
-		// is table empty
-		if (result == null)
-			return (null);
-		
-		// Enumerate all movies
-		List<Integer> returnedList = new ArrayList<Integer>();
-		
-		while (result.next())
-		{
-			int movie_id = result.getInt("idMovie");
-			
-			returnedList.add(movie_id);
-		} 
-		
-		return (returnedList);
-
 	}
 	
 // ID GETTERS
@@ -500,6 +480,5 @@ public abstract class db_queries_movies extends db_operations
 	{
 		return (delete("actor_movie","") != -1);
 	}
-
 }
 

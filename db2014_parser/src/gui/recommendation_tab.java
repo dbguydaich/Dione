@@ -108,7 +108,7 @@ public class recommendation_tab extends Composite
 		//based on what we have learned about you LINKS
 		
 		try {
-			movies_my_taste =log_in_window.user.get_user_most_recommended_movies(log_in_window.user.get_current_user_id()) ;
+			movies_my_taste =log_in_window.user.get_user_recommended_movie_names(log_in_window.user.get_current_user_id()) ;
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			movies_my_taste = new ArrayList<String>();

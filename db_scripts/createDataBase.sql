@@ -9,7 +9,7 @@ USE `dbmysql05` ;
 -- Table `dbmysql05`.`person`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`person` (
-  `idPerson` INT(11) NOT NULL,
+  `idPerson` INT(11) NOT NULL AUTO_INCREMENT,
   `personName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idPerson`))
 ENGINE = InnoDB
@@ -19,9 +19,8 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`actor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor` (
-  `idActor` INT(11) NOT NULL,
   `idPerson` INT(11) NOT NULL,
-  PRIMARY KEY (`idActor`),
+  PRIMARY KEY (`idPerson`),
   CONSTRAINT `idPersonActor`
     FOREIGN KEY (`idPerson`)
     REFERENCES `dbmysql05`.`person` (`idPerson`)
@@ -34,9 +33,8 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`director`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`director` (
-  `idDirector` INT(11) NOT NULL,
   `idPerson` INT(11) NOT NULL,
-  PRIMARY KEY (`idDirector`),
+  PRIMARY KEY (`idPerson`),
   CONSTRAINT `idPersonDirector`
     FOREIGN KEY (`idPerson`)
     REFERENCES `dbmysql05`.`person` (`idPerson`)
@@ -49,7 +47,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`language`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`language` (
-  `idLanguage` INT(11) NOT NULL,
+  `idLanguage` INT(11) NOT NULL AUTO_INCREMENT,
   `LanguageName` TEXT NOT NULL,
   PRIMARY KEY (`idLanguage`))
 ENGINE = InnoDB
@@ -59,7 +57,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie` (
-  `idMovie` INT(11) NOT NULL,
+  `idMovie` INT(11) NOT NULL AUTO_INCREMENT,
   `idLanguage` INT(11) NULL DEFAULT NULL,
   `idDirector` INT(11) NULL DEFAULT NULL,
   `movieName` TEXT NOT NULL,
@@ -72,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie` (
   INDEX `idDirector_idx` (`idDirector` ASC),
   CONSTRAINT `idDirector`
     FOREIGN KEY (`idDirector`)
-    REFERENCES `dbmysql05`.`director` (`idDirector`)
+    REFERENCES `dbmysql05`.`director` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idLanguage`
@@ -98,7 +96,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`genre`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`genre` (
-  `idGenre` INT(11) NOT NULL,
+  `idGenre` INT(11) NOT NULL AUTO_INCREMENT,
   `genreName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idGenre`))
 ENGINE = InnoDB
@@ -108,7 +106,7 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`tag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`tag` (
-  `idTag` INT(11) NOT NULL,
+  `idTag` INT(11) NOT NULL AUTO_INCREMENT,
   `tagName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`idtag`))
 ENGINE = InnoDB
@@ -118,13 +116,14 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `dbmysql05`.`actor_movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor_movie` (
-  `idMovie` INT(11) NOT NULL,
+  `idMovie` INT(11) NOT NULL AUTO_INCREMENT,
   `idActor` INT(11) NOT NULL,
   INDEX `idMovie_idx` (`idMovie` ASC),
   INDEX `idActor_idx` (`idActor` ASC),
+  PRIMARY KEY (`idMovie`, `idActor`),
   CONSTRAINT `idActor`
     FOREIGN KEY (`idActor`)
-    REFERENCES `dbmysql05`.`actor` (`idActor`)
+    REFERENCES `dbmysql05`.`actor` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idMovie`
@@ -134,7 +133,6 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor_movie` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-
 
 -- -----------------------------------------------------
 -- Table `dbmysql05`.`friend_relation`
@@ -163,6 +161,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `dbmysql05`.`genre_movie` (
   `idMovie` INT(11) NOT NULL,
   `idGenre` INT(11) NOT NULL,
+  PRIMARY KEY (`idMovie`, `idGenre`),
   INDEX `idGenre_idx` (`idGenre` ASC),
   INDEX `idMovie_idx` (`idMovie` ASC),
   CONSTRAINT `idGenre`
