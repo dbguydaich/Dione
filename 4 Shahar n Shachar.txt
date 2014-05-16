@@ -1,0 +1,4 @@
+after removing a friend, reload the friend list
+
+adding a friend crashes, I don't thing it's my fault
+

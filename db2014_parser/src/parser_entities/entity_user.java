@@ -26,4 +26,3 @@ public class entity_user
 		return entity_user_id;
 	}
 }
-
