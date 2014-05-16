@@ -11,8 +11,9 @@ public class gui_utils
 	
 	static int RESULTS_OPEN = 0;
 	static all_tabs_window tabs_win = null;
-	
-	
+	static log_in_window login_win = null;
+	static preferences_window pref_win = null;
+	static Display display;
 	
 	
 	
@@ -21,16 +22,18 @@ public class gui_utils
 	public static void main(String args[])
 	{
 
-		Display display = Display.getDefault();
+		display = new Display();
 
 		
-		log_in_window log_in_win = new log_in_window(display);
-	//	movie_details_window movie_win = new movie_details_window(display);
+		login_win = new log_in_window(display);
+		//movie_details_window movie_win = new movie_details_window(display);
 		//tabs_win = new all_tabs_window(display);
+		//pref_win = new preferences_window(display);
 		
-		log_in_win.open();
-	//	movie_win.open();
-	//	tabs_win.open();
+		login_win.open();
+		//movie_win.open();
+		//tabs_win.open();
+		//pref_win.open();
 		
 		
 		while (!display.isDisposed()) 

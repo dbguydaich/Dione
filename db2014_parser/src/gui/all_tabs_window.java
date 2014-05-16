@@ -29,7 +29,7 @@ public class all_tabs_window extends Shell
 	public all_tabs_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-	
+			
 		this.setSize(window_width, window_height);
 		this.setText("MovieBook");
 		
@@ -81,7 +81,10 @@ public class all_tabs_window extends Shell
 			public void widgetDisposed(DisposeEvent e) 
 			{
 				if(gui_utils.RESULTS_OPEN == 0)
+				{
 					display.dispose();
+					System.out.println("display disposed by all tabs...");
+				}
 			}		
 		});
 	}

@@ -199,7 +199,7 @@ public class overview_tab extends Composite
 		{
 			reco_movies_links.add(new Link(reco_area, SWT.BORDER ));
 			reco_movies_links.get(i).setText(str);
-			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
+			reco_movies_links.get(i).setFont(new Font(display, "Ariel", 9, java.awt.Font.PLAIN));
 			if(i == 0)
 			{
 				reco_movies_links.get(i).addDisposeListener(new DisposeListener()
@@ -291,7 +291,7 @@ public class overview_tab extends Composite
 //		user_activities_strings.add("recent activity 6");
 //		//
 		
-		final Font font_user_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_user_activities_labels = new Font(display, "Ariel", 10, java.awt.Font.PLAIN);
 		i = 0;
 		for(String str: user_activities_strings)
 		{

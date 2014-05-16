@@ -265,14 +265,8 @@ public class search_movie_tab extends Composite
 			e1.printStackTrace();
 		}
 		
-		//just for check
 		genres_checkboxes = new ArrayList<Button>();
-	//	genres = new ArrayList<String>();	
-		for(int i = 1; i < 20; i ++)
-		{
-			genres.add("Genre" + i + " ");
-		}
-		//
+	
 		
 		
 		for(int i = 0; i < genres.size(); i++)
