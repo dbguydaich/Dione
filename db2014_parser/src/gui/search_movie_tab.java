@@ -50,7 +50,9 @@ public class search_movie_tab extends Composite
 	{
 		super(parent, style);
 		
-
+		Composite results_area = new Composite(this, SWT.NONE);
+		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+		
 		List<Label> tags_labels = new ArrayList<Label>();	
 		List<Label> actors_labels = new ArrayList<Label>();
 		
@@ -295,7 +297,8 @@ public class search_movie_tab extends Composite
 		
 		
 		//Listener
-		search_button.addSelectionListener(new SelectionAdapter() {
+		search_button.addSelectionListener(new SelectionAdapter()
+		{
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
@@ -315,63 +318,65 @@ public class search_movie_tab extends Composite
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
 				get_text_button (genres_checkboxes, genres_numbers );
 				
-			//	 try {
-			//		if(movie.does_movie_exists(title,director,actor_list,tags_list,
-				//				rating_radios_text,genres_numbers)){ //to be implemented next on
+				 try {
 					
+					if(movie_logics.does_movie_exists(title,director,actor_list,tags_list,
+								rating_radios_text,genres_numbers))  //to be implemented next on
+					{
+						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,actor_list,tags_list, rating_radios_text,genres_numbers);
+					
+						for(String str: movie_names)
+						{
+							movie_list.add(str);
+						}
 
-
+							
+						/* 
+					     * handle selection of movie number selectedItem
+					     */
+					        
+						movie_list.addSelectionListener(new SelectionAdapter() {
+							public void widgetSelected(SelectionEvent event) {
+						     int selectedItem = movie_list.getSelectionIndex();
+						     try 
+						     {
+						    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
+						     } catch (SQLException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+							        
+							        
+							      }
+							});
+					movie_list.print(null);
+					//refresh list
+						
+					}
+					
+					else //no movie found
+					{
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("No Movie Found");
+						messageBox.setMessage("No movie Found. Please try again.");
+						messageBox.open();
+					}
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
 	
-					//List<String> movie_names = movie.get_relevant_movies_names(title,director,actor_list,tags_list,	rating_radios_text,genres_numbers) 
-				//			
-//							
-//							for(int i = 0; i < 100; i ++)
-//							{
-//								movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
-//							}
-//
-//							
-//							movie_list.addSelectionListener(new SelectionAdapter() {
-//								public void widgetSelected(SelectionEvent event) {
-//							        int selectedItem = movie_list.getSelectionIndex();
-//							       
-//							        /* 
-//							         * handle selection of movie number selectedItem
-//							         */
-//							        
-//							      }
-//							});
-//				 
-//					 
-//					 
-//					if()
-//					 {
-//
-//
-//						
-//					}
-//					else //no movie found
-//					{
-//						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-//						messageBox.setText("No Movie Found");
-//						messageBox.setMessage("No movie Found. Please try again.");
-//						messageBox.open();
-//					}
-//				} catch (NumberFormatException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-			}
+				 }
 
 		});
 		
 		
 		
 		//results area
-		Composite results_area = new Composite(this, SWT.NONE);
 		results_area.setLayoutData(gui_utils.form_data_factory(416, 120, 295, 190));
 		GridLayout grid_layout_results_area = new GridLayout(1, false);
 		results_area.setLayout(grid_layout_results_area);
@@ -407,7 +412,7 @@ public class search_movie_tab extends Composite
 //		results_scroller.setMinHeight(260);
 		
 		
-		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+		
 		movie_list.setLayoutData(gui_utils.grid_data_factory(390, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
 		
 		

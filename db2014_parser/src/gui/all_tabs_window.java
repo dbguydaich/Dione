@@ -83,7 +83,6 @@ public class all_tabs_window extends Shell
 				if(gui_utils.RESULTS_OPEN == 0)
 				{
 					display.dispose();
-					System.out.println("display disposed by all tabs...");
 				}
 			}		
 		});

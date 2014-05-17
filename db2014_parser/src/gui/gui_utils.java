@@ -26,7 +26,7 @@ public class gui_utils
 
 		
 		login_win = new log_in_window(display);
-		//movie_details_window movie_win = new movie_details_window(display);
+		//movie_details_window movie_win = new movie_details_window(display, 1);
 		//tabs_win = new all_tabs_window(display);
 		//pref_win = new preferences_window(display);
 		

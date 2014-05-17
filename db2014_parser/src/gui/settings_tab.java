@@ -3,6 +3,8 @@ package gui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -131,7 +133,6 @@ public class settings_tab extends Composite
 		username_text.setLayoutData(gui_utils.form_data_factory(-1, -1, 149, 165));
 		
 		//username apply button
-		//log out button
 		Button username_upply_button = new Button(this, SWT.PUSH);
 		username_upply_button.setText("Apply");
 		username_upply_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 147, 250));
@@ -161,12 +162,11 @@ public class settings_tab extends Composite
 			}		
 		});
 		
-		//username text
+		//password text
 		Text password_text = new Text(this, SWT.BORDER);
 		password_text.setLayoutData(gui_utils.form_data_factory(-1, -1, 189, 165));
 		
-		//username apply button
-		//log out button
+		//password apply button
 		Button password_upply_button = new Button(this, SWT.PUSH);
 		password_upply_button.setText("Apply");
 		password_upply_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 187, 250));
@@ -179,6 +179,8 @@ public class settings_tab extends Composite
 				font_password_upply_button.dispose();
 			}		
 		});
+		
+
 		
 		
 	}

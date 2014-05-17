@@ -64,7 +64,7 @@ public class movie_details_window extends Shell
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
 	
-	public movie_details_window(final Display display)
+	public movie_details_window(final Display display, int movie_id)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 	
