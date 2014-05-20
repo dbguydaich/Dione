@@ -262,6 +262,7 @@ public class search_movie_tab extends Composite
 		try {
 			genres = movie_logics.get_genres();
 		} catch (SQLException e1) {
+			gui_utils.raise_sql_error_window(display);
 			genres = new ArrayList<String>();	
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -313,10 +314,10 @@ public class search_movie_tab extends Composite
 				
 				
 				List<Boolean> rating_radios_text = new ArrayList<Boolean>();
-				get_text_button(rating_checkboxes, rating_radios_text);
+				gui_utils.get_text_button(rating_checkboxes, rating_radios_text);
 						
 				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
-				get_text_button (genres_checkboxes, genres_numbers );
+				gui_utils.get_text_button (genres_checkboxes, genres_numbers );
 				
 				 try {
 					
@@ -342,6 +343,7 @@ public class search_movie_tab extends Composite
 						     {
 						    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
 						     } catch (SQLException e) {
+						    		gui_utils.raise_sql_error_window(display);
 										// TODO Auto-generated catch block
 										e.printStackTrace();
 									}
@@ -362,10 +364,12 @@ public class search_movie_tab extends Composite
 						messageBox.open();
 					}
 				} catch (NumberFormatException e) {
+					gui_utils.raise_sql_error_window(display);
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
+					gui_utils.raise_sql_error_window(display);
 					e.printStackTrace();
 				}
 			
@@ -461,13 +465,7 @@ public class search_movie_tab extends Composite
 	 
 	
 	
-	 void get_text_button(List<Button> from,List<Boolean> to)
-	{
-		for (Button a: from)
-		{
-			to.add((a.getSelection()));
-		}
-	}
+
 	
 
 }

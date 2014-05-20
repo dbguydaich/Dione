@@ -1,11 +1,14 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FillLayout;
@@ -15,7 +18,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import db.db_queries_user;
+import parser_entities.entity_movie;
+import bl.movie_logics;
+import bl.user_logics;
+import bl.verifier;
 
 
 
@@ -59,12 +69,12 @@ public class preferences_window extends Shell
 			}		
 		});
 		
-		
+		final entity_movie current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
 		//movie label
 		Label movie_label = new Label(this, SWT.NONE);
 		movie_label.setAlignment(SWT.CENTER);
 		movie_label.setBackground(preferences_window_color);
-		movie_label.setText("this is a movie to be rated");
+		movie_label.setText(current_movie.get_movie_name());
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
 		final Font font_movie_label = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		movie_label.setFont(font_movie_label);
@@ -86,7 +96,7 @@ public class preferences_window extends Shell
 		
 		
 		//radios
-		List<Button> radios = new ArrayList<Button>();
+		final List<Button> radios = new ArrayList<Button>();
 		
 		for(int i = 0; i < 6; i++)
 		{
@@ -117,6 +127,34 @@ public class preferences_window extends Shell
 				font_rate_button.dispose();
 			}		
 		});
+		
+		rate_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				try {
+					List<Boolean> rating_radios = new ArrayList<Boolean>();
+					gui_utils.get_text_button(radios, rating_radios);
+					user_logics.rate_movie(movie_logics.get_movie_id(current_movie.get_movie_name(), current_movie.get_movie_director().get_person_name()), log_in_window.user.get_current_user_id(),rating_radios );
+			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
+					//shahar that's is final we have to see how we make the next movie be availble///
+				} catch (NumberFormatException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					gui_utils.raise_sql_error_window(display);
+					e.printStackTrace();
+				}
+				
+			
+		
+			
+		
+			}
+
+		});
+		
+		/////shahar we need a nutton specifying "finish rating".....
 		
 		
 		

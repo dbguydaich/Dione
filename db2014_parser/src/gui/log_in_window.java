@@ -185,7 +185,7 @@ public class log_in_window extends Shell
 							messageBox.open();
 						}
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
+						gui_utils.raise_sql_error_window(display);
 						e.printStackTrace();
 					}
 				
@@ -237,6 +237,7 @@ public class log_in_window extends Shell
 							messageBox.open();
 						}
 					} catch (SQLException e) {
+						gui_utils.raise_sql_error_window(display);
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

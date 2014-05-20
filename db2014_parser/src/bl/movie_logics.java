@@ -26,6 +26,29 @@ public abstract class movie_logics
 		return (ret);
 	}
 
+	
+	
+	//matan please implement////
+	public static entity_movie get_movie_details(int movie_id)
+	{
+		return null;
+	}
+	
+	///matan please implement////
+	public static entity_movie get_unrated_movie_by_user(int user_id)
+	{
+		return null;
+	}
+	
+	///matan please implement////
+	public static List<String> get_popular_tags(int movie_id,int limit)
+	{
+		return null;
+	}
+	
+	
+	
+	
 	public static boolean does_movie_exists(String title,String director,List<String>actor_list,List<String> tags_list, List<Boolean>	rating_radios_text,List<Boolean>genres_numbers) 
 			throws NumberFormatException, SQLException
 	{
@@ -51,6 +74,8 @@ public abstract class movie_logics
 		
 		return (result);
 	}
+	
+
 
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 
 			throws SQLException 

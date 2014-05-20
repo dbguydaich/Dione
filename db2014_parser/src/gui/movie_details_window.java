@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
+import bl.movie_logics;
+import parser_entities.entity_movie;
+import parser_entities.light_entity_movie;
 import config.config;
 
 
@@ -66,6 +69,8 @@ public class movie_details_window extends Shell
 	
 	public movie_details_window(final Display display, int movie_id)
 	{
+		
+
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 	
 		gui_utils.RESULTS_OPEN++;
@@ -98,13 +103,12 @@ public class movie_details_window extends Shell
 		this.setSize(window_width, window_height);
 		this.setText("Movie Details");
 		
-		
+		entity_movie movie =  movie_logics.get_movie_details(movie_id);
 		List<Label> movie_details_labels = new ArrayList<Label>();
 		
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);	
-		String movie_name = "Movie Name: this is a somewhat long long long movie name"; //just for check
-		//String movie name = "Movie Name: get_result_movie_name();  to be used
+		String movie_name = movie.get_movie_name();
 		headline_label.setText(movie_name);
 		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 10, 10));
 		headline_label.setAlignment(SWT.CENTER);
@@ -149,11 +153,11 @@ public class movie_details_window extends Shell
 					
 		//genres2	
 		List<String> genres;
-		genres = new ArrayList<String>(); //just for check
-		//genres = get_result_movie_genres();  to be used
-		genres.add("Comedy"); //
-		genres.add("Action"); //
-		genres.add("Best Genre Ever"); //
+		//genres = new ArrayList<String>(); //just for check
+		genres = (List<String>) movie.get_movie_genres();
+		//genres.add("Comedy"); //
+		//genres.add("Action"); //
+		//genres.add("Best Genre Ever"); //
 		
 	
 		String genres_str = "";
@@ -171,7 +175,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(2).setText("Director:");	
 			
 		//director2	
-		String director_name = "Best Director Ever"; //just for check
+		String director_name = movie.get_movie_director().get_person_name();
 		//String director_name = get_result_movie_director();  to be used
 		
 		movie_details_labels.get(3).setText(director_name);
@@ -182,7 +186,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(4).setText("Language:");	
 			
 		//language2	
-		String language = "Best Language Ever"; //just for check
+		String language = movie.get_movie_language();
 		//String language = get_result_movie_language();  to be used
 		
 		movie_details_labels.get(5).setText(language);
@@ -194,7 +198,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(6).setText("Year:");	
 			
 		//year
-		String year = "Best Year Ever"; //just for check
+		String year =movie.get_movie_year();
 		//String director_name = get_result_movie_year();  to be used
 		
 		movie_details_labels.get(7).setText(year);
@@ -206,7 +210,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(8).setText("Duration:");	
 			
 		//duration
-		String duration = "Best Duration Ever"; //just for check
+		String duration =movie.get_movie_length();
 		//String director_name = get_result_movie_duration();  to be used
 		
 		movie_details_labels.get(9).setText(duration);
@@ -217,11 +221,8 @@ public class movie_details_window extends Shell
 							
 		//stars2	
 		List<String> stars;
-		stars = new ArrayList<String>(); //just for check
-		//stars = get_result_movie_stars();  to be used
-		stars.add("Star1"); //
-		stars.add("Star2"); //
-		stars.add("Star3"); //
+		stars = gui_utils.convert_person_string(movie.get_movie_actors());
+	
 				
 			
 		String stars_str = "";
@@ -238,7 +239,7 @@ public class movie_details_window extends Shell
 		//rating1
 		movie_details_labels.get(8).setText("Rating(1-5):");	
 		//rating2
-		String rating_str = "3"; //just for check
+		String rating_str =String.valueOf(movie.get_movie_rating());
 		//String rating_str = get_result_movie_rating();  to be used	
 		movie_details_labels.get(9).setText(rating_str);
 		
@@ -254,7 +255,7 @@ public class movie_details_window extends Shell
 		Link wiki_link = new Link(left_area, SWT.NONE);
 		String wiki_str;
 		//wiki_str = get_result_movie_wiki(); to be used
-		wiki_str = "<a>Best Link Ever</a>";
+		wiki_str = movie.get_movie_wikipedia_url();
 		wiki_link.setText(wiki_str);
 		wiki_link.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
 		wiki_link.setFont(font_ariel_11);
@@ -290,15 +291,8 @@ public class movie_details_window extends Shell
 		List<List<Button>> radios_lists = new ArrayList<List<Button>>();
 		List<String> tags;
 		List<Composite> radios_areas = new ArrayList<Composite>();
-		//tags = get_result_movie_tags(); to be used
-		tags = new ArrayList<String>(); //just for check
-		tags.add("tag1");
-		tags.add("tag2");
-		tags.add("tag3");
-		tags.add("tag4");
-		tags.add("tag5");
-		tags.add("tag6");
-		tags.add("tag7");
+		tags = (List<String>) movie.get_movie_tags();
+	
 		//
 		
 		int count = 0;
@@ -382,12 +376,7 @@ public class movie_details_window extends Shell
 		
 		//plot label
 		Label plot_label = new Label(scroller_plot, SWT.WRAP);
-		plot_label.setText("this is a very long long long long long long long long long long long long long "
-				+ "long long long long long long long long long long long long long long long long long "
-				+ "long long long long long long long long long long long long long long long long long "
-				+ "long long long long long long long long long long long long long long long long long "
-				+ "long long long long long long long long long long long long long long long long long "
-				+ "long long long long long long long long long plot");
+		plot_label.setText(movie.get_movie_plot());
 		//plot_label.setText(get_result_movie_plot())   //to be used
 				
 		scroller_plot.setContent(plot_label);
@@ -408,6 +397,15 @@ public class movie_details_window extends Shell
 	
 	
 	
+
+	private void get_movie_details(int movie_id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
 
 	protected void checkSubclass()
 	{

@@ -400,5 +400,14 @@ public class user_logics
 		
 		return (retList);
 	}
+	
+	
+	
+	
+	///matan please implement/// //consider rating_radios[0] =1 - don't rate. then same as i asked you in search movie. the position of 1 is the right rating.
+	public static boolean rate_movie(int movie_id, int user_id,List<Boolean> rating_radios)
+	{
+		return true;
+	}
 
 }

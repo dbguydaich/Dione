@@ -48,6 +48,12 @@ import org.eclipse.swt.layout.GridLayout;
 
 
 
+
+
+
+
+
+
 import parser_entities.entity_person;
 import config.config;
 import db.db_queries_user;
@@ -64,7 +70,7 @@ public class social_tab extends Composite
 		super(parent, style);
 		
 		
-		List<String> user_friends;
+		List<String> user_friends = null;
 		List<String> friends_activities_strings = null;
 		List<Label> friends_activities_labels = new ArrayList<Label>();
 		List<String> user_social_activities_strings = null;
@@ -145,12 +151,17 @@ public class social_tab extends Composite
 					alertBox.open();
 				} else
 					try {
-						if(log_in_window.user.does_user_exists((friend_name_text.getText()))){ //to be implemented next on
+						System.out.println(add_friend_text.getText());
+						if(log_in_window.user.does_user_exists((add_friend_text.getText()))){ //to be implemented next on
 						
-							Integer friend_id = log_in_window.user.get_user_id(friend_name_text.getText());
+							Integer friend_id = log_in_window.user.get_user_id(add_friend_text.getText());
 							Integer current_user_id =   log_in_window.user.get_current_user_id() ;
 							log_in_window.user.add_friendship(friend_id, current_user_id);
-						
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("SUCCESS");
+							messageBox.setMessage("Friend has successfully added");
+							messageBox.open();
+			
 						
 						
 						}
@@ -166,6 +177,7 @@ public class social_tab extends Composite
 							messageBox.open();
 						}
 					} catch (SQLException e) {
+						gui_utils.raise_sql_error_window(display);
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -210,6 +222,7 @@ public class social_tab extends Composite
 		try {
 			user_friends = log_in_window.user.get_current_user_friends_names();
 		} catch (SQLException e2) {
+			gui_utils.raise_sql_error_window(display);
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}  // will be used when function exists
@@ -221,7 +234,7 @@ public class social_tab extends Composite
 //		user_friends.add("another user");
 		//
 		
-		String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);
+		final String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);
 		remove_friend_combo.setItems(user_friends_arr);
 		
 		//remove friend button
@@ -264,6 +277,7 @@ public class social_tab extends Composite
 								alertBox.setText("Success");
 								alertBox.setMessage("Friend has been removed!");
 								alertBox.open();
+								
 										
 							}
 							
@@ -278,10 +292,12 @@ public class social_tab extends Composite
 								messageBox.open();
 							}
 						} catch (SQLException e) {
+							gui_utils.raise_sql_error_window(display);
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} catch (SQLException e1) {
+						gui_utils.raise_sql_error_window(display);
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -323,6 +339,7 @@ public class social_tab extends Composite
 		try {
 			List<String> user_activities_strings = log_in_window.user.get_friends_recent_string_activities();
 		} catch (SQLException e1) {
+			gui_utils.raise_sql_error_window(display);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} //to be used when function exists
@@ -399,7 +416,7 @@ public class social_tab extends Composite
 				friends_activities_strings = new ArrayList<String>();
 			}
 		} catch (SQLException e1) {
-	
+			gui_utils.raise_sql_error_window(display);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} //to be used when function exists

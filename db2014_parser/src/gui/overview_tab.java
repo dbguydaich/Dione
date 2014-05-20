@@ -115,6 +115,7 @@ public class overview_tab extends Composite
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			user_tags_string = new ArrayList<String>();
+			gui_utils.raise_sql_error_window(display);
 			e1.printStackTrace();
 		} //to be used when function exists
 		
@@ -277,6 +278,7 @@ public class overview_tab extends Composite
 			
 		} catch (SQLException e1) {
 			user_activities_strings = new ArrayList<String>();
+			gui_utils.raise_sql_error_window(display);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
@@ -348,6 +350,7 @@ public class overview_tab extends Composite
 		} catch (SQLException e1) {
 			friends_activities_strings = new ArrayList<String>();
 			// TODO Auto-generated catch block
+			gui_utils.raise_sql_error_window(display);
 			e1.printStackTrace();
 		}
 		

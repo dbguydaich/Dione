@@ -1,9 +1,18 @@
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+
+import parser_entities.entity_person;
+import parser_entities.light_entity_movie;
 
 
 public class gui_utils
@@ -26,12 +35,12 @@ public class gui_utils
 
 		
 		login_win = new log_in_window(display);
-		//movie_details_window movie_win = new movie_details_window(display, 1);
+	//	movie_details_window movie_win = new movie_details_window(display, 1);
 		//tabs_win = new all_tabs_window(display);
 		//pref_win = new preferences_window(display);
 		
 		login_win.open();
-		//movie_win.open();
+	//	movie_win.open();
 		//tabs_win.open();
 		//pref_win.open();
 		
@@ -135,6 +144,57 @@ public class gui_utils
 		return my_form;
 	}
 	
+	
+	
+	public static void raise_sql_error_window(Display display)
+	{
+		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+		messageBox.setText("Error");
+		messageBox.setMessage("SQL SERVER ERROR. Try again.");
+		messageBox.open();
+	}
+	
+	
+	public static List<String> convert_person_string(List<entity_person> persons)
+	{
+		List<String> result = new ArrayList();
+		for (entity_person a: persons)
+		{
+			result.add(a.get_person_name());
+		}
+		return result;
+	}
+	
+	public static List<String> convert_movies_entity_to_string(List<light_entity_movie> movies)
+	{
+		List<String> result = new ArrayList<String>();
+		
+		
+		for (light_entity_movie movie: movies)
+		{
+			result.add(movie.get_movie_name());
+		}
+		return result;
+	}
+	
+	public static void get_text_button(List<Button> from,List<Boolean> to)
+	{
+		for (Button a: from)
+		{
+			to.add((a.getSelection()));
+		}
+	}
+
+
+
+
+
+
+
+	
+	
+	
+
 	
 	
 	

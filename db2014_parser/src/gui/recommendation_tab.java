@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -19,6 +20,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
+
+import parser_entities.light_entity_movie;
+import bl.movie_logics;
 
 
 
@@ -40,13 +44,13 @@ import org.eclipse.swt.widgets.Link;
 public class recommendation_tab extends Composite
 {
 	
-	public recommendation_tab(Display display, Composite parent, int style)
+	public recommendation_tab(final Display display, Composite parent, int style)
 	{
 		super(parent, style);
 		
 		
-		List<String> movies_my_taste;
-		List<String> movies_friends_taste;
+		List<String> movies_my_taste= null;
+		List<String> movies_friends_taste = null;
 		List<String> movies_similar_to_me_taste;
 		
 		List<Link> movies_my_taste_links = new ArrayList<Link>();
@@ -106,12 +110,14 @@ public class recommendation_tab extends Composite
 		
 		
 		//based on what we have learned about you LINKS
-		
+		List<light_entity_movie> movies_my_taste_entity = null;
 		try {
-			movies_my_taste =log_in_window.user.get_user_recommended_movie_names(log_in_window.user.get_current_user_id()) ;
+			movies_my_taste_entity = log_in_window.user.get_user_recommended_movies(log_in_window.user.get_current_user_id());
+			movies_my_taste = gui_utils.convert_movies_entity_to_string(movies_my_taste_entity);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
-			movies_my_taste = new ArrayList<String>();
+			gui_utils.raise_sql_error_window(display);
+			
 			e1.printStackTrace();
 		}
 		
@@ -125,17 +131,22 @@ public class recommendation_tab extends Composite
 		//
 		
 		int i = 0;
-		for(String str: movies_my_taste)
+		int j=0;
+		final List<light_entity_movie> movies_my_taste_entity_for_annonymus = movies_my_taste_entity;
+		for(j=0; j< movies_my_taste.size(); j++)
 		{
+			final int k =j;
+			System.out.println(movies_my_taste.get(j));
 			movies_my_taste_links.add(new Link(area1, SWT.BORDER));
-			movies_my_taste_links.get(i).setText(str);
-			movies_my_taste_links.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
-			movies_my_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			movies_my_taste_links.get(j).setText(movies_my_taste.get(j));
+			movies_my_taste_links.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			movies_my_taste_links.get(j).addSelectionListener(new SelectionAdapter() {
 			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
+				public void widgetSelected(SelectionEvent arg0) {
+				System.out.println("hi");
+				movie_details_window  movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
+				/////wtf? not working/ shahar what is going on in here????
+				}
 
 			});
 			
@@ -170,15 +181,21 @@ public class recommendation_tab extends Composite
 		
 		//based on my friends LINKS
 		
-		//movies_friends_taste = get_recommended_movies_friends_taste(); //to be used when function exists
+		try {
+			movies_friends_taste =log_in_window.user.get_user_recommended_movies_by_friends(log_in_window.user.get_current_user_id(), 5);
+		} catch (SQLException e1) {
+			gui_utils.raise_sql_error_window(display);
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		//just for check
-		movies_friends_taste = new ArrayList<String>();
-		movies_friends_taste.add("reco by friends taste1");
-		movies_friends_taste.add("reco by friends taste2");
-		movies_friends_taste.add("reco by friends taste3");
-		movies_friends_taste.add("reco by friends taste4");
-		movies_friends_taste.add("reco by friends taste5");
+//		movies_friends_taste = new ArrayList<String>();
+//		movies_friends_taste.add("reco by friends taste1");
+//		movies_friends_taste.add("reco by friends taste2");
+//		movies_friends_taste.add("reco by friends taste3");
+//		movies_friends_taste.add("reco by friends taste4");
+	//	movies_friends_taste.add("reco by friends taste5");
 		//
 		
 		i = 0;
@@ -190,10 +207,10 @@ public class recommendation_tab extends Composite
 			
 			movies_friends_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
 			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
+				public void widgetSelected(SelectionEvent arg0) {
+				System.out.println("hi");
+
+			}
 
 			});
 
@@ -246,11 +263,11 @@ public class recommendation_tab extends Composite
 			movies_similar_to_me_taste_links.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
 			
 			movies_similar_to_me_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
-			//	@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//				open_movie_details(str);
-//
-//				}
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+				System.out.println("hi");
+
+				}
 
 			});
 
