@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import parser_entities.entity_movie;
-import parser_entities.light_entity_movie;
-import db.db_queries_movies;
+import parser_entities.*;
+import db.*;
 
 public abstract class movie_logics 
 {
@@ -26,29 +25,6 @@ public abstract class movie_logics
 		return (ret);
 	}
 
-	
-	
-	//matan please implement////
-	public static entity_movie get_movie_details(int movie_id)
-	{
-		return null;
-	}
-	
-	///matan please implement////
-	public static entity_movie get_unrated_movie_by_user(int user_id)
-	{
-		return null;
-	}
-	
-	///matan please implement////
-	public static List<String> get_popular_tags(int movie_id,int limit)
-	{
-		return null;
-	}
-	
-	
-	
-	
 	public static boolean does_movie_exists(String title,String director,List<String>actor_list,List<String> tags_list, List<Boolean>	rating_radios_text,List<Boolean>genres_numbers) 
 			throws NumberFormatException, SQLException
 	{
@@ -74,8 +50,6 @@ public abstract class movie_logics
 		
 		return (result);
 	}
-	
-
 
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 
 			throws SQLException 
@@ -83,6 +57,18 @@ public abstract class movie_logics
 		return(db_queries_movies.is_movie_of_tags(movie_id, tags_list));
 	}
 
+	public static List<String> get_movie_top_tags(int movie_id, int limit) 
+			throws SQLException
+	{
+		return (db_queries_movies.get_movie_top_tags(movie_id, limit));				
+	}
+	
+	public static light_entity_movie get_movie_details(int movie_id) 
+			throws SQLException
+	{
+		return (db_queries_movies.get_movie_details(movie_id));
+	}
+	
 // ID Getters
 	
 	public static int get_tag_id(String tag_name) 

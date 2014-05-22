@@ -6,8 +6,10 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -261,6 +263,30 @@ public abstract class db_operations
 
 // GENERICS
 
+	/** internaly used in functions that retrieve HM<Str, Int>
+	 * @param table		- table name
+	 * @param values	- "IntegerVal, StringVal", exactly these values!
+	 * @return a HashMap of wanted values from the table
+	 * @throws SQLException 
+	 */
+	protected static List <String> ResultSet2ListString(ResultSet result) 
+			throws SQLException
+	{
+		// Enumerate all movies
+		List<String> retList =  new ArrayList<String>(); 
+				
+		// is table empty
+		if (result.next())
+		{
+			while (result.next())
+			{
+				retList.add(result.getString(1));
+			}
+		}
+		
+		return (retList);
+	}
+		
 	/** internaly used in functions that retrieve HM<Str, Int>
 	 * @param table		- table name
 	 * @param values	- "IntegerVal, StringVal", exactly these values!

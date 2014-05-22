@@ -54,6 +54,32 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 	 
+	public static boolean rate_movie(int movie_id, int user_id, int rate) 
+			throws SQLException 
+	{
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		int rows_effected = insert("user_rank", "`idUser`, `idMovie`, `rank`, `rankDate`" , user_id , movie_id , rate, date);
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+
+	public static boolean rate_tag(int movie_id, int user_id, int tag_id, int rate) 
+			throws SQLException 
+	{
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		int rows_effected = insert("user_tag_movie", "`idUser`, `idTag`, `idMovie`, `rank`, `rankDate`" , user_id , tag_id , movie_id , rate, date);
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+
 // BOOLEANS
 	
 	public static boolean authenticate_user(String user, String pass) 
@@ -219,7 +245,7 @@ public abstract class db_queries_user extends db_operations
 			{
 				int id = result.getInt("idMovie");
 				String name = result.getString("movieName");
-				String year = result.getString("year");
+				int year = result.getInt("year");
 				String director = result.getString("personName");
 				String plot = result.getString("plot");
 				
@@ -418,6 +444,7 @@ public abstract class db_queries_user extends db_operations
 		
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
+
 	
 }
 

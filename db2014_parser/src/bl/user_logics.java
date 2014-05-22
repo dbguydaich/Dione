@@ -319,7 +319,7 @@ public class user_logics
 	 * @return		- a list of the tags, ordered by popularity
 	 * @throws SQLException 
 	 */
-	public List<String> get_user_popular_tags(int user_id, int limit) 
+	public List<String> get_popular_tags(int user_id, int limit) 
 			throws SQLException
 	{
 		return (db_queries_user.get_prefered_tags(user_id, limit));
@@ -379,6 +379,30 @@ public class user_logics
 // INTERNALS
 	
 	/**
+	 * Rate a movie
+	 * @param rate (-5) - 5
+	 * @return did succeed?
+	 * @throws SQLException 
+	 */
+	public static boolean rate_movie(int movie_id, int user_id,int rate) 
+			throws SQLException
+	{
+		return (db_queries_user.rate_movie(movie_id, user_id, rate));
+	}
+	
+	/**
+	 * Rate a movie tag
+	 * @param rating_radios
+	 * @return did succeed?
+	 * @throws SQLException 
+	 */
+	public static boolean rate_tag_movie(int movie_id, int user_id, int tag_id, int rate) 
+			throws SQLException
+	{
+		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
+	}
+	
+	/**
 	 * just get the toString of each activity
 	 * implemented to avoid code duplication
 	 * @param activity_list
@@ -399,15 +423,6 @@ public class user_logics
 		}
 		
 		return (retList);
-	}
-	
-	
-	
-	
-	///matan please implement/// //consider rating_radios[0] =1 - don't rate. then same as i asked you in search movie. the position of 1 is the right rating.
-	public static boolean rate_movie(int movie_id, int user_id,List<Boolean> rating_radios)
-	{
-		return true;
 	}
 
 }

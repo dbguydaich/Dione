@@ -310,8 +310,8 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws NumberFormatException
 	 * @throws SQLException
 	 */
-	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, List<String> actor_list, 
-			List<Integer> tags_list, boolean[] rating_radios_text, boolean[] genres) 
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, 
+			List<Integer> actor_list, List<Integer> tags_list, boolean[] rating_radios_text, boolean[] genres) 
 					throws SQLException 
 	{
 		String select = "idMovie, movieName, year, director, plot";
@@ -339,7 +339,7 @@ public abstract class db_queries_movies extends db_operations
 			String actorsCond = "idMovie IN (SELECT idMovie FROM movie WHERE 'a' = 'a' ";
 			
 			// For every actor add a constraint
-			for (String actor : actor_list)
+			for (Integer actor : actor_list)
 			{
 				actorsCond += "AND EXISTS (SELECT * FROM actor_movie WHERE " + 
 								" actor_movie.idMovie = movie.idMovie AND " +
@@ -355,11 +355,26 @@ public abstract class db_queries_movies extends db_operations
 			where += actorsCond;
 		}
 		
-		// Tag filter
+		/*/ Tag filter
 		if (tags_list != null && tags_list.size() > 0)
 		{
-
+			String actorsCond = "idMovie IN (SELECT idMovie FROM movie WHERE 'a' = 'a' ";
+			
+			// For every actor add a constraint
+			for (Integer actor : actor_list)
+			{
+				actorsCond += "AND EXISTS (SELECT * FROM actor_movie WHERE " + 
+								" actor_movie.idMovie = movie.idMovie AND " +
+								" actor_movie.idActor = '?')";
+				
+				// Add it in order 
+				values.add(actor);
+			}
+			
+			// This closes the IN clause
+			actorsCond += ")";
 		}
+		*/
 		
 		// Genre filter
 		if (tags_list != null && tags_list.size() > 0)
@@ -379,7 +394,7 @@ public abstract class db_queries_movies extends db_operations
 			{
 				int id = result.getInt("idMovie");
 				String name = result.getString("movieName");
-				String movie_year = result.getString("year");
+				int movie_year = result.getInt("year");
 				String movie_director = result.getString("personName");
 				String plot = result.getString("plot");
 				
@@ -395,24 +410,80 @@ public abstract class db_queries_movies extends db_operations
 	public static List<String> get_movie_geners(int movie_id) 
 			throws SQLException 
 	{
-		String where = "movie_tag.idmovie = ? AND tag.idTag = movie_tag.idTag";
-		ResultSet result = select("tagName", "tag, movie_tag", where, movie_id);
-		
-		// is table empty
-		if (result == null)
-			return (null);
-		
+		String where = "genre_movie.idMovie = ? AND genre.idGenre = genre_movie.idGenre";
+		ResultSet result = select("genreName", "genre_movie, genre", where, movie_id);
+	
 		// Enumerate all movies
 		List<String> returnedList = new ArrayList<String>();
 		
-		while (result.next())
-		{
-			String name = result.getString("tagName");
-			
-			returnedList.add(name);
-		} 
+		// is table empty
+		if (result != null)
+		{		
+			while (result.next())
+			{
+				String name = result.getString(1);
+				
+				returnedList.add(name);
+			}
+		}
 		
 		return (returnedList);
+	}
+	
+	public static List<String> get_movie_top_tags(int movie_id, int limit) 
+			throws SQLException 
+	{
+		String where = " user_tag_movie.idTag = tag.idTag AND " +
+						" tag.idmovie = ? " +
+						" GROUP BY idTag " +
+						" ORDER BY relatedness "+
+						" LIMIT " + limit;
+		ResultSet result = select("tagName, SUM(rate) as relatedness", "tag, user_tag_movie", where, movie_id);
+	
+		// Enumerate all movies
+		List<String> returnedList = new ArrayList<String>();
+		
+		// is table empty
+		if (result != null)
+		{		
+			while (result.next())
+			{
+				String name = result.getString(1);
+				
+				returnedList.add(name);
+			}
+		}
+		
+		return (returnedList);
+
+	}
+	
+	/**
+	 * 	Get movie entity by id
+	 * @return If user id does not exists, return an empty movie
+	 * @throws SQLException
+	 */
+	public static light_entity_movie get_movie_details(int movie_id) 
+			throws SQLException 
+	{
+		String where = "movie.idMovie = ? AND movie.director = person.idPerson";
+		ResultSet result = select("idMovie, movieName, year, personName, plot", "movie, person", where, movie_id);
+		
+		// is table empty
+		if (result != null && result.next())
+		{		
+			int id = result.getInt(1);
+			String name = result.getString(2);
+			int year = result.getInt(3);
+			String director = result.getString(4);
+			String plot = result.getString(5);
+			
+			light_entity_movie movie = new light_entity_movie(id, name, year, director, plot);
+			return (movie);
+		}
+		
+		// If there is user that feets
+		return (new light_entity_movie(0, "", 0, "", ""));
 	}
 	
 // ID GETTERS
