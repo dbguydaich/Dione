@@ -10,6 +10,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -58,33 +59,41 @@ public class log_in_window extends Shell
 	{
 		super(display);
 		
-		this.setSize(window_width, window_height);
-		final Color log_in_window_color = display.getSystemColor(SWT.COLOR_DARK_CYAN);
-		this.setBackground(log_in_window_color);
+		this.setSize(300, 300);
+		this.setText("MovieBook");
 		
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				log_in_window_color.dispose();
 				display.dispose();
 			}		
 		});
 		
 		this.setLayout(new FormLayout());
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.setLayout(new GridLayout(2, false));
 		
 		
-		//area
-		Composite area = new Composite(this, SWT.NONE);
-		area.setLayoutData(gui_utils.form_data_factory(300, 300, 70, 160));
-		GridLayout grid_layout_area = new GridLayout(2, false);
-		area.setLayout(grid_layout_area);
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				background.dispose();
+			}		
+		});
 		
+
 		
 		//headline label
-		Label log_in_label = new Label(area, SWT.NONE);
-		log_in_label.setText("    Log In Or Sign Up:");
-		log_in_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, SWT.CENTER));
+		Label log_in_label = new Label(this, SWT.NONE);
+		log_in_label.setText("Log In Or Sign Up");
+		log_in_label.setLayoutData(gui_utils.grid_data_factory(27, 15, 2, -1, SWT.CENTER, SWT.CENTER));
 		final Font font_log_in_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
 		log_in_label.setFont(font_log_in_label);
 		log_in_label.addDisposeListener(new DisposeListener()
@@ -98,9 +107,9 @@ public class log_in_window extends Shell
 		
 		
 		//label username
-		Label username_label = new Label(area, SWT.NONE);
+		Label username_label = new Label(this, SWT.NONE);
 		username_label.setText("Username:");
-		username_label.setLayoutData(gui_utils.grid_data_factory(40, -1, -1, -1, -1, -1));
+		username_label.setLayoutData(gui_utils.grid_data_factory(31, 20, -1, -1, -1, -1));
 		final Font font_username_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		username_label.setFont(font_username_label);
 		username_label.addDisposeListener(new DisposeListener()
@@ -114,16 +123,16 @@ public class log_in_window extends Shell
 		
 		
 		//text username
-		final Text username_text = new Text(area, SWT.BORDER);
-		username_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, -1, -1, -1, -1, -1));
+		final Text username_text = new Text(this, SWT.BORDER);
+		username_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 20, -1, -1, -1, -1));
 		username_text.setTextLimit(10);
 		
 		
 		
 		//label password
-		Label password_label = new Label(area, SWT.NONE);
+		Label password_label = new Label(this, SWT.NONE);
 		password_label.setText("Password:");
-		password_label.setLayoutData(gui_utils.grid_data_factory(40, -1, -1, -1, -1, -1));
+		password_label.setLayoutData(gui_utils.grid_data_factory(31, 10, -1, -1, -1, -1));
 		final Font font_password_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
 		password_label.setFont(font_password_label);
 		password_label.addDisposeListener(new DisposeListener()
@@ -137,16 +146,26 @@ public class log_in_window extends Shell
 		
 		
 		//text password
-		final Text password_text = new Text(area, SWT.PASSWORD | SWT.BORDER);
-		password_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, -1, -1, -1, -1, -1));
+		final Text password_text = new Text(this, SWT.PASSWORD | SWT.BORDER);
+		password_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 10, -1, -1, -1, -1));
 		password_text.setTextLimit(6);
 		
 		
 		
 		//log in button
-		Button log_in_button = new Button(area, SWT.PUSH);
+		Button log_in_button = new Button(this, SWT.PUSH);
 		log_in_button.setText("Log In");
-		log_in_button.setLayoutData(gui_utils.grid_data_factory(80, -1, -1, -1, -1, -1));
+		final Font font_login_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		log_in_button.setFont(font_login_button);
+		log_in_button.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_login_button.dispose();
+			}		
+		});
+		
+		log_in_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 55, 30, -1, -1, -1, -1));
 		////
 		log_in_button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -202,9 +221,18 @@ public class log_in_window extends Shell
 		
 		
 		//sign up button
-		Button sign_up_button = new Button(area, SWT.PUSH);
+		Button sign_up_button = new Button(this, SWT.PUSH);
 		sign_up_button.setText("Sign Up");
-		sign_up_button.setLayoutData(gui_utils.grid_data_factory(10, -1, -1, -1, -1, -1));
+		sign_up_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 20, 30, -1, -1, -1, -1));
+		final Font font_signup_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		sign_up_button.setFont(font_login_button);
+		sign_up_button.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_signup_button.dispose();
+			}		
+		});
 		
 		sign_up_button.addSelectionListener(new SelectionAdapter() {
 			@Override

@@ -54,6 +54,7 @@ import org.eclipse.swt.layout.GridLayout;
 
 
 
+
 import parser_entities.entity_person;
 import config.config;
 import db.db_queries_user;
@@ -79,15 +80,20 @@ public class social_tab extends Composite
 		
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		final Color color_window = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color_window);
+		
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				color_window.dispose();
+				background.dispose();
 			}		
 		});
+				
 
 		
 		//headline
@@ -108,8 +114,8 @@ public class social_tab extends Composite
 		
 		//add friend area
 		Composite add_friend_area = new Composite(this, SWT.NONE);
-		add_friend_area.setLayoutData(gui_utils.form_data_factory(295, 185, 30, 10));
-		GridLayout grid_layout_add_friend_area = new GridLayout(1, false);
+		add_friend_area.setLayoutData(gui_utils.form_data_factory(350, 85, 30, 135));
+		GridLayout grid_layout_add_friend_area = new GridLayout(3, false);
 		add_friend_area.setLayout(grid_layout_add_friend_area);
 				
 				
@@ -117,9 +123,9 @@ public class social_tab extends Composite
 		//add friend headline
 		Label add_friend_headline = new Label(add_friend_area, SWT.NONE);
 		add_friend_headline.setText("Add a Friend");
-		final Font font_friend_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		final Font font_friend_headline = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
 		add_friend_headline.setFont(font_friend_headline);
-		add_friend_headline.setLayoutData(gui_utils.grid_data_factory(75, -1, -1, -1, -1, -1));
+		add_friend_headline.setLayoutData(gui_utils.grid_data_factory(5, -1, -1, -1, -1, -1));
 		add_friend_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -131,15 +137,15 @@ public class social_tab extends Composite
 		
 		
 		//add friend text
-		final Text add_friend_text = new Text(add_friend_area, SWT.BORDER);
-		add_friend_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 74, 25, -1, -1, -1, -1));
+		final Text add_friend_text = new Text(add_friend_area, SWT.NONE);
+		add_friend_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 10, 5, -1, -1, -1, -1));
 		
 		
 		
 		//add friend BUTTON
 		Button add_friend_button = new Button(add_friend_area, SWT.PUSH);
 		add_friend_button.setText("Add");
-		add_friend_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 95, 8, -1, -1, -1, -1));
+		add_friend_button.setLayoutData(gui_utils.grid_data_factory(60, 30, 10, 5, -1, -1, -1, -1));
 		
 		add_friend_button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -187,21 +193,15 @@ public class social_tab extends Composite
 
 		
 		
-		
-		//remove friend area
-		Composite remove_friend_area = new Composite(this, SWT.NONE);
-		remove_friend_area.setLayoutData(gui_utils.form_data_factory(295, 185, 220, 10));
-		GridLayout grid_layout_remove_friend_area = new GridLayout(2, false);
-		remove_friend_area.setLayout(grid_layout_remove_friend_area);
-				
+	
 		
 				
 		//remove friend headline
-		Label remove_friend_headline = new Label(remove_friend_area, SWT.NONE);
+		Label remove_friend_headline = new Label(add_friend_area, SWT.NONE);
 		remove_friend_headline.setText("Remove a Friend");
-		final Font font_remove_friend_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN ); 
+		final Font font_remove_friend_headline = new Font(display, "Ariel",12, java.awt.Font.PLAIN ); 
 		remove_friend_headline.setFont(font_remove_friend_headline);
-		remove_friend_headline.setLayoutData(gui_utils.grid_data_factory(55, -1, 2, -1, -1, -1));
+		remove_friend_headline.setLayoutData(gui_utils.grid_data_factory(5, -1, -1, -1, -1, -1));
 		remove_friend_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -213,8 +213,8 @@ public class social_tab extends Composite
 		
 		
 		//remove friend combo
-		final Combo remove_friend_combo = new Combo(remove_friend_area, SWT.DROP_DOWN);
-		remove_friend_combo.setLayoutData(gui_utils.grid_data_factory(100, 15, 30, 25, -1, -1, -1, -1));
+		final Combo remove_friend_combo = new Combo(add_friend_area, SWT.DROP_DOWN);
+		remove_friend_combo.setLayoutData(gui_utils.grid_data_factory(100, 15, 10, 5, -1, -1, -1, -1));
 		
 		
 		user_friends = new ArrayList<String>();
@@ -238,9 +238,9 @@ public class social_tab extends Composite
 		remove_friend_combo.setItems(user_friends_arr);
 		
 		//remove friend button
-		Button remove_friend_button = new Button(remove_friend_area, SWT.PUSH);
+		Button remove_friend_button = new Button(add_friend_area, SWT.PUSH);
 		remove_friend_button.setText("Remove");
-		remove_friend_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 15, 25, -1, -1, -1, -1));
+		remove_friend_button.setLayoutData(gui_utils.grid_data_factory(60, 30, 10, 5, -1, -1, -1, -1));
 		
 		remove_friend_button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -311,7 +311,7 @@ public class social_tab extends Composite
 		
 		//user recent social activity area
 		Composite user_social_activity_area = new Composite(this, SWT.NONE);
-		user_social_activity_area.setLayoutData(gui_utils.form_data_factory(295, 185, 30, 310));
+		user_social_activity_area.setLayoutData(gui_utils.form_data_factory(600, 145, 120, 10));
 		GridLayout grid_layout_user_social_activity_area = new GridLayout(1, false);
 		user_social_activity_area.setLayout(grid_layout_user_social_activity_area);
 		
@@ -321,7 +321,7 @@ public class social_tab extends Composite
 		user_social_activity_headline.setText("Your Recent Social Activity");
 		final Font font_user_social_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN ); 
 		user_social_activity_headline.setFont(font_user_social_activity_headline);
-		user_social_activity_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
+		user_social_activity_headline.setLayoutData(gui_utils.grid_data_factory(180, 0, -1, -1, -1, -1));
 		user_social_activity_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -331,9 +331,8 @@ public class social_tab extends Composite
 		});
 		
 		
+		
 		//user recent social activities labels
-		
-		
 		user_social_activities_strings = new ArrayList<String>();
 		
 		try {
@@ -384,7 +383,7 @@ public class social_tab extends Composite
 		
 		//friends recent activity area
 		Composite friends_activity_area = new Composite(this, SWT.NONE);
-		friends_activity_area.setLayoutData(gui_utils.form_data_factory(295, 185, 220, 310));
+		friends_activity_area.setLayoutData(gui_utils.form_data_factory(600, 145, 270, 10));
 		GridLayout grid_layout_friends_activity_area = new GridLayout(1, false);
 		friends_activity_area.setLayout(grid_layout_friends_activity_area);
 		
@@ -394,7 +393,7 @@ public class social_tab extends Composite
 		friends_activity_headline.setText("Your Friends Recent Activity");
 		final Font font_friends_activity_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		friends_activity_headline.setFont(font_friends_activity_headline);
-		friends_activity_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
+		friends_activity_headline.setLayoutData(gui_utils.grid_data_factory(180, -1, -1, -1, -1, -1));
 		friends_activity_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -405,9 +404,8 @@ public class social_tab extends Composite
 		
 		
 		//friends recent activities labels
-		
 		friends_activities_strings = new ArrayList<String>();
-		
+	
 		try {
 			friends_activities_strings = log_in_window.user.get_friends_recent_string_activities(); //////matan///// it returns null
 			if (friends_activities_strings ==null)  // fix meanwhile 
@@ -431,12 +429,13 @@ public class social_tab extends Composite
 //		friends_activities_strings.add("friend recent activity 6");
 		//
 		
-		final Font font_friends_activities_labels = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_friends_activities_labels = new Font(display, "Ariel", 11, java.awt.Font.PLAIN);
 		i = 0;
 		for(String str: friends_activities_strings)
 		{
 			friends_activities_labels.add(new Label(friends_activity_area, SWT.NONE));
 			friends_activities_labels.get(i).setText(str);
+			friends_activities_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, -1, -1, -1, -1, -1));
 			friends_activities_labels.get(i).setFont(font_friends_activities_labels);
 			if(i == 0)
 			{

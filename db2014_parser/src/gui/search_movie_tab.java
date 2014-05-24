@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -64,6 +65,21 @@ public class search_movie_tab extends Composite
 		final List<Button> genres_checkboxes;
 		
 		List<String> genres;
+		
+		
+	
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				background.dispose();
+			}		
+		});
 		
 		
 		FormLayout form_layout_tab = new FormLayout();
@@ -236,7 +252,7 @@ public class search_movie_tab extends Composite
 		
 		//genres area
 		Composite genres_area = new Composite(this, SWT.NONE);
-		genres_area.setLayoutData(gui_utils.form_data_factory(220, 250, 40, 387));
+		genres_area.setLayoutData(gui_utils.form_data_factory(210, 250, 40, 410));
 		GridLayout grid_layout_genres_area = new GridLayout(2, false);
 		genres_area.setLayout(grid_layout_genres_area);
 		
@@ -275,7 +291,7 @@ public class search_movie_tab extends Composite
 		for(int i = 0; i < genres.size(); i++)
 		{
 			Button checkbox = new Button(genres_area, SWT.CHECK);		
-			checkbox.setLayoutData(gui_utils.grid_data_factory(0, -1, -1, -1, -1, -1));
+			checkbox.setLayoutData(gui_utils.grid_data_factory(5, 5, -1, -1, -1, -1));
 			checkbox.setText(genres.get(i));
 			genres_checkboxes.add(checkbox);
 		}

@@ -7,15 +7,19 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -53,20 +57,24 @@ public class recommendation_tab extends Composite
 		List<String> movies_friends_taste = null;
 		List<String> movies_similar_to_me_taste;
 		
-		List<Link> movies_my_taste_links = new ArrayList<Link>();
-		List<Link> movies_friends_taste_links = new ArrayList<Link>();
-		List<Link> movies_similar_to_me_taste_links = new ArrayList<Link>();
+		List<Label> movies_my_taste_labels = new ArrayList<Label>();
+		List<Label> movies_friends_taste_labels = new ArrayList<Label>();
+		List<Label> movies_similar_to_me_taste_labels = new ArrayList<Label>();
 		
 		
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
-		final Color color_form_layout_tab = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color_form_layout_tab);
+	
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				color_form_layout_tab.dispose();
+				background.dispose();
 			}		
 		});
 		
@@ -137,15 +145,15 @@ public class recommendation_tab extends Composite
 		{
 			final int k =j;
 			System.out.println(movies_my_taste.get(j));
-			movies_my_taste_links.add(new Link(area1, SWT.BORDER));
-			movies_my_taste_links.get(j).setText(movies_my_taste.get(j));
-			movies_my_taste_links.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
-			movies_my_taste_links.get(j).addSelectionListener(new SelectionAdapter() {
+			movies_my_taste_labels.add(new Label(area1, SWT.BORDER));
+			movies_my_taste_labels.get(j).setText(movies_my_taste.get(j));
+			movies_my_taste_labels.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			movies_my_taste_labels.get(j).addMouseListener(new MouseAdapter() {
 			//	@Override
-				public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("hi");
-				movie_details_window  movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
-				/////wtf? not working/ shahar what is going on in here????
+				public void mouseUp(MouseEvent arg0) {
+					System.out.println("hi-1");
+					movie_details_window  movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
+				
 				}
 
 			});
@@ -201,19 +209,18 @@ public class recommendation_tab extends Composite
 		i = 0;
 		for(String str: movies_friends_taste)
 		{
-			movies_friends_taste_links.add(new Link(area2, SWT.BORDER));
-			movies_friends_taste_links.get(i).setText(str);
-			movies_friends_taste_links.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			movies_friends_taste_labels.add(new Label(area2, SWT.BORDER));
+			movies_friends_taste_labels.get(i).setText(str);
+			movies_friends_taste_labels.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
 			
-			movies_friends_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			movies_friends_taste_labels.get(i).addMouseListener(new MouseAdapter() {
 			//	@Override
-				public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("hi");
-
-			}
+				public void mouseUp(MouseEvent arg0) {
+					System.out.println("hi-2");
+					//shachar: open here the new movie_details_window
+				}
 
 			});
-
 			
 			i++;
 		}
@@ -258,14 +265,14 @@ public class recommendation_tab extends Composite
 		i = 0;
 		for(String str: movies_similar_to_me_taste)
 		{
-			movies_similar_to_me_taste_links.add(new Link(area3, SWT.BORDER));
-			movies_similar_to_me_taste_links.get(i).setText(str);
-			movies_similar_to_me_taste_links.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			movies_similar_to_me_taste_labels.add(new Label(area3, SWT.BORDER));
+			movies_similar_to_me_taste_labels.get(i).setText(str);
+			movies_similar_to_me_taste_labels.get(i).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
 			
-			movies_similar_to_me_taste_links.get(i).addSelectionListener(new SelectionAdapter() {
+			movies_similar_to_me_taste_labels.get(i).addMouseListener(new MouseAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-				System.out.println("hi");
+				public void mouseUp(MouseEvent arg0) {
+				System.out.println("hi-3");
 
 				}
 

@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
@@ -50,9 +51,24 @@ public class preferences_window extends Shell
 		this.setText("Movies Preferences");
 				
 		this.setLayout(new FormLayout());
+
 		
-		final Color preferences_window_color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(preferences_window_color);
+	
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_400_300.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				background.dispose();
+			}		
+		});
+
+		
+		
 		
 		//headline label
 		Label headline_label = new Label(this, SWT.NONE);
@@ -60,7 +76,6 @@ public class preferences_window extends Shell
 		headline_label.setLayoutData(gui_utils.form_data_factory(360, 30, 10, 20));
 		final Font font_headline_label = new Font(display, "Ariel",17, java.awt.Font.PLAIN );
 		headline_label.setFont(font_headline_label);
-		headline_label.setBackground(preferences_window_color);
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -73,8 +88,8 @@ public class preferences_window extends Shell
 		//movie label
 		Label movie_label = new Label(this, SWT.NONE);
 		movie_label.setAlignment(SWT.CENTER);
-		movie_label.setBackground(preferences_window_color);
 		movie_label.setText(current_movie.get_movie_name());
+		movie_label.setText("this is a movie to reate");
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
 		final Font font_movie_label = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		movie_label.setFont(font_movie_label);
@@ -154,7 +169,21 @@ public class preferences_window extends Shell
 
 		});
 		
-		/////shahar we need a nutton specifying "finish rating".....
+
+		//stop button
+		Button stop_button = new Button(this, SWT.PUSH);
+		stop_button.setText("Stop");
+		stop_button.setLayoutData(gui_utils.form_data_factory(50, 30, 160, 300));
+		final Font font_stop_button = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+		stop_button.setFont(font_stop_button);
+		stop_button.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_stop_button.dispose();
+			}		
+		});
+		
 		
 		
 		

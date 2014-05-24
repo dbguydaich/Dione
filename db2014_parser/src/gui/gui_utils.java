@@ -22,9 +22,8 @@ public class gui_utils
 	static all_tabs_window tabs_win = null;
 	static log_in_window login_win = null;
 	static preferences_window pref_win = null;
+	static import_window import_win = null;
 	static Display display;
-	
-	
 	
 	
 	
@@ -35,15 +34,17 @@ public class gui_utils
 
 		
 		login_win = new log_in_window(display);
-	//	movie_details_window movie_win = new movie_details_window(display, 1);
+		//movie_details_window movie_win = new movie_details_window(display, 1);
 		//tabs_win = new all_tabs_window(display);
 		//pref_win = new preferences_window(display);
+		//import_win = new import_window(display);
+		
 		
 		login_win.open();
-	//	movie_win.open();
+		//movie_win.open();
 		//tabs_win.open();
 		//pref_win.open();
-		
+		//import_win.open();
 		
 		while (!display.isDisposed()) 
 		{

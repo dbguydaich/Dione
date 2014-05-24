@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -46,17 +47,19 @@ public class settings_tab extends Composite
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
 		
-		final Color color_window = display.getSystemColor(SWT.COLOR_GRAY);
+		
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				color_window.dispose();
+				background.dispose();
 			}		
 		});
-		
-		this.setBackground(color_window);
-		
 		
 		
 		//headline
@@ -134,15 +137,19 @@ public class settings_tab extends Composite
 		
 		
 		
+		//username area
+		Composite username_area = new Composite(this, SWT.BORDER);
+		username_area.setLayoutData(gui_utils.form_data_factory(250, 160, 150, 25));
+		username_area.setLayout(new GridLayout(2, false));
 		
 		
 		
 		//username label
-		Label username_label = new Label(this, SWT.NONE);
+		Label username_label = new Label(username_area, SWT.NONE);
 		final Font font_username_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
 		username_label.setFont(font_username_label);
-		username_label.setText("Change username:");
-		username_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 150, 25));
+		username_label.setText("Change Username");
+		username_label.setLayoutData(gui_utils.grid_data_factory(50, -1, 2, 1, -1, -1));
 		username_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -151,25 +158,57 @@ public class settings_tab extends Composite
 			}		
 		});
 		
-		//username text
-		final Text username_text = new Text(this, SWT.BORDER);
-		username_text.setLayoutData(gui_utils.form_data_factory(-1, -1, 149, 165));
 		
-		
-		
-		//username_password text //shachar implement
-		final Text username_pass_text = new Text(this, SWT.BORDER);
+		//new username label
+		Label new_username_label = new Label(username_area, SWT.NONE);
+		final Font font_new_username_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		new_username_label.setFont(font_new_username_label);
+		new_username_label.setText("New username");
+		new_username_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
+		new_username_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_new_username_label.dispose();
+			}		
+		});
 				
-		/////implement shachar///
-		final Text password__pass_text = new Text(this, SWT.BORDER);
 		
+		
+		//username text
+		final Text username_text = new Text(username_area, SWT.BORDER);
+		username_text.setLayoutData(gui_utils.grid_data_factory(10, 15, -1, -1, -1, -1));
+
+		
+		
+		//username password label
+		Label username_password_label = new Label(username_area, SWT.NONE);
+		final Font font_username_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		username_password_label.setFont(font_username_password_label);
+		username_password_label.setText("Password for verification");
+		username_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
+		username_password_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_username_password_label.dispose();
+			}		
+		});
+		
+		
+		//username_password text
+		final Text username_pass_text = new Text(username_area, SWT.PASSWORD | SWT.BORDER);
+		username_pass_text.setLayoutData(gui_utils.grid_data_factory(10, 5, -1, -1, -1, -1));
+
+				
+	
 		
 		//username apply button
-		Button username_upply_button = new Button(this, SWT.PUSH);
+		Button username_upply_button = new Button(username_area, SWT.PUSH);
 		username_upply_button.setText("Apply");
-		username_upply_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 147, 250));
 		final Font font_username_upply_button = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
 		username_upply_button .setFont(font_username_upply_button);
+		username_upply_button.setLayoutData(gui_utils.grid_data_factory(90, 15, 2, -1, -1, -1));
 		username_upply_button .addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -217,13 +256,18 @@ public class settings_tab extends Composite
 				
 		
 		
+		//password area
+		Composite password_area = new Composite(this, SWT.BORDER);
+		password_area.setLayoutData(gui_utils.form_data_factory(250, 160, 150, 325));
+		password_area.setLayout(new GridLayout(2, false));
+		
 		
 		//password label
-		Label password_label = new Label(this, SWT.NONE);
+		Label password_label = new Label(password_area, SWT.NONE);
 		final Font font_password_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
 		password_label.setFont(font_password_label);
-		password_label.setText("Change password:");
-		password_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 190, 25));
+		password_label.setText("Change Password");
+		password_label.setLayoutData(gui_utils.grid_data_factory(50, -1, 2, 1, -1, -1));
 		password_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -232,15 +276,52 @@ public class settings_tab extends Composite
 			}		
 		});
 		
+		
+		
+		//new password label
+		Label new_password_label = new Label(password_area, SWT.NONE);
+		final Font font_new_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		new_password_label.setFont(font_new_password_label);
+		new_password_label.setText("New password");
+		new_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
+		new_password_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_new_username_label.dispose();
+			}		
+		});
+		
+		
 		//password text
-		final Text password_text = new Text(this, SWT.BORDER);
-		password_text.setLayoutData(gui_utils.form_data_factory(-1, -1, 189, 165));
+		final Text password_text = new Text(password_area, SWT.PASSWORD | SWT.BORDER);
+		password_text.setLayoutData(gui_utils.grid_data_factory(10, 15, -1, -1, -1, -1));
+		
+		
+		//old password label
+		Label old_password_label = new Label(password_area, SWT.NONE);
+		final Font font_old_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		old_password_label.setFont(font_old_password_label);
+		old_password_label.setText("Current password");
+		old_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
+		old_password_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_old_password_label.dispose();
+			}		
+		});
+		
+		
+		//old password text
+		final Text old_password_text = new Text(password_area, SWT.PASSWORD | SWT.BORDER);
+		old_password_text.setLayoutData(gui_utils.grid_data_factory(10, 5, -1, -1, -1, -1));
 		
 		//password apply button
-		Button password_upply_button = new Button(this, SWT.PUSH);
+		Button password_upply_button = new Button(password_area, SWT.PUSH);
 		password_upply_button.setText("Apply");
-		password_upply_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 187, 250));
 		final Font font_password_upply_button = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		password_upply_button.setLayoutData(gui_utils.grid_data_factory(90, 15, 2, -1, -1, -1));
 		password_upply_button .setFont(font_username_upply_button);
 		password_upply_button .addDisposeListener(new DisposeListener()
 		{
@@ -254,7 +335,7 @@ public class settings_tab extends Composite
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				final String pass_change_to = password_text.getText();
-				final String pass = password__pass_text .getText();
+				final String pass = old_password_text .getText();
 				if(!verifier.verifyPass(pass_change_to))
 				{ // illegal user name
 					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
