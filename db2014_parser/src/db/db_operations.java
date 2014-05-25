@@ -225,15 +225,15 @@ public abstract class db_operations
 		conn = jdbc_connection_pooling.get_conn().connectionCheck();
 		
 		// Build insert string
-		String insert_string;
+		String select_string;
 		if 	(whereClause == null || whereClause == "")
-			insert_string = "SELECT " + select + " FROM " + table;
+			select_string = "SELECT " + select + " FROM " + table;
 		else
-			insert_string = "SELECT " + select + " FROM " + table + " WHERE " + whereClause;
+			select_string = "SELECT " + select + " FROM " + table + " WHERE " + whereClause;
 			
 		// Set the statment
 		PreparedStatement stmt = null; 
-		stmt = conn.prepareStatement(insert_string);
+		stmt = conn.prepareStatement(select_string);
 
 		// Fill the question marks
 		if (values != null)
@@ -249,6 +249,65 @@ public abstract class db_operations
 				{	
 					stmt.setString((i+1), (String) values[i]);
 					continue;
+				}
+			}
+		}
+		
+		// execute insert SQL stetement
+		ResultSet rows_effected = stmt.executeQuery();
+		
+		// Close connection
+		jdbc_connection_pooling.get_conn().close(conn);
+		return (rows_effected);
+	}
+
+	/** select tuple/s
+	 * @param tableName	- the name of the table we want to delete from
+	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."
+	 * @param values	- the objects to switch '?' in the where clause 
+	 * @throws SQLException 
+	 */
+	protected static ResultSet select(String select, String table , String whereClause, List<Object> values) throws SQLException 
+	{
+		if (table == null)
+			throw (new SQLException("null table name"));
+		
+		// Does value count match the number of "?"
+		if (values != null)
+			if (countChar(whereClause, '?') != values.size())
+				throw (new SQLException("wrong number of values entered"));
+		
+		// Set the connection
+		Connection conn = null;
+		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		
+		// Build insert string
+		String insert_string;
+		if 	(whereClause == null || whereClause == "")
+			insert_string = "SELECT " + select + " FROM " + table;
+		else
+			insert_string = "SELECT " + select + " FROM " + table + " WHERE " + whereClause;
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(insert_string);
+
+		// Fill the question marks
+		if (values != null)
+		{
+			// Place index
+			int i = 0;
+			
+			for (Object value : values) 
+			{
+				i++;
+				if (value instanceof Integer)
+				{
+					stmt.setInt(i, (int) value);
+				} 
+				else if (value instanceof String)
+				{	
+					stmt.setString(i, (String) value);
 				}
 			}
 		}
@@ -328,8 +387,8 @@ public abstract class db_operations
 		if (value == null)
 			return (-1);
 		
-		String whereClause = value.toLowerCase() + "Name = '" + value_name + "'";
-		ResultSet results = select("id"+ value, value.toLowerCase() , whereClause);
+		String whereClause = value.toLowerCase() + "Name = ?";
+		ResultSet results = select("id"+ value, value.toLowerCase() , whereClause, value_name);
 		
 		try{
 		// did select find souch user

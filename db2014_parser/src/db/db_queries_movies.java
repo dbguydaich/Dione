@@ -311,42 +311,52 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws SQLException
 	 */
 	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, 
-			List<Integer> actor_list, List<Integer> tags_list, boolean[] rating_radios_text, boolean[] genres) 
+			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
-		String select = "idMovie, movieName, year, director, plot";
-		String from	 = "movie, director";
-		String where = "director.idPerson = movie.director ";
+		String select = "idMovie, movieName, year, personName, plot";
+		String from	 = "movie, person";
+		String where = "person.idPerson = movie.idDirector ";
 		List<Object> values = new ArrayList<Object>();
 		
 		// Title filter
 		if (title != null && title != "")
 		{
-			where += " AND (movie.name like '%?%')";
+			where += " AND (movie.movieName like ?)";
+			title = "%" + title + "%";
 			values.add(title);
 		}
 		
 		// Director filter
 		if (director != null && director != "")
 		{
-			where += " AND (movie.director like '%?%')";
+			where += " AND (person.personName like ?)";
+			director = "%" + director + "%";
 			values.add(director);
 		}
-			
+		
+		// year filter
+		if (year != null)
+		{
+			where += " AND (movie.year = ?)";
+			values.add(year);
+		}
+		
 		// Actor filter
 		if (actor_list != null && actor_list.size() > 0)
 		{
-			String actorsCond = "idMovie IN (SELECT idMovie FROM movie WHERE 'a' = 'a' ";
+			String actorsCond = " AND idMovie IN (SELECT actorMovie.idMovie FROM movie as actorMovie WHERE 'a' = 'a' ";
 			
 			// For every actor add a constraint
-			for (Integer actor : actor_list)
+			for (String actor : actor_list)
 			{
-				actorsCond += "AND EXISTS (SELECT * FROM actor_movie WHERE " + 
-								" actor_movie.idMovie = movie.idMovie AND " +
-								" actor_movie.idActor = '?')";
+				actorsCond += " AND EXISTS (SELECT * FROM actor_movie, person as actors WHERE " + 
+									" actor_movie.idMovie = actorMovie.idMovie AND " +		
+									" actor_movie.idActor = actors.idPerson AND " +
+									" actors.personName like ?)";
 				
 				// Add it in order 
-				values.add(actor);
+				values.add( "%" + actor + "%");
 			}
 			
 			// This closes the IN clause
@@ -355,35 +365,80 @@ public abstract class db_queries_movies extends db_operations
 			where += actorsCond;
 		}
 		
-		/*/ Tag filter
+		// Tag filter
 		if (tags_list != null && tags_list.size() > 0)
 		{
-			String actorsCond = "idMovie IN (SELECT idMovie FROM movie WHERE 'a' = 'a' ";
+			String tagsCond = " AND idMovie IN (SELECT tagMovie.idMovie FROM movie as tagMovie WHERE 'a' = 'a' ";
 			
 			// For every actor add a constraint
-			for (Integer actor : actor_list)
+			for (Integer tag : tags_list)
 			{
-				actorsCond += "AND EXISTS (SELECT * FROM actor_movie WHERE " + 
-								" actor_movie.idMovie = movie.idMovie AND " +
-								" actor_movie.idActor = '?')";
+				tagsCond += "AND EXISTS (SELECT * FROM movie_tag WHERE " + 
+								" movie_tag.idMovie = tagMovie.idMovie AND " +
+								" movie_tag.idTag = ?)";
 				
 				// Add it in order 
-				values.add(actor);
+				values.add(tag);
 			}
 			
 			// This closes the IN clause
-			actorsCond += ")";
+			tagsCond += ")";
+			
+			where += tagsCond;
 		}
-		*/
 		
 		// Genre filter
-		if (tags_list != null && tags_list.size() > 0)
+		if (genre_list != null && genre_list.size() > 0)
 		{
-
+			String genreCond = " AND idMovie IN (SELECT genreMovie.idMovie FROM movie as genreMovie WHERE 'a' = 'a' ";
+			
+			// For every actor add a constraint
+			for (Integer genre : genre_list)
+			{
+				genreCond += " AND EXISTS (SELECT * FROM genre_movie WHERE " + 
+								" genre_movie.idMovie = genreMovie.idMovie AND " +
+								" genre_movie.idGenre = ?)";
+				
+				// Add it in order 
+				values.add(genre);
+			}
+			
+			// This closes the IN clause
+			genreCond += ")";
+			where += genreCond;
+		}
+		
+		// Rating filter
+		if (rating != null && rating.length != 0)
+		{
+			// Build having clause
+			String having = "(";
+			
+			for (int i = 0 ; i < rating.length ; i++)
+			{
+				if (rating[i] == true)
+				{
+					// Is this not the first true
+					if (having.compareTo("(") != 0)
+						having += " OR ";
+					
+					having += "round(avg(rank)) = " + i;
+				}
+			}
+			having += ")";
+			
+			// Was there a single rating true
+			if (having.compareTo("()") != 0)
+			{
+				where += " AND idMovie IN (SELECT idMovie FROM user_rank" +
+						" GROUP BY idMovie" +
+						" HAVING " + having + ") ";
+			}
+					
 		}
 		
 		// Make the querey
-		ResultSet result = select(select, from, where + "limit 50;", values);
+		ResultSet result = select(select, from, where + " limit 50;", values);
 		
 		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
 		

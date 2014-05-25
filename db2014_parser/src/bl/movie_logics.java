@@ -51,6 +51,13 @@ public abstract class movie_logics
 		return (result);
 	}
 
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year,
+			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			throws SQLException
+	{
+		return (db_queries_movies.get_relevant_movies(title, director, year, actor_list, tags_list, genre_list, rating));
+	}
+	
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 
 			throws SQLException 
 	{
