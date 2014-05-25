@@ -1,5 +1,6 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class movie_details_window extends Shell
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
 	
-	public movie_details_window(final Display display, int movie_id)
+	public movie_details_window(final Display display, int movie_id) throws SQLException
 	{
 		
 
@@ -103,7 +104,7 @@ public class movie_details_window extends Shell
 		this.setSize(window_width, window_height);
 		this.setText("Movie Details");
 		
-		entity_movie movie =  movie_logics.get_movie_details(movie_id);
+		light_entity_movie movie =  movie_logics.get_movie_details(movie_id);
 		List<Label> movie_details_labels = new ArrayList<Label>();
 		
 		//headline
@@ -154,7 +155,7 @@ public class movie_details_window extends Shell
 		//genres2	
 		List<String> genres;
 		//genres = new ArrayList<String>(); //just for check
-		genres = (List<String>) movie.get_movie_genres();
+		genres = movie_logics.get_movie_genres(movie.get_movie_id());
 		//genres.add("Comedy"); //
 		//genres.add("Action"); //
 		//genres.add("Best Genre Ever"); //
@@ -175,7 +176,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(2).setText("Director:");	
 			
 		//director2	
-		String director_name = movie.get_movie_director().get_person_name();
+		String director_name = movie.get_movie_director();
 		//String director_name = get_result_movie_director();  to be used
 		
 		movie_details_labels.get(3).setText(director_name);
@@ -198,7 +199,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(6).setText("Year:");	
 			
 		//year
-		String year =movie.get_movie_year();
+		String year = Integer.toString(movie.get_movie_year());
 		//String director_name = get_result_movie_year();  to be used
 		
 		movie_details_labels.get(7).setText(year);
@@ -210,7 +211,7 @@ public class movie_details_window extends Shell
 		movie_details_labels.get(8).setText("Duration:");	
 			
 		//duration
-		String duration =movie.get_movie_length();
+		String duration = Integer.toString(movie.get_movie_duration());
 		//String director_name = get_result_movie_duration();  to be used
 		
 		movie_details_labels.get(9).setText(duration);

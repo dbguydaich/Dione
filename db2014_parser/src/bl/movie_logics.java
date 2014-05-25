@@ -76,6 +76,12 @@ public abstract class movie_logics
 		return (db_queries_movies.get_movie_details(movie_id));
 	}
 	
+	public static List<String> get_movie_genres(int movie_id) 
+			throws SQLException
+	{
+		return (db_queries_movies.get_movie_geners(movie_id));
+	}
+	
 // ID Getters
 	
 	public static int get_tag_id(String tag_name) 

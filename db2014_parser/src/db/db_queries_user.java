@@ -154,6 +154,34 @@ public abstract class db_queries_user extends db_operations
 		return (returnedList);
 	}
 	
+	public static List<Integer> get_unrated_movies(int user_id, int limit) 
+			throws SQLException
+	{
+		// where string includes "order by" field to get the prefered tags
+		String where = 	"NOT EXISTS (SELECT idMovie FROM user_rank " + 
+									"WHERE user_rank.idMovie = movie.idMovie AND idUser = ?) " + 
+						" LIMIT " + limit;
+		
+		ResultSet result = select("idMovie", "movie", where, user_id);
+		
+		// Enumerate all movies
+		List<Integer> returnedList = new ArrayList<Integer>();
+		
+		// is table empty
+		if (result != null)
+		{
+			while (result.next())
+			{
+				int id = result.getInt(1);
+				
+				returnedList.add(id);
+			}
+		}
+		
+		return (returnedList);
+	}
+	
+	
 	public static List<Integer> get_prefered_tags_ids(int user_id, int limit) 
 			throws SQLException
 	{
@@ -232,7 +260,7 @@ public abstract class db_queries_user extends db_operations
 						" ORDER BY like_score DESC " +
 						" LIMIT " + limit;
 				
-		ResultSet result = select("movie.idMovie, movieName, year, personName, plot, SUM(tag_user_rate) as like_score", 
+		ResultSet result = select("movie.idMovie, movieName, year, personName, duration , plot, SUM(tag_user_rate) as like_score", 
 									"user_prefence, movie_tag, movie, person", where, id_user);
 		
 		// Enumerate all movies
@@ -246,10 +274,12 @@ public abstract class db_queries_user extends db_operations
 				int id = result.getInt("idMovie");
 				String name = result.getString("movieName");
 				int year = result.getInt("year");
+				String wiki = result.getString("wiki");
 				String director = result.getString("personName");
+				int duration = result.getInt("duration");
 				String plot = result.getString("plot");
 				
-				light_entity_movie movie = new light_entity_movie(id, name, year, director, plot);
+				light_entity_movie movie = new light_entity_movie(id, name, year, wiki, director, duration, plot);
 				
 				returnedList.add(movie);
 			}

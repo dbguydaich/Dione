@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie` (
   `movieName` TEXT NOT NULL,
   `year` VARCHAR(45) NULL DEFAULT NULL,
   `wiki` TEXT NULL DEFAULT NULL,
-  `duration` VARCHAR(45) NULL DEFAULT NULL,
+  `duration` int(11) NULL DEFAULT NULL,
   `plot` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`idMovie`),
   INDEX `idLanguage_idx` (`idLanguage` ASC),

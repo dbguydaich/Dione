@@ -314,7 +314,7 @@ public abstract class db_queries_movies extends db_operations
 			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
-		String select = "idMovie, movieName, year, personName, plot";
+		String select = "idMovie, movieName, year, personName, duration, plot";
 		String from	 = "movie, person";
 		String where = "person.idPerson = movie.idDirector ";
 		List<Object> values = new ArrayList<Object>();
@@ -450,10 +450,12 @@ public abstract class db_queries_movies extends db_operations
 				int id = result.getInt("idMovie");
 				String name = result.getString("movieName");
 				int movie_year = result.getInt("year");
+				String wiki = result.getString("wiki");
 				String movie_director = result.getString("personName");
+				int duration = result.getInt("duration");
 				String plot = result.getString("plot");
 				
-				light_entity_movie movie = new light_entity_movie(id, name, movie_year, movie_director, plot);
+				light_entity_movie movie = new light_entity_movie(id, name, movie_year, wiki, movie_director, duration, plot);
 				
 				returnedList.add(movie);
 			}
@@ -467,6 +469,28 @@ public abstract class db_queries_movies extends db_operations
 	{
 		String where = "genre_movie.idMovie = ? AND genre.idGenre = genre_movie.idGenre";
 		ResultSet result = select("genreName", "genre_movie, genre", where, movie_id);
+	
+		// Enumerate all movies
+		List<String> returnedList = new ArrayList<String>();
+		
+		// is table empty
+		if (result != null)
+		{		
+			while (result.next())
+			{
+				String name = result.getString(1);
+				
+				returnedList.add(name);
+			}
+		}
+		
+		return (returnedList);
+	}
+	
+	public static List<String> get_movie_tags(int movie_id) throws SQLException 
+	{
+		String where = "movie_tag.idMovie = ? AND tag.idTag = movie_tag.idTag";
+		ResultSet result = select("tagName", "movie_tag, tag", where, movie_id);
 	
 		// Enumerate all movies
 		List<String> returnedList = new ArrayList<String>();
@@ -522,7 +546,7 @@ public abstract class db_queries_movies extends db_operations
 			throws SQLException 
 	{
 		String where = "movie.idMovie = ? AND movie.director = person.idPerson";
-		ResultSet result = select("idMovie, movieName, year, personName, plot", "movie, person", where, movie_id);
+		ResultSet result = select("idMovie, movieName, year, wiki, personName, duration, plot", "movie, person", where, movie_id);
 		
 		// is table empty
 		if (result != null && result.next())
@@ -530,15 +554,47 @@ public abstract class db_queries_movies extends db_operations
 			int id = result.getInt(1);
 			String name = result.getString(2);
 			int year = result.getInt(3);
-			String director = result.getString(4);
-			String plot = result.getString(5);
+			String wiki = result.getString(4);
+			String director = result.getString(5);
+			int duration = result.getInt(6);
+			String plot = result.getString(7);
 			
-			light_entity_movie movie = new light_entity_movie(id, name, year, director, plot);
+			light_entity_movie movie = new light_entity_movie(id, name, year, wiki, director, duration, plot);
 			return (movie);
 		}
 		
 		// If there is user that feets
-		return (new light_entity_movie(0, "", 0, "", ""));
+		return (new light_entity_movie(0, "", 0, "", "", 0, ""));
+	}
+	
+	public static String get_movie_language(int movie_id) 
+			throws SQLException 
+	{
+		String where = "movie.idMovie = ? AND movie.idLanguage = .language.idLanguage";
+		ResultSet result = select("languageName", "language, movie", where, movie_id);
+		
+		// is table empty
+		if (result != null && result.next())
+		{		
+			return (result.getString(1));
+		}
+		
+		return ("None");
+	}
+	
+	public static int get_movie_rating(int movie_id) 
+			throws SQLException 
+	{
+		String where = "idMovie = ? ";
+		ResultSet result = select("round(avg(rank))", "user_rank", where, movie_id);
+		
+		// is table empty
+		if (result != null && result.next())
+		{		
+			return (result.getInt(1));
+		}
+		
+		return (-1);
 	}
 	
 // ID GETTERS
@@ -583,6 +639,7 @@ public abstract class db_queries_movies extends db_operations
 		return (generic_id_getter("Language", language_name));
 	}
 	
+	
 // REMOVERS
 
 	/**
@@ -606,5 +663,12 @@ public abstract class db_queries_movies extends db_operations
 	{
 		return (delete("actor_movie","") != -1);
 	}
+
+	
+
+
+
+	
+	
 }
 
