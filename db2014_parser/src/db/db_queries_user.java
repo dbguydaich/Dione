@@ -1,5 +1,6 @@
 package db;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -128,7 +129,30 @@ public abstract class db_queries_user extends db_operations
 	}
 	
 // GETTERS
-
+	public static List<Integer> get_all_users() 
+			throws SQLException
+	{
+		// where string includes "order by" field to get the prefered tags
+		ResultSet result = select("idUsers", "users", null);
+		
+		// Enumerate all movies
+		List<Integer> returnedList = new ArrayList<Integer>();
+		
+		// is table empty
+		if (result != null)
+		{
+			while (result.next())
+			{
+				Integer id = result.getInt(1);
+				
+				returnedList.add(id);
+			}
+		}
+		
+		return (returnedList);
+	}
+	
+	
 	public static List<String> get_prefered_tags(int user_id, int limit) 
 			throws SQLException
 	{
@@ -179,7 +203,6 @@ public abstract class db_queries_user extends db_operations
 		
 		return (returnedList);
 	}
-	
 	
 	public static List<Integer> get_prefered_tags_ids(int user_id, int limit) 
 			throws SQLException
@@ -259,7 +282,7 @@ public abstract class db_queries_user extends db_operations
 						" ORDER BY like_score DESC " +
 						" LIMIT " + limit;
 				
-		ResultSet result = select("movie.idMovie, movieName, year, personName, duration , plot, SUM(tag_user_rate) as like_score", 
+		ResultSet result = select("movie.idMovie, movieName, year, wiki, personName, duration , plot, SUM(tag_user_rate) as like_score", 
 									"user_prefence, movie_tag, movie, person", where, id_user);
 		
 		// Enumerate all movies
@@ -464,6 +487,49 @@ public abstract class db_queries_user extends db_operations
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
 
+// BackGrounders
 	
+	public static boolean fill_user_prefence() 
+			throws SQLException
+	{
+		java.sql.PreparedStatement stmt = null;
+		Connection conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		
+		conn.setAutoCommit(false);
+		
+		// Delete old preference
+		stmt = conn.prepareStatement("DELETE FROM user_prefence");
+		stmt.addBatch();
+		
+		if (delete("user_prefence", "", "") < 0)
+			return (false);
+		
+		// Get user list		
+		List<Integer> users = get_all_users();
+		
+		
+		// Fill with new data
+		int batchSize = 0;
+		for (Integer user : users)
+		{
+			// is this a good user
+			if (user != null)
+			{
+				stmt = conn.prepareStatement("");
+				stmt.addBatch();
+				batchSize++;
+				
+				if (batchSize % 1000 > 0)
+				{
+					stmt.executeBatch();
+					batchSize = 0;
+				}
+			}
+		}
+		
+		// Commit
+		
+		return (true);
+	}
 }
 
