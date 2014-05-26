@@ -154,27 +154,26 @@ public abstract class db_queries_user extends db_operations
 		return (returnedList);
 	}
 	
-	public static List<Integer> get_unrated_movies(int user_id, int limit) 
+	public static List<light_entity_movie> get_unrated_movies(int user_id, int limit) 
 			throws SQLException
 	{
 		// where string includes "order by" field to get the prefered tags
-		String where = 	"NOT EXISTS (SELECT idMovie FROM user_rank " + 
-									"WHERE user_rank.idMovie = movie.idMovie AND idUser = ?) " + 
+		String where = 	" movie.idDirector = person.idPerson AND " +
+						" NOT EXISTS (SELECT idMovie FROM user_rank " + 
+									" WHERE (user_rank.idMovie = movie.idMovie AND idUser = ?)) " + 
 						" LIMIT " + limit;
 		
-		ResultSet result = select("idMovie", "movie", where, user_id);
+		ResultSet result = select("idMovie, movieName, year, wiki, personName, duration, plot", "movie, person", where, user_id);
 		
 		// Enumerate all movies
-		List<Integer> returnedList = new ArrayList<Integer>();
+		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
 		
 		// is table empty
 		if (result != null)
 		{
 			while (result.next())
 			{
-				int id = result.getInt(1);
-				
-				returnedList.add(id);
+				returnedList.add(get_light_entity_movie(result));
 			}
 		}
 		
@@ -271,17 +270,7 @@ public abstract class db_queries_user extends db_operations
 		{
 			while (result.next())
 			{
-				int id = result.getInt("idMovie");
-				String name = result.getString("movieName");
-				int year = result.getInt("year");
-				String wiki = result.getString("wiki");
-				String director = result.getString("personName");
-				int duration = result.getInt("duration");
-				String plot = result.getString("plot");
-				
-				light_entity_movie movie = new light_entity_movie(id, name, year, wiki, director, duration, plot);
-				
-				returnedList.add(movie);
+				returnedList.add(get_light_entity_movie(result));
 			}
 		}
 		

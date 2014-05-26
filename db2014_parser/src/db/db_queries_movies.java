@@ -314,7 +314,7 @@ public abstract class db_queries_movies extends db_operations
 			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
-		String select = "idMovie, movieName, year, personName, duration, plot";
+		String select = "idMovie, movieName, year, wiki, personName, duration, plot";
 		String from	 = "movie, person";
 		String where = "person.idPerson = movie.idDirector ";
 		List<Object> values = new ArrayList<Object>();
@@ -447,23 +447,13 @@ public abstract class db_queries_movies extends db_operations
 		{
 			while (result.next())
 			{
-				int id = result.getInt("idMovie");
-				String name = result.getString("movieName");
-				int movie_year = result.getInt("year");
-				String wiki = result.getString("wiki");
-				String movie_director = result.getString("personName");
-				int duration = result.getInt("duration");
-				String plot = result.getString("plot");
-				
-				light_entity_movie movie = new light_entity_movie(id, name, movie_year, wiki, movie_director, duration, plot);
-				
-				returnedList.add(movie);
+				returnedList.add(get_light_entity_movie(result));
 			}
 		}
 		
 		return (returnedList);
 	}
-	
+
 	public static List<String> get_movie_geners(int movie_id) 
 			throws SQLException 
 	{
@@ -509,6 +499,11 @@ public abstract class db_queries_movies extends db_operations
 		return (returnedList);
 	}
 	
+	/**
+	 * uses a random of (-3) - 3 so the top wont be the same all the time
+	 * @return
+	 * @throws SQLException
+	 */
 	public static List<String> get_movie_top_tags(int movie_id, int limit) 
 			throws SQLException 
 	{
@@ -517,7 +512,7 @@ public abstract class db_queries_movies extends db_operations
 						" GROUP BY idTag " +
 						" ORDER BY relatedness "+
 						" LIMIT " + limit;
-		ResultSet result = select("tagName, SUM(rate) as relatedness", "tag, user_tag_movie", where, movie_id);
+		ResultSet result = select("tagName, (SUM(rate) + (FLOOR(RAND() * (7)) - 3)) as relatedness", "tag, user_tag_movie", where, movie_id);
 	
 		// Enumerate all movies
 		List<String> returnedList = new ArrayList<String>();
@@ -551,16 +546,7 @@ public abstract class db_queries_movies extends db_operations
 		// is table empty
 		if (result != null && result.next())
 		{		
-			int id = result.getInt(1);
-			String name = result.getString(2);
-			int year = result.getInt(3);
-			String wiki = result.getString(4);
-			String director = result.getString(5);
-			int duration = result.getInt(6);
-			String plot = result.getString(7);
-			
-			light_entity_movie movie = new light_entity_movie(id, name, year, wiki, director, duration, plot);
-			return (movie);
+			return (get_light_entity_movie(result));
 		}
 		
 		// If there is user that feets

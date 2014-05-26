@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import parser_entities.light_entity_movie;
+
 
 /**
  * The communication with the db is being made
@@ -421,6 +423,30 @@ public abstract class db_operations
 		Connection conn = jdbc_con.connectionCheck();
 		
 		return (conn.createStatement());
+	}
+	
+	/**
+	 * make sure to select all needed fields
+	 * @return result may be an empry entity
+	 * @throws SQLException
+	 */
+	protected static light_entity_movie get_light_entity_movie(ResultSet result) 
+			throws SQLException 
+	{
+		if (result != null)
+		{
+			int id = result.getInt("idMovie");
+			String name = result.getString("movieName");
+			int movie_year = result.getInt("year");
+			String wiki = result.getString("wiki");
+			String movie_director = result.getString("personName");
+			int duration = result.getInt("duration");
+			String plot = result.getString("plot");
+			
+			return(new light_entity_movie(id, name, movie_year, wiki, movie_director, duration, plot));
+		}
+		
+		return(new light_entity_movie(0, "", 0, "", "", 0, ""));
 	}
 	
 // Internal usage

@@ -376,6 +376,22 @@ public class user_logics
 		return ids;
 	}
 	
+	public List<light_entity_movie> get_unrated_movies(Integer limit) 
+			throws SQLException
+	{
+		return (get_unrated_movies(current_user_id, limit));
+	}
+	
+	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
+			throws SQLException
+	{
+		if (limit == null)
+			limit = 5;
+		
+		return (db_queries_user.get_unrated_movies(user_id, limit));
+	}
+
+	
 // INTERNALS
 	
 	/**
