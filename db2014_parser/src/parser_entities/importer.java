@@ -1,13 +1,18 @@
 package parser_entities;
 
+import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import db.*;
+import db.db_operations;
+import db.db_queries_movies;
+import db.db_queries_persons;
+import db.jdbc_connection_pooling;
 
 /** A Bussiness Logic class for import of data. 
  ** Recieves parsed and normalized data in sets and maps,
@@ -15,12 +20,17 @@ import db.*;
  ** (insert, update), etc. **/
 public class importer extends db_operations{
 
-	private static final Integer DEFAULT_TAG_SCORE = new Integer(5);
-	public static final String OBJECT_GENRE = "genre";
-	public static final String OBJECT_LANGUAGE = "language";
-	public static final String OBJECT_TAG = "tag";
-	public static final String PERSON_TYPE_ACTOR  = "actor";
-	public static final String PERSON_TYPE_DIRECTOR  = "director";
+	private static final Integer 	DEFAULT_TAG_SCORE = 		new Integer(5);
+	public static final String 		OBJECT_GENRE = 				"genre";
+	public static final String 		OBJECT_LANGUAGE = 			"language";
+	public static final String 		OBJECT_TAG = 				"tag";
+	public static final String 		PERSON_TYPE_ACTOR  = 		"actor";
+	public static final String 		PERSON_TYPE_DIRECTOR  = 	"director";
+	public static final String 		MOVIE_ATTRIBUTE_GENRES = 	"genres";
+	public static final String 		MOVIE_ATTRIBUTE_TAGS =	 	"tags";
+	public static final String 		MOVIE_ATTRIBUTE_ACTORS =  	"actors";
+	public static final int 		BATCH_SIZE =			  	10000;
+	
 	
 	/*logical represantation of tables is the db*/
 	HashMap<String,Integer> movie_table; 
@@ -47,15 +57,15 @@ public class importer extends db_operations{
 		if (directors_table==null)
 			directors_table = new HashMap<String,Integer>();
 		
-		//genres_table = db_queries_movies.get_genre_names_and_ids();
+		genres_table = db_queries_movies.get_genre_names_and_ids();
 		if (genres_table==null)
 			genres_table = new HashMap<String,Integer>();
 		
-		//tags_table = db_queries_movies.get_tag_names_and_ids();
+		tags_table = db_queries_movies.get_tag_names_and_ids();
 		if (tags_table==null)
 			tags_table = new HashMap<String,Integer>();
 		
-		//languages_table = db_queries_movies.get_language_names_and_ids();
+		languages_table = db_queries_movies.get_language_names_and_ids();
 		if (languages_table==null)
 			languages_table = new HashMap<String,Integer>();
 		
@@ -63,7 +73,8 @@ public class importer extends db_operations{
 	
 	/** updates movie tables, with new movies. 
 	 ** If the movie already exists - overwrite it's details:
-	 ** actors, directors, etc. we add tags only to new movies 
+	 ** actors, directors, etc. we add tags only to new movies
+	 ** a movie is indentified by it's FQ-name, i.e. <name (year) (director)> 
 	 * @throws SQLException **/
 	public void update_movies_table (HashMap<String,entity_movie> movies_map) throws SQLException
 	{
@@ -73,45 +84,49 @@ public class importer extends db_operations{
 		PreparedStatement movie_insert_stmt, movie_update_stmt;
 		/*sync tables with db*/
 		movie_table = db_queries_movies.get_movie_names_and_ids();
-		actors_table = db_queries_persons.get_actor_names_and_ids();
-		directors_table = db_queries_persons.get_director_names_and_ids();
-				
+		if (movie_table == null)
+			movie_table = new HashMap<String,Integer>();
+		
 		Connection db_conn = getConnection();
 		
-		movie_update_stmt = db_conn.prepareStatement("UPDATE Movie SET idLanguage=?,idDirector=?,movieName=?,year=?,wiki=?,duration=?,plot=? WHERE idMovie=?) VALUES(?,?,?,?,?,?,?,?)");
-		movie_insert_stmt = db_conn.prepareStatement("INSERT INTO Movie(idLanguage,idDirector,movieName,year,wiki,duration,plot) VALUES(?,?,?,?,?,?,?,?)");
+		movie_update_stmt = db_conn.prepareStatement("UPDATE Movie SET idLanguage=?,idDirector=?,movieName=?,year=?,wiki=?,duration=?,movie_qualified_name=?,plot=? WHERE idMovie=?");
+		movie_insert_stmt = db_conn.prepareStatement("INSERT INTO Movie(idLanguage,idDirector,movieName,year,wiki,duration,movie_qualified_name,plot) VALUES(?,?,?,?,?,?,?,?)");
 		
+		/* iterate over input */
 		for (entity_movie movie : movies_map.values())
 		{
 			/*if movie exists, add an update to the batch*/
-			if (db_queries_movies.movie_exist(movie.get_movie_name(), movie.get_movie_year(), movie.get_movie_director().get_person_name()))
+			String movie_fq_name = movie.get_movie_qualified_name();
+			Integer movie_id = null; 
+			if ((movie_id = movie_table.get(movie_fq_name)) != null)
 			{	
+				movie_update_stmt = set_values_movie_update(movie_update_stmt, movie, movie_id);
+				movie_update_stmt.addBatch();
+				batch_count++;	
+			}
+			/*movie doesn't exists, insert new movie*/
+			else
+			{				
 				movie_insert_stmt = set_values_movie_insert(movie_insert_stmt, movie);
 				movie_insert_stmt.addBatch(); 
 				batch_count++;
 			}
-			/*movie doesn't exists, insert new movie*/
-			else
+			
+			if (batch_count % BATCH_SIZE == 0)
 			{
-				movie_update_stmt = set_values_movie_update(movie_update_stmt, movie);
-				movie_update_stmt.addBatch();
-				batch_count++;
+				try{
+					movie_update_stmt.executeBatch();
+					movie_insert_stmt.executeBatch();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 			
-		if (batch_count % 1000 == 0)
-		{
-			movie_update_stmt.executeBatch();
-			movie_insert_stmt.executeBatch();
-		}		
 		}
 		/*execute remainder*/ 
 		movie_update_stmt.executeBatch();
 		movie_insert_stmt.executeBatch();
 	}
-	
-	private static final String MOVIE_ATTRIBUTE_GENRES = "genres";
-	private static final String MOVIE_ATTRIBUTE_TAGS = "tags";
-	private static final String MOVIE_ATTRIBUTE_ACTORS = "actors";
 	
 	/**
 	 * batch update of one-to-many relationships: movie-genre, movie-tag, movie-actor
@@ -124,22 +139,23 @@ public class importer extends db_operations{
 		movie_table = db_queries_movies.get_movie_names_and_ids();
 		int batch_count = 0;
 		Set<String> attributes_set;
+		int fail_count=0;
 		
 		Connection db_conn = getConnection();
 		
 		PreparedStatement table_movie_insert_stmt;
 		switch (attribute_type) {
 		case MOVIE_ATTRIBUTE_GENRES:  
-				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO GenreMovie(idMovie, idGenre) VALUES(?,?)");
+				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO genre_movie(idMovie, idGenre) VALUES(?,?)");
 				/*delete movie-genre table*/
 				db_queries_movies.clear_movie_genres();
 				break;
 		case MOVIE_ATTRIBUTE_TAGS:  
 				/*we do not delete the tags table, once it exists.*/	
-				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO tag_movie(idMovie, idTag, scoreTag) VALUES(?,?,?)");
+				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag, scoreTag) VALUES(?,?,?)");
 		 		break;
 		case MOVIE_ATTRIBUTE_ACTORS:
-				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO ActorMovie(idMovie, idActor) VALUES(?,?)");
+				table_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO actor_movie(idMovie, idActor) VALUES(?,?)");
 				db_queries_persons.clear_movie_actors();
 				break;
 		default: table_movie_insert_stmt = null; 
@@ -149,7 +165,7 @@ public class importer extends db_operations{
 		/*for every movie*/
 		for (entity_movie movie : movies_map.values())
 		{
-			Integer movie_id = movie_table.get(movie.get_movie_name());
+			Integer movie_id = movie_table.get(movie.get_movie_qualified_name());
 			if (movie_id == null)
 				return;
 			/* select appropriate attribute set - the movie's genres, tags or actors*/
@@ -182,38 +198,92 @@ public class importer extends db_operations{
 					Integer genre_id = genres_table.get(attribute);
 					if (genre_id == null)
 						continue;
-					table_movie_insert_stmt.setInt(0,movie_id);
-					table_movie_insert_stmt.setInt(1,genre_id);
+					table_movie_insert_stmt.setInt(1,movie_id);
+					table_movie_insert_stmt.setInt(2,genre_id);
 					break;
 				case MOVIE_ATTRIBUTE_TAGS:  
 					Integer tag_id = tags_table.get(attribute);
 					if (tag_id == null)
 						continue;
-					table_movie_insert_stmt.setInt(0,movie_id);
-					table_movie_insert_stmt.setInt(1,tag_id);
-					table_movie_insert_stmt.setInt(1,DEFAULT_TAG_SCORE);
+					table_movie_insert_stmt.setInt(1,movie_id);
+					table_movie_insert_stmt.setInt(2,tag_id);
+					table_movie_insert_stmt.setInt(3,DEFAULT_TAG_SCORE);
 				 		break;
 				case MOVIE_ATTRIBUTE_ACTORS:
 					Integer actor_id = actors_table.get(attribute);
 					if (actor_id == null)
 						continue;
-					table_movie_insert_stmt.setInt(0,movie_id);
-					table_movie_insert_stmt.setInt(1,actor_id);
+					table_movie_insert_stmt.setInt(1,movie_id);
+					table_movie_insert_stmt.setInt(2,actor_id);
 						break;
 				default: break; 
 				}
 				table_movie_insert_stmt.addBatch();
 				batch_count++;
 				
-				if (batch_count % 1000 == 0)
-				{
-					table_movie_insert_stmt.executeBatch();
-				}
+				if (batch_count % BATCH_SIZE == 0)
+					fail_count += execute_batch(table_movie_insert_stmt);
 			}
-			/*remainder*/
-			table_movie_insert_stmt.executeBatch();
+			
 		}
+		/*execute remainder*/ 
+		fail_count += execute_batch(table_movie_insert_stmt);
+		System.out.println(attribute_type +"-Movies Table updates:\n\t failed: " + fail_count + " out of: " + batch_count);
 	}
+	
+	/**
+	 * batch update of one-to-many relationships: movie-genre, movie-tag, movie-actor
+	 * @param movies_map - a map of movie entities
+	 * @param attribute_type - which one-to-many attribute we wish to update
+	 * @throws SQLException
+	 */
+	public void update_objects_by_name_batch(HashSet<String> object_set, String object_name) throws SQLException
+	{
+		int batch_count = 0;
+		int fail_count=0;
+		
+		int update_count = 0; 
+		HashMap<String,Integer> object_map; 
+		Connection db_conn = getConnection();
+		PreparedStatement insert_stmt;
+		
+		/* determine which misc id-name object we're updating*/
+		switch (object_name) {
+		case OBJECT_GENRE:  object_map = this.genres_table;
+				insert_stmt = db_conn.prepareStatement("INSERT INTO genre(genreName) VALUES(?)");
+		 		break;
+		case OBJECT_LANGUAGE:  object_map = this.languages_table;
+				insert_stmt = db_conn.prepareStatement("INSERT INTO language(languageName) VALUES(?)");
+		 		break;
+		case OBJECT_TAG:  object_map = this.tags_table;
+				insert_stmt = db_conn.prepareStatement("INSERT INTO tag(tagName) VALUES(?)");
+		 		break;
+		default: object_map = null;
+				 insert_stmt = null;	
+		 		break;
+		}
+		if (object_map == null || insert_stmt == null)
+			return; 
+		
+		for (String object : object_set)
+		{
+			Integer object_id = new Integer(0);
+			/*if doesn't exists in DB*/
+			if (object_map.get(object) == null)
+			{
+				/*create and add*/
+				insert_stmt.setString(1, object);
+				insert_stmt.addBatch();
+				batch_count++;
+			}
+			if (batch_count % BATCH_SIZE == 0)
+				fail_count += execute_batch(insert_stmt);
+		}
+			/*execute remainder*/ 
+			fail_count += execute_batch(insert_stmt);
+			System.out.println(object_name +" Table, input set size: " + object_set.size() + "\n\tInserts:\n\t failed: " + fail_count + " out of: " + batch_count);
+	}
+	
 	
 	
 	/**
@@ -225,9 +295,10 @@ public class importer extends db_operations{
 	 * first adds person to persons relation in batch, and then adds him to specific directors/actors table
 	 * @throws SQLException
 	 */
+	
 	public void update_person_entities_table(HashMap<String,entity_person> person_map, String person_type) throws SQLException
 	{
-		int batch_count = 0;
+		int batch_count = 0, fail_count = 0;
 		/* will update relevant person table*/
 		PreparedStatement person_insert_stmt = null;
 		/*represents specific person subclass (actor/directo) persons and ids*/
@@ -237,7 +308,6 @@ public class importer extends db_operations{
 		
 		Connection db_conn = getConnection();
 		
-		/*wait for matan get_person_names_and_ids();*/
 		general_person_table = db_queries_persons.get_person_names_and_ids();
 		if (general_person_table == null)
 			general_person_table = new HashMap<String,Integer>();
@@ -256,14 +326,14 @@ public class importer extends db_operations{
 				batch_count++;
 			}
 			
-		if (batch_count % 1000 == 0)
-			person_insert_stmt.executeBatch();
+		if (batch_count % BATCH_SIZE == 0)
+			fail_count += execute_batch(person_insert_stmt);
 		
 		}
 		/*execute remainder*/ 
-		person_insert_stmt.executeBatch();
+		fail_count += execute_batch(person_insert_stmt);
+		System.out.println("Person Table updates:\n\t failed: " + fail_count + " out of: " + batch_count);
 		
-		/*wait for matan*/
 		/*sync general person table with db*/
 		general_person_table = db_queries_persons.get_person_names_and_ids();
 		
@@ -287,6 +357,7 @@ public class importer extends db_operations{
 		if (person_insert_stmt == null)
 			return;
 				
+		fail_count = 0;
 		for (entity_person person : person_map.values())
 		{
 			
@@ -295,19 +366,19 @@ public class importer extends db_operations{
 			if (general_person_id != null && person_table.get(general_person_id) != null)
 				continue; 
 			/*no such person, add him to table*/
-			else
+			else if (general_person_id != null)
 			{
 				person_insert_stmt.setInt(1, general_person_id);
 				person_insert_stmt.addBatch();
 				batch_count++;
 			}
+			if (batch_count % BATCH_SIZE == 0)
+				fail_count += execute_batch(person_insert_stmt);
 			
-		if (batch_count % 1000 == 0)
-			person_insert_stmt.executeBatch();
-		
 		}
 		/*execute remainder*/ 
-		person_insert_stmt.executeBatch();
+		fail_count += execute_batch(person_insert_stmt);
+		System.out.println(person_type + " Table updates:\n\t failed: " + fail_count + " out of: " + batch_count);
 		
 		/*sync parser tables with db after update*/
 		switch (person_type) {
@@ -321,150 +392,6 @@ public class importer extends db_operations{
 		}
 	}
 	
-	/** deletes previous actor-movie relation,
-	 ** updates with current data from yago**/
-	public void update_movie_actors_tabls(HashMap<String,entity_movie> movies_map) throws SQLException
-	{
-		/*sync tables*/
-		movie_table = db_queries_movies.get_movie_names_and_ids();
-		actors_table = db_queries_persons.get_actor_names_and_ids();
-		
-		int batch_count = 0;
-		
-		Connection db_conn = getConnection();
-		
-		PreparedStatement actor_movie_insert_stmt;
-		actor_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO actormovie(idMovie, idGenre) VALUES(?,?)");
-		
-		/*delete movie-actor table*/
-		db_queries_persons.clear_movie_actors();
-		
-		for (entity_movie movie : movies_map.values())
-		{
-			Integer movie_id = movie_table.get(movie.get_movie_name());
-			if (movie_id == null)
-				return;
-			for (entity_person actor : movie.get_movie_actors())
-			{
-				Integer actor_id = actors_table.get(actor.get_person_name());
-				if (actor_id == null)
-					continue;
-				actor_movie_insert_stmt.setInt(0,movie_id);
-				actor_movie_insert_stmt.setInt(1,actor_id);
-				actor_movie_insert_stmt.addBatch();
-				batch_count++;
-				
-				if (batch_count % 1000 == 0)
-				{
-					actor_movie_insert_stmt.executeBatch();
-					actor_movie_insert_stmt.executeBatch();
-				}		
-			}
-		}
-		
-		/*remainder*/
-		actor_movie_insert_stmt.executeBatch();
-		actor_movie_insert_stmt.executeBatch();
-	}
-
-	
-	/** set values in a prepared movie insert query
-	 * 	return null on failure or if movie id not found **/
-	public PreparedStatement set_values_movie_update(PreparedStatement movie_update_stmt, entity_movie movie)
-	{
-		try {
-			Integer movie_id = db_queries_movies.get_movie_id(movie.get_movie_name());
-			/*set statment parameters*/
-			if (languages_table.get(movie.get_movie_language()) != null)
-				movie_update_stmt.setInt(0, languages_table.get(movie.get_movie_language()));
-			else
-				movie_update_stmt.setNull(0, 2);
-			if (directors_table.get(movie.get_movie_director()) != null)
-				movie_update_stmt.setInt(1, directors_table.get(movie.get_movie_director()));
-			else
-				movie_update_stmt.setNull(1, 2);
-			
-			if (movie.get_movie_name() != null)
-				movie_update_stmt.setString(2, movie.get_movie_name());
-			else
-				movie_update_stmt.setNull(1, 2);
-			
-			if (movie.get_movie_year() != null)
-				movie_update_stmt.setString(3, movie.get_movie_year());
-			else
-				movie_update_stmt.setNull(3, 2);
-			
-			if (movie.get_movie_wikipedia_url() != null)
-				movie_update_stmt.setString(4, movie.get_movie_wikipedia_url());
-			else 
-				movie_update_stmt.setNull(4, 2);
-			
-			if (movie.get_movie_plot() != null)
-				movie_update_stmt.setString(5, movie.get_movie_plot());
-			else
-				movie_update_stmt.setNull(5, 2);
-			
-			if (movie_id != null)
-				movie_update_stmt.setInt(6, movie_id);
-			else /*cannot update without id*/
-				return null;
-			
-			return movie_update_stmt;
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Error preparing statement update statment" +  ex.getStackTrace());
-			return null;
-		}
-	}
-	
-	
-	/** set values in a prepared movie insert query
-	 * 	return null on failure or if movie id not found **/
-	public PreparedStatement set_values_movie_insert(PreparedStatement movie_insert_stmt, entity_movie movie)
-	{
-		/*auto incremental, no need to specify id!*/
-		try {
-			/*set statment parameters*/
-			if (languages_table.get(movie.get_movie_language()) != null)
-				movie_insert_stmt.setInt(0, languages_table.get(movie.get_movie_language()));
-			else
-				movie_insert_stmt.setNull(0, 2);
-			if (directors_table.get(movie.get_movie_director()) != null)
-				movie_insert_stmt.setInt(1, directors_table.get(movie.get_movie_director()));
-			else
-				movie_insert_stmt.setNull(1, 2);
-			
-			if (movie.get_movie_name() != null)
-				movie_insert_stmt.setString(2, movie.get_movie_name());
-			else
-				movie_insert_stmt.setNull(1, 2);
-			
-			if (movie.get_movie_year() != null)
-				movie_insert_stmt.setString(3, movie.get_movie_year());
-			else
-				movie_insert_stmt.setNull(3, 2);
-			
-			if (movie.get_movie_wikipedia_url() != null)
-				movie_insert_stmt.setString(4, movie.get_movie_wikipedia_url());
-			else 
-				movie_insert_stmt.setNull(4, 2);
-			
-			if (movie.get_movie_plot() != null)
-				movie_insert_stmt.setString(5, movie.get_movie_plot());
-			else
-				movie_insert_stmt.setNull(5, 2);
-			
-
-			
-			return movie_insert_stmt;
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Error preparing statement update statment" +  ex.getStackTrace());
-			return null;
-		}
-	}
 	
 	
 	/**
@@ -521,6 +448,122 @@ public class importer extends db_operations{
 				+ update_count + " out of Total:" +  object_map.size());
 	}
 	
+	/* helper functions */
+
+	/** set values in a prepared movie insert query
+	 * 	return null on failure or if movie id not found **/
+	public PreparedStatement set_values_movie_insert(PreparedStatement movie_insert_stmt, entity_movie movie)
+	{
+		/*auto incremental, no need to specify id!*/
+		try {
+			/*set statment parameters*/
+			if (languages_table.get(movie.get_movie_language()) != null)
+				movie_insert_stmt.setInt(1, languages_table.get(movie.get_movie_language()));
+			else
+				movie_insert_stmt.setNull(1, 2);
+			
+			if (movie.get_movie_director() != null)
+				System.out.println(movie.get_movie_director());
+				
+			if (movie.get_movie_director() != null && directors_table.get(movie.get_movie_director().get_person_name()) != null)
+				movie_insert_stmt.setInt(2, directors_table.get(movie.get_movie_director().get_person_name()));
+			else
+				movie_insert_stmt.setNull(2, 2);
+			
+			if (movie.get_movie_name() != null)
+				movie_insert_stmt.setString(3, movie.get_movie_name());
+			else
+				movie_insert_stmt.setNull(3, 2);
+			
+			if (movie.get_movie_year() != null)
+				movie_insert_stmt.setString(4, movie.get_movie_year());
+			else
+				movie_insert_stmt.setNull(4, 2);
+			
+			if (movie.get_movie_wikipedia_url() != null)
+				movie_insert_stmt.setString(5, movie.get_movie_wikipedia_url());
+			else 
+				movie_insert_stmt.setNull(5, 2);
+			
+			if (movie.get_movie_plot() != null)
+				movie_insert_stmt.setString(6, movie.get_movie_length());
+			else
+				movie_insert_stmt.setNull(6, 2);
+			
+			if (movie.get_movie_qualified_name() != null)
+				movie_insert_stmt.setString(7, movie.get_movie_qualified_name());
+			else
+				movie_insert_stmt.setNull(7, 2);
+			
+			if (movie.get_movie_plot() != null)
+				movie_insert_stmt.setString(8, movie.get_movie_plot());
+			else
+				movie_insert_stmt.setNull(8, 2);
+			
+			return movie_insert_stmt;
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error preparing statement update statment" +  ex.getStackTrace());
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param 	stmt - the batch to perform
+	 * @return	int fail_count - the amount of failed statements 
+	 * executes a bath statement, and handles returns fail count
+	 * in all possible scenarios
+	 */
+	public int execute_batch(PreparedStatement stmt)
+	{
+		int fail_count=0;
+		try{
+			stmt.executeBatch();
+		}
+		catch(BatchUpdateException batch_ex){
+			/* at least one command failed, see how many*/
+			int[] batch_results = batch_ex.getUpdateCounts();
+			int i=0;
+			/* driver stopped execution after faulty statement*/
+			if (batch_results.length != BATCH_SIZE)
+				fail_count += BATCH_SIZE - batch_results.length; 
+			else { /* driver tried executing all commands - find fails*/
+				for (i=0; i< batch_results.length; i++)
+					if (batch_results[i] == PreparedStatement.EXECUTE_FAILED)
+						fail_count++;
+			}
+		}
+		catch (Exception ex) { /*some other issue*/
+			fail_count += BATCH_SIZE;
+			ex.printStackTrace();
+		}
+		return fail_count; 
+	}
+	
+	
+	/** set values in a prepared movie insert query
+	 * 	return null on failure or if movie id not found **/
+	public PreparedStatement set_values_movie_update(PreparedStatement movie_update_stmt, entity_movie movie, Integer movie_id)
+	{
+		try {
+			/* same as insert, just need to append and id for the Where clause*/
+			set_values_movie_insert(movie_update_stmt,movie);
+			if (movie_id != null)
+				movie_update_stmt.setInt(9, movie_id);
+			else /*cannot update without id*/
+				return null;
+			return movie_update_stmt;
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error preparing statement update statment" +  ex.getStackTrace());
+			return null;
+		}
+	}
+
 	
 	/************************ TBD *************************************/
 	/**
@@ -637,7 +680,7 @@ public class importer extends db_operations{
 				batch_count++;
 			}
 			
-		if (batch_count % 1000 == 0)
+		if (batch_count % BATCH_SIZE == 0)
 			actor_inser_stmt.executeBatch();
 		
 		}
@@ -673,7 +716,7 @@ public class importer extends db_operations{
 				batch_count++;
 			}
 			
-		if (batch_count % 1000 == 0)
+		if (batch_count % BATCH_SIZE == 0)
 			director_insert_stmt.executeBatch();
 		
 		}
@@ -710,7 +753,7 @@ public class importer extends db_operations{
 				genre_movie_insert_stmt.addBatch();
 				batch_count++;
 				
-				if (batch_count % 1000 == 0)
+				if (batch_count % BATCH_SIZE == 0)
 				{
 					genre_movie_insert_stmt.executeBatch();
 					genre_movie_insert_stmt.executeBatch();
@@ -759,7 +802,7 @@ public class importer extends db_operations{
 				tag_movie_insert_stmt.addBatch();
 				batch_count++;
 				
-				if (batch_count % 1000 == 0)
+				if (batch_count % BATCH_SIZE == 0)
 				{
 					tag_movie_insert_stmt.executeBatch();
 					tag_movie_insert_stmt.executeBatch();
@@ -772,6 +815,51 @@ public class importer extends db_operations{
 		tag_movie_insert_stmt.executeBatch();
 	}
 	
+	/** deletes previous actor-movie relation,
+	 ** updates with current data from yago**/
+	public void update_movie_actors_tabls(HashMap<String,entity_movie> movies_map) throws SQLException
+	{
+		/*sync tables*/
+		movie_table = db_queries_movies.get_movie_names_and_ids();
+		actors_table = db_queries_persons.get_actor_names_and_ids();
+		
+		int batch_count = 0;
+		
+		Connection db_conn = getConnection();
+		
+		PreparedStatement actor_movie_insert_stmt;
+		actor_movie_insert_stmt = db_conn.prepareStatement("INSERT INTO actormovie(idMovie, idGenre) VALUES(?,?)");
+		
+		/*delete movie-actor table*/
+		db_queries_persons.clear_movie_actors();
+		
+		for (entity_movie movie : movies_map.values())
+		{
+			Integer movie_id = movie_table.get(movie.get_movie_name());
+			if (movie_id == null)
+				return;
+			for (entity_person actor : movie.get_movie_actors())
+			{
+				Integer actor_id = actors_table.get(actor.get_person_name());
+				if (actor_id == null)
+					continue;
+				actor_movie_insert_stmt.setInt(0,movie_id);
+				actor_movie_insert_stmt.setInt(1,actor_id);
+				actor_movie_insert_stmt.addBatch();
+				batch_count++;
+				
+				if (batch_count % BATCH_SIZE == 0)
+				{
+					actor_movie_insert_stmt.executeBatch();
+					actor_movie_insert_stmt.executeBatch();
+				}		
+			}
+		}
+		
+		/*remainder*/
+		actor_movie_insert_stmt.executeBatch();
+		actor_movie_insert_stmt.executeBatch();
+	}
 	
 }
 

@@ -5,30 +5,37 @@ import java.io.Serializable;
 public class entity_person implements Serializable{
 	
 	private String entity_person_name;
-	private int entity_person_id;
+	private String entity_person_id;
 	
-	public entity_person(int person_id)
-	{
+	public entity_person(String person_id){
 		this.entity_person_id = person_id;
 	}
 
 	public entity_person(String name, Integer id) 
 	{
 		entity_person_name = name;
-		entity_person_id = id;
+		entity_person_id = (new Integer(id)).toString();
 	}
 
 	public String get_person_name() {
 		return entity_person_name;
 	}
-	
-	public int get_person_id() {
-		return entity_person_id;
+
+	public void set_person_name(String person_name) {
+		this.entity_person_name = person_name;
 	}
 	
 	public String toString(){
 		return this.entity_person_name;
 		
+	}
+
+	public String get_person_id() {
+		return entity_person_id;
+	}
+	
+	public void set_person_id(String person_id) {
+		this.entity_person_id = person_id;
 	}
 }
 

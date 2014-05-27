@@ -300,7 +300,7 @@ public abstract class db_queries_movies extends db_operations
 	public static HashMap <String,Integer> get_movie_names_and_ids() 
 			throws SQLException
 	{
-		return (generic_get_two_values("idMovie, movieName", "movie", ""));
+		return (generic_get_two_values("idMovie, movie_qualified_name", "movie", ""));
 	}
 
 	/**
@@ -606,6 +606,24 @@ public abstract class db_queries_movies extends db_operations
 		else
 			return (0);
 	}
+	
+	public static HashMap <String,Integer> get_genre_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idGenre, genreName", "genre", ""));
+	}
+	
+	public static HashMap <String,Integer> get_language_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idLanguage, languageName", "language", ""));
+	}
+	
+	public static HashMap <String,Integer> get_tag_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idTag, tagName", "tag", ""));
+	}
 
 	public static int get_movie_id(String movie_name) 
 			throws SQLException
@@ -636,7 +654,7 @@ public abstract class db_queries_movies extends db_operations
 	public static boolean clear_movie_genres() 
 			throws SQLException
 	{
-		return (delete("genre_movie",null) != -1);
+		return (delete("genre_movie","") != -1);
 	}
 	
 	/**

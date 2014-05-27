@@ -1,8 +1,12 @@
 package parser_entities;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +14,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import config.config;
+
+
+import java.sql.BatchUpdateException;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import db.db_operations;
+import db.db_queries_movies;
+import db.db_queries_persons;
+import db.jdbc_connection_pooling;
+
 
 /** parser_src_imdb is initialized with an existing 
  * movie catalog and enriches it with IMDB data.  
@@ -31,16 +47,13 @@ public class praser_src_imdb {
 	private static final Integer MAX_TAGS = 10; 
 	private static final Integer MIN_TAG_COUNT = 100;
 	
-	
-	
 	/*main movie catalog to be enriched*/
 	private HashMap<String,entity_movie> parser_movie_map;
+	
 	/*side objects - languges, genres*/
 	private HashSet<String> parser_language_set; 
 	private HashSet<String> parser_genre_set;
 	private HashSet<String> parser_tag_set;
-	
-	
 	
 	/*helper hash, to find yago_name by imdb_name*/
 	private HashMap<String,String> imdb_to_yago;
@@ -53,33 +66,20 @@ public class praser_src_imdb {
 	
 	/* counters */
 	private int c_plots = 0; 
+	private int c_plots_rejected = 0;
 	private int c_tags = 0;
+	private int c_tags_rejected = 0;
 	private int c_genres = 0;
+	private int c_genres_rejected = 0;
 	private int c_languages = 0;
-	
-	
-	public void print_imdb_stats()
-	{
-		System.out.println("IMDB enrichment\n\t plots: " + c_plots + "\n\t tags: " + c_tags + "\n\t genres: " + c_genres + "\n\t languages: " + c_languages);
-	}
-	public HashSet<String> get_parser_languages()
-	{
-		return this.parser_language_set;
-	}
-	
-	public HashSet<String> get_parser_genres()
-	{
-		return this.parser_genre_set;
-	}
-
-	public HashSet<String> get_parser_tags()
-	{
-		return this.parser_tag_set;
-	}
+	private int c_langs_rejected = 0;
+		
 	/*constructor*/
 	public praser_src_imdb(HashMap<String,entity_movie> movie_map)
 	{
-
+		
+		int count = 0; 
+		
 		this.properties = new config();
 		/*init movie catalog*/
 		this.parser_movie_map = movie_map; 
@@ -92,125 +92,16 @@ public class praser_src_imdb {
 		
 		get_imdb_directors();
 		
-		/* yago names are "movie_name (sometext)", IMDB names are : "movie_name (movie year/num in year)"
-		 * assume that no film with the same name and same director aired in the same year, to create a map
-		 * given yago_name, year and director, we create a logical "key" : name (year) (director). 
-		 * if IMDB record agrees on these three, we use it to enrich yago element
-		 * with plot, language, tags, genres*/
-		for (Entry<String,entity_movie> kvp : movie_map.entrySet())
+		/* maps upper-case movie names, to their real fq-names */
+		for (entity_movie movie : movie_map.values())
 		{
-			/* get source entity_movie*/
-			entity_movie modified_movie = kvp.getValue();
-			/*get name, year, make new name and update*/
-			String movie_name = modified_movie.get_movie_name();
-			/*remove  (sometext) from yago name*/
-			if (movie_name.contains(" ("))
-			{
-				String comments = movie_name.substring(movie_name.indexOf(" ("),movie_name.lastIndexOf(")")+1);
-				movie_name = movie_name.replace(comments, "");
-			}
-			/*add (year)*/
-			String movie_year = modified_movie.get_movie_year();
-			if (movie_year == null)
-				continue;
-			entity_person director = modified_movie.get_movie_director();
-			if (director == null)
-				continue;
-			String movie_director = director.get_person_name();
-			if (movie_director == null)
-				continue;
-			
-			String imdb_movie_name = movie_name + " (" + movie_year + ")" + " (" + movie_director + ")";
-			/*update movie catalog with new imdb_name*/
-			modified_movie.set_imdb_name(imdb_movie_name);
-			kvp.setValue(modified_movie);
-			
 			/*set translation in hash*/
-			imdb_to_yago.put(imdb_movie_name,modified_movie.get_movie_name());
+			imdb_to_yago.put(movie.get_movie_qualified_name().toUpperCase(),movie.get_movie_qualified_name());
+			/*add also foreign names*/
+			for (String label_fq_name : movie.get_label_fq_names())
+					imdb_to_yago.put(label_fq_name.toUpperCase(),movie.get_movie_qualified_name());
 		}
-	}
-	
-	/*expects imdb name: "movie (year/number)"
-	 * return movie key: movie (year) (director)*/
-	public String get_movie_key(String imdb_movie_name)
-	{
-		if (imdb_name_to_director.get(imdb_movie_name) == null)
-			return clean_imdb_name(imdb_movie_name); 
-		String movie_key = clean_imdb_name(imdb_movie_name) + " (" +imdb_name_to_director.get(imdb_movie_name) + ")";
-		return movie_key;
 		
-	}
-	
-	/* helper function - we parse IMDB titles by directors file
-	 * to establish a yago-IMDB key based on name,year,director */
-	public void get_imdb_directors()
-	{
-		if (properties.get_imdb_directors_path() == null)
-			return; 
-		File fl = new File(properties.get_imdb_directors_path());
-		if (! fl.exists())
-			return;
-
-		try {
-			FileReader fr = new FileReader(properties.get_imdb_directors_path());
-			BufferedReader br = new BufferedReader(fr);
-			String line;
-			String cur_director = "";
-			try {
-				/*read until start*/
-				while ((line = br.readLine()) != null)
-				{	
-					if (line.contains(imdb_movie_directors_list_start))
-					{
-						line = br.readLine();
-						break;
-					}
-				}
-				while ((line = br.readLine()) != null)
-				{
-					if (line.equals(""))
-						continue; 
-					String[] splitted_line = line.split("\\t");
-					if (splitted_line[0] == null)
-						continue; 
-					/*new director*/
-					if (!splitted_line[0].equals("")) 
-						{
-						/*re-organize director name*/
-						cur_director = "";
-						String[] split_director = splitted_line[0].split(",");
-						if (split_director.length >= 2)
-							cur_director = split_director[1].trim() + " ";
-						cur_director = cur_director + split_director[0].trim(); 
-						/*movie also present in line*/
-						if (splitted_line[splitted_line.length -1] != null) 
-							imdb_name_to_director.put(clean_imdb_name(splitted_line[splitted_line.length -1]), cur_director);
-						}
-					else
-					{
-						/*only movie in line*/
-						if (splitted_line[splitted_line.length -1] != null) 
-							imdb_name_to_director.put(clean_imdb_name(splitted_line[splitted_line.length -1]), cur_director);
-					}					
-				}
-						
-			} catch (Exception ex) {
-				System.out.println(ex.getMessage());
-				}
-			}
-			catch (Exception ex) {
-				
-			}
-	}
-
-	/*remove bad characters from movie names*/
-	private String clean_imdb_name (String imdb_movie_name)
-	{
-		imdb_movie_name =imdb_movie_name.replaceAll("\"", "");		
-		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
-		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
-		imdb_movie_name = imdb_movie_name.substring(0,imdb_movie_name.indexOf(")")+1);
-		return imdb_movie_name;
 	}
 	
 	public void parse()
@@ -219,7 +110,12 @@ public class praser_src_imdb {
 		if (properties.get_imdb_genres_path() != null)
 			parse_src_imdb_genres(properties.get_imdb_genres_path());
 		if (properties.get_imdb_plots_path() != null)
+			try{
 			parse_src_imdb_plots(properties.get_imdb_plots_path());
+			}
+		catch (Exception ex){
+			
+		}
 		if (properties.get_imdb_languages_path() != null)
 			parse_src_imdb_languages(properties.get_imdb_languages_path());
 		if (properties.get_imdb_tags_path() != null)
@@ -251,25 +147,33 @@ public class praser_src_imdb {
 				while ((line = br.readLine()) != null)
 				{
 					String splitted_line[] = line.split("\\t");
-					if (splitted_line[0] == null)
+					if (splitted_line[0] == null || splitted_line[0].equals(""))
 						continue;
 					String imdb_movie_name = clean_imdb_name(splitted_line[0]);
-					String imdb_movie_key = get_movie_key(imdb_movie_name);
-					String yago_name = imdb_to_yago.get(imdb_movie_key);
-					if (yago_name == null)
-						continue;
-					entity_movie movie = this.parser_movie_map.get(yago_name);
+					entity_movie movie = get_movie_by_imdb_name(imdb_movie_name);
 					if (movie == null)
+					{
+						c_genres_rejected++;
 						continue;
+					}
 					movie.add_to_genres(splitted_line[splitted_line.length -1]);
-					this.parser_movie_map.put(yago_name, movie);
+					this.parser_movie_map.put(movie.get_movie_qualified_name(), movie);
 					parser_genre_set.add(splitted_line[splitted_line.length -1]);
 					c_genres++;
 				}
-			}catch (Exception ex){
 			}
-		}
-		catch (Exception ex){}
+				catch(Exception ex){
+					System.out.println("ERROR parsing Yago literal facts:" );
+					ex.printStackTrace();
+					fr.close();
+					br.close();
+					
+				}
+			}
+			catch(Exception ex)
+			{
+				System.out.println(ex.toString());
+			}
 	}
 	
 	/**
@@ -357,14 +261,12 @@ public class praser_src_imdb {
 						continue;
 					
 					/*get relevant movie in map*/
-					String imdb_movie_key = get_movie_key(imdb_movie_name);
-					String yago_name = imdb_to_yago.get(imdb_movie_key);
-					
-					if (yago_name == null)
-						continue; 
-					entity_movie movie = this.parser_movie_map.get(yago_name);
+					entity_movie movie = get_movie_by_imdb_name(imdb_movie_name);
 					if (movie == null)
-						continue; 
+					{
+						c_tags_rejected++;
+						continue;
+					}
 					Set<String> tags = movie.get_movie_tags();
 					tags_count++;
 					
@@ -387,7 +289,7 @@ public class praser_src_imdb {
 								movie.add_to_tags(new_tag);
 								movie.remove_from_tags(tag);
 								/*update movie in map and look for next line*/
-								this.parser_movie_map.put(yago_name, movie);
+								this.parser_movie_map.put(movie.get_movie_qualified_name(), movie);
 								c_tags++;
 								break;
 							}
@@ -402,16 +304,24 @@ public class praser_src_imdb {
 		catch (Exception ex){}
 		System.out.println("added tags to:" + tags_count);
 	}
-
+	
+	
 	/**
 	 * @param imdb_plots_path - path to tags file
 	 * Parse IMDB plots file. 
 	 * Parse titles and their plots. if Parsed title agrees with 
 	 * yago name, year and director, enrich Yago movie with 
 	 * the plot for the movie 
+	 * @throws SQLException 
 	 **/
-	private void parse_src_imdb_plots(String imdb_plots_path)
+	private void parse_src_imdb_plots(String imdb_plots_path) throws SQLException
 	{
+
+		//HashSet<String> reject_set = new HashSet<String>();
+		//Connection db_conn = db_operations.getConnection();
+		//int batch_count =0;
+		//PreparedStatement stmt = db_conn.prepareStatement("INSERT INTO reject_film(film_name) VALUES(?)");
+		
 		int plot_count=0; 
 		// assert file exists
 		File fl = new File(imdb_plots_path);
@@ -421,6 +331,7 @@ public class praser_src_imdb {
 		try {
 			FileReader fr = new FileReader(imdb_plots_path);
 			BufferedReader br = new BufferedReader(fr);
+			
 			String line; 
 			try {
 				/*read until start*/
@@ -437,12 +348,30 @@ public class praser_src_imdb {
 						/*get name*/
 						String temp_name = line.replace("MV: ", "");
 						String imdb_movie_name = clean_imdb_name(temp_name);
-						String imdb_movie_key = get_movie_key(imdb_movie_name);
-						String yago_name = imdb_to_yago.get(imdb_movie_key);
-						
-						if (yago_name == null)
-							continue; 
-						
+						ArrayList<String> movie_keys  = get_movie_keys(imdb_movie_name);
+						entity_movie movie = get_movie_by_imdb_name(imdb_movie_name);
+						if (movie == null)
+						{
+							/*if (!reject_set.contains(imdb_movie_name))
+							{
+								reject_set.add(imdb_movie_name);
+							
+								stmt.setString(1, imdb_movie_name);
+								stmt.addBatch(); 
+								batch_count++;
+								if (batch_count % 10000 == 0)
+								{
+									try{
+										stmt.executeBatch();
+									} catch (Exception ex) {
+										ex.printStackTrace();
+									}
+								}
+
+							}*/
+							c_plots_rejected++;
+							continue;
+						}
 						/* read until next item*/
 						String plot = br.readLine();
 						plot.replace(imdb_plots_item_text, "");
@@ -451,10 +380,9 @@ public class praser_src_imdb {
 							plot+= line.replace(imdb_plots_item_text, "");
 						}
 						
-						entity_movie movie = this.parser_movie_map.get(yago_name);
 						movie.set_movie_plot(plot);
 						plot_count++;
-						this.parser_movie_map.put(yago_name, movie);
+						this.parser_movie_map.put(movie.get_movie_qualified_name(), movie);
 						c_plots++;
 					}
 				}
@@ -464,7 +392,6 @@ public class praser_src_imdb {
 		System.out.println("added plot to" + plot_count);
 	}
 	
-
 	/**
 	 * @param imdb_languages_path - path to languages file
 	 * Parse IMDB languages file. 
@@ -497,18 +424,16 @@ public class praser_src_imdb {
 						String temp_name = splitted_line[0];
 						/* clean up*/
 						String imdb_movie_name = clean_imdb_name(splitted_line[0]);
-						String imdb_movie_key = get_movie_key(imdb_movie_name);
-						String yago_name = imdb_to_yago.get(imdb_movie_key);
-						
-						if (yago_name==null)
-							continue; 
-						entity_movie movie = this.parser_movie_map.get(yago_name);
+						entity_movie movie = get_movie_by_imdb_name(imdb_movie_name);
 						if (movie == null)
+						{
+							c_langs_rejected++;
 							continue;
+						}
 						movie.set_movie_langage(splitted_line[1]);
 						parser_language_set.add(splitted_line[1]);
 						language_count++;
-						this.parser_movie_map.put(yago_name, movie);
+						this.parser_movie_map.put(movie.get_movie_qualified_name(), movie);
 						c_languages++;
 					}
 				}catch (Exception ex){}
@@ -517,35 +442,190 @@ public class praser_src_imdb {
 			System.out.println("added_language to :" + language_count);
 		}
 			
-		private String[] get_line_parsing(BufferedReader br)
-		{		
-			String line;
-			int i;
-			
-			try{
-				if((line = br.readLine()) != null) 
-				{ 
-					/*split next line*/
-					line = line.trim();
-					String[] splitted_line = line.split("\\t");
-					/*check for expected number of parameters*/
-					if (splitted_line.length != 2)
-						return new String[2];
-					/*take "name (year)" part*/
-					splitted_line[0] = splitted_line[0].substring(0,splitted_line[0].indexOf(")")+1);  
-					
-					return splitted_line;
-				}
-				else
-					return null;
-			}
-			catch (Exception ex){
-				System.out.println("error on parsing line:" + ex.getMessage());
-			}
-			return null;
-		}
-
+	private String[] get_line_parsing(BufferedReader br)
+	{		
+		String line;
+		int i;
 		
+		try{
+			if((line = br.readLine()) != null) 
+			{ 
+				/*split next line*/
+				line = line.trim();
+				String[] splitted_line = line.split("\\t");
+				/*check for expected number of parameters*/
+				if (splitted_line.length != 2)
+					return new String[2];
+				/*take "name (year)" part*/
+				splitted_line[0] = splitted_line[0].substring(0,splitted_line[0].indexOf(")")+1);  
+				
+				return splitted_line;
+			}
+			else
+				return null;
+		}
+		catch (Exception ex){
+			System.out.println("error on parsing line:" + ex.getMessage());
+		}
+		return null;
+	}
+	
+	/*remove bad characters from movie names*/
+	private String clean_imdb_name (String imdb_movie_name)
+	{
+		imdb_movie_name =imdb_movie_name.replaceAll("\"", "");		
+		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
+		imdb_movie_name = imdb_movie_name.replaceAll("$#*! ", "");
+		imdb_movie_name = imdb_movie_name.substring(0,imdb_movie_name.indexOf(")")+1);
+		return imdb_movie_name;
+	}
+	
+	public ArrayList<String> get_movie_keys(String imdb_movie_name)
+	{
+		ArrayList<String> keys = new ArrayList<String>();
+		String imdb_year = null;
+		if (imdb_movie_name == null || imdb_movie_name.equals(""))
+			return keys; 
+		
+		String imdb_director = null;
+		String imdb_name = clean_imdb_name(imdb_movie_name);
+		if (imdb_name.indexOf("(") > 0)
+		{
+			imdb_year = imdb_name.substring(imdb_name.indexOf("(") +1 , imdb_name.indexOf(")"));
+			imdb_name = imdb_name.substring(0, imdb_name.indexOf("("));
+		}
+		imdb_name = imdb_name.trim();
+		
+		if (imdb_name_to_director.get(imdb_movie_name) == null)
+			imdb_director = "NAN";
+		else
+			imdb_director = imdb_name_to_director.get(imdb_movie_name);
+		if (imdb_year == null || imdb_year.equals(""))
+			imdb_director = "NAN";
+		
+		/*we create all possible matches for this movie*/
+		keys.add((imdb_name + " (" + imdb_year + ") (" + imdb_director +")").toUpperCase());
+		keys.add((imdb_name + " (NAN) (" + imdb_director +")").toUpperCase());
+		keys.add((imdb_name + " (" + imdb_year + ") (NAN)").toUpperCase());
+		keys.add((imdb_name + " (NAN) (NAN)").toUpperCase());
+	
+		return keys;
+		
+	}
+	
+	/* helper function - we parse IMDB titles by directors file
+	 * to establish a yago-IMDB key based on name,year,director */
+	public void get_imdb_directors()
+	{
+		if (properties.get_imdb_directors_path() == null)
+			return; 
+		File fl = new File(properties.get_imdb_directors_path());
+		if (! fl.exists())
+			return;
+
+		try {
+			FileReader fr = new FileReader(properties.get_imdb_directors_path());
+			BufferedReader br = new BufferedReader(fr);
+			String line;
+			String cur_director = "";
+			try {
+				/*read until start*/
+				while ((line = br.readLine()) != null)
+				{	
+					if (line.contains(imdb_movie_directors_list_start))
+					{
+						line = br.readLine();
+						break;
+					}
+				}
+				while ((line = br.readLine()) != null)
+				{
+					if (line.equals(""))
+						continue; 
+					String[] splitted_line = line.split("\\t");
+					if (splitted_line[0] == null)
+						continue; 
+					/*new director*/
+					if (!splitted_line[0].equals("")) 
+						{
+						/*re-organize director name*/
+						cur_director = "";
+						String[] split_director = splitted_line[0].split(",");
+
+						/*surname, family name*/
+						if (split_director.length >= 2)
+							cur_director = split_director[1].trim() + " ";
+						
+						/*has some imdb rubbish*/
+						if (cur_director.indexOf("(")>0)
+							cur_director = (cur_director.substring(0,cur_director.indexOf("("))).trim() + " ";
+						
+						/* add surname */
+						cur_director = cur_director + split_director[0].trim(); 
+						
+						/*movie also present in line*/
+						if (splitted_line[splitted_line.length -1] != null) 
+							imdb_name_to_director.put(clean_imdb_name(splitted_line[splitted_line.length -1]), cur_director);
+						}
+					else
+					{
+						/*only movie in line*/
+						if (splitted_line[splitted_line.length -1] != null) 
+							imdb_name_to_director.put(clean_imdb_name(splitted_line[splitted_line.length -1]), cur_director);
+					}					
+				}
+						
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+				}
+			}
+			catch (Exception ex) {
+				
+			}
+		
+	}
+	
+	public void print_imdb_stats()
+	{
+		System.out.println("IMDB enrichment\n\t plots: " + c_plots + "\n\t tags: " + c_tags + "\n\t genres: " + c_genres + "\n\t languages: " + c_languages);
+		System.out.println("IMDB rejects\n\t plots: " + c_plots_rejected + "\n\t tags: " + c_tags_rejected + "\n\t genres: " + c_genres_rejected + "\n\t languages: " + c_langs_rejected);
+	}
+	public HashSet<String> get_parser_languages()
+	{
+		return this.parser_language_set;
+	}
+	
+	public HashSet<String> get_parser_genres()
+	{
+		return this.parser_genre_set;
+	}
+
+	public HashSet<String> get_parser_tags()
+	{
+		return this.parser_tag_set;
+	}
+	
+	/**
+	 * tries all possible keys for this name, and returns a yago movie
+	 * if a movie matches
+	 * @param imdb_movie_name 
+	 * @return
+	 */
+	public entity_movie get_movie_by_imdb_name(String imdb_movie_name)
+	{
+		ArrayList<String> movie_keys  = get_movie_keys(imdb_movie_name);
+		String yago_name = null; 
+		for (String key : movie_keys)
+		{
+			yago_name = imdb_to_yago.get(key);
+			if (yago_name != null)
+				break;
+		}
+		if (yago_name == null)
+			return null;
+		entity_movie movie = this.parser_movie_map.get(yago_name);
+		return movie; 
+	}
 }
 
 	

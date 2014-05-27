@@ -25,12 +25,16 @@ public class parser_src_yago {
 	public static final int yago_wiki_movie_offset = 0; 
 	public static final int yago_wiki_url_offset = 2;
 	public static final int yago_wiki_tag_offset = 1;
+	public static final int yago_label_value_offset = 2;
+	public static final int yago_label_movie_offset = 0; 
+	public static final int yago_label_offset = 1; 
 	
 	/*expected number of elements in line per file type*/
 	public static final int yago_facts_params = 4; 
 	public static final int yago_types_params = 3;
 	public static final int yago_literal_params = 5;
 	public static final int yago_wiki_params = 3;
+	public static final int yago_label_params = 3;
 	
 	/* counters */
 	private int c_movies = 0; 
@@ -108,6 +112,29 @@ public class parser_src_yago {
 			{
 				System.out.println(ex.getMessage());
 			}*/
+
+		if (properties.get_yago_labels_path() != null)
+			parse_src_yago_labels(properties.get_yago_labels_path(),yago_label_params);
+		
+		
+		update_fq_name();
+		
+	}
+	
+	/**
+	 * when all data is available, we update our film map to work with 
+	 * fully qualified names, instead of the temporary yago names 
+	 **/
+	private void update_fq_name()
+	{
+		HashMap<String,entity_movie> fq_movie_map = new HashMap<String,entity_movie>();
+		for (entity_movie mv: this.parser_map_movie.values())
+		{
+			mv.set_fq_name();
+			fq_movie_map.put(mv.get_movie_qualified_name(), mv);
+		}
+		this.parser_map_movie = fq_movie_map;
+		
 	}
 	
 	/*parse*/
@@ -115,6 +142,7 @@ public class parser_src_yago {
 	/** parse yagoSimpleTypes for Director, Actor, Movie entity */
 	private void parse_src_yago_types(String yago_types_path, int num_params)
 	{
+		HashSet<String> rejectset = new HashSet<String>(); 
 		// assert file exists
 		File fl = new File(yago_types_path);
 		if (yago_types_path == null || ! fl.exists() )
@@ -136,11 +164,13 @@ public class parser_src_yago {
 					if(splitted_line[yago_fact_offset].contains(properties.get_yago_tag_movie()))
 						add_to_parser_movies(clean_format(splitted_line[yago_type_offset]));
 					
-					if(splitted_line[yago_fact_offset].contains(properties.get_yago_tag_actor()))
+					else if(splitted_line[yago_fact_offset].contains(properties.get_yago_tag_actor()))
 						add_to_parser_actors(clean_format(splitted_line[yago_type_offset]));
 					
-					if(splitted_line[yago_fact_offset].contains(properties.get_yago_tag_director()))
+					else if(splitted_line[yago_fact_offset].contains(properties.get_yago_tag_director()))
 						add_to_parser_directors(clean_format(splitted_line[yago_type_offset]));
+					
+					
 				}
 				fr.close();
 				br.close();
@@ -154,6 +184,9 @@ public class parser_src_yago {
 				br.close();
 			}
 	} catch(Exception ex) {}
+		//System.out.println(rejectset);
+		for (String reject : rejectset)
+			System.out.println(reject);
 }
 	
 	/*clean up tag*/
@@ -198,11 +231,12 @@ public class parser_src_yago {
 	 * tags from yagofacts.tsv **/
 	private void parse_src_yago_facts(String yago_facts_path, int num_params)
 	{
+		HashSet<String> tag_set = new HashSet<String>();
 		// assert file exists
 		File fl = new File(yago_facts_path);
 		if (yago_facts_path == null || ! fl.exists() )
 			return;
-		
+		HashSet<String> rejectset = new HashSet<String>();
 		// open files for read
 		try {
 			FileReader fr = new FileReader(yago_facts_path);
@@ -217,13 +251,14 @@ public class parser_src_yago {
 						continue;
 					/*check the fact is relevant*/
 					if (splitted_line[yago_fact_offset].contains(properties.get_yago_tag_actedin())
-						|| splitted_line[yago_fact_offset].contains(properties.get_yago_tag_directed()))
+						|| splitted_line[yago_fact_offset].contains(properties.get_yago_tag_directed()) 
+						|| splitted_line[yago_fact_offset].contains(properties.get_yago_tag_created()))
 					{
 						update_movies_by_fact(splitted_line);
 					}
+					tag_set.add(splitted_line[yago_fact_offset]);
 				}
 				br.close();
-				return; 
 			}
 			catch(Exception ex){
 				System.out.println("ERROR parsing Yago facts:" );
@@ -234,8 +269,62 @@ public class parser_src_yago {
 		}
 		catch(Exception ex)
 		{
+			System.out.println("ERROR parsing Yago facts:" );
+			ex.printStackTrace();
 		}
+		
+		System.out.println("Parsing " + yago_facts_path + "");
+		
+		System.out.println(tag_set);
 	}
+	
+	
+	/**parse yago labels, which are language  
+	 * tags from yagofacts.tsv **/
+	private void parse_src_yago_labels(String yago_labels_path, int num_params)
+	{
+		HashSet<String> tag_set = new HashSet<String>();
+		// assert file exists
+		File fl = new File(yago_labels_path);
+		if (yago_labels_path == null || ! fl.exists() )
+			return;
+		// open files for read
+		try {
+			FileReader fr = new FileReader(yago_labels_path);
+			BufferedReader br = new BufferedReader(fr);
+			try {
+				
+				String splitted_line[];
+				/* read line */
+				while ((splitted_line = get_line_parsing(br,num_params)) != null)
+				{
+					if (splitted_line[0] == null) //bad line
+						continue;
+					/*check the fact is relevant*/
+					if (splitted_line[yago_label_offset].contains(properties.get_yago_tag_label()))
+					{
+						update_movies_by_label(splitted_line);
+					}
+				}
+				br.close();
+			}
+			catch(Exception ex){
+				System.out.println("ERROR parsing Yago facts:" );
+				ex.printStackTrace();
+				fr.close();
+				br.close();
+			}
+		}
+		catch(Exception ex)
+		{
+			System.out.println("ERROR parsing Yago facts:" );
+			ex.printStackTrace();
+		}
+		
+		System.out.println("Parsing " + yago_labels_path + "");
+		
+	}
+	
 	
 	/*parses a TSV line of format : <yago_id> <yago_name> <fact> <yago_name>, e.g.
 	 * <id_1e7i0ut_1gi_50uey2>	<Paul_Redford>	<created>	<The_Portland_Trip> */
@@ -398,14 +487,33 @@ public class parser_src_yago {
 			movie.add_to_actors(actor);
 			c_actor_movie++;
 		}
-		/*set director of movie*/
-		else if (fact_name.equals(properties.get_yago_tag_directed()))
+		/*set director\creator of movie*/
+		else 
 		{
-			entity_person director = this.parser_map_director.get(person_name);
-			movie.set_movie_director(director);
-			c_director_movie++;
+			if (fact_name.equals(properties.get_yago_tag_directed()))
+			{
+				if (movie.get_movie_director() == null)
+					c_director_movie++;
+				entity_person director = this.parser_map_director.get(person_name);
+				if (director == null) /*this one doesn't exist, for some reason*/
+					parser_map_director.put(person_name,new entity_person(person_name));
+				movie.set_movie_director(director);
+				
+			}
+			else /*use creator only if director missing*/ 
+			{
+				if (movie.get_movie_director() == null)
+					{
+						entity_person director = this.parser_map_director.get(person_name);
+						movie.set_movie_director(director);
+						c_director_movie++;
+					}
+			}
+				
 		}
-	}
+		
+}
+
 		
 	/** enrich movie with fact literals: year, duration**/
 	private void update_movies_by_literal(String[] splitted_line)
@@ -429,7 +537,7 @@ public class parser_src_yago {
 			return; 
 		
 		/*add length to movie*/
-		if (fact_name.equals(properties.get_yago_tag_length()))
+		if (fact_name.contains(properties.get_yago_tag_length()))
 		{
 			movie.set_movie_length(parse_movie_length(fact_value));
 			c_length_movie++;
@@ -440,6 +548,42 @@ public class parser_src_yago {
 			movie.set_movie_year(parse_movie_year(fact_value));
 			c_year_movie++;
 		}
+	}
+	
+	
+	/** enrich movie with fact literals: year, duration**/
+	private void update_movies_by_label(String[] splitted_line)
+	{		
+		String movie_name, fact_value;
+		
+		fact_value = splitted_line[yago_label_value_offset];
+		if (fact_value == null)
+			return;
+		
+		movie_name = clean_format(splitted_line[yago_label_movie_offset]);
+		if (movie_name == null)
+			return;
+		
+		entity_movie movie = this.parser_map_movie.get(movie_name);
+		if (movie == null)
+			return; 
+		
+		movie.add_to_labels(parse_movie_label(fact_value));
+	}
+	
+
+	/** pull the year from the date format of yago */
+	private String parse_movie_label(String label){
+		if (label == null)
+			return null;
+		if (label.indexOf('\"') < 0 || label.indexOf('@') <= 0)
+			return null;
+		
+		label = (label.substring(0,label.indexOf('@'))).trim();
+		label = label.replace("\"","");
+		if (label.indexOf("(") > 0)
+			label = (label.substring(0,label.indexOf("("))).trim(); 
+		return label;
 	}
 	
 	/** pull the year from the date format of yago */

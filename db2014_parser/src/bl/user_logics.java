@@ -43,7 +43,7 @@ public class user_logics
 			return (current_user_id);
 		}
 	}
-					
+	
 	/**
 	 * add user to "users" table
 	 * @return true iff succedded adding the user
@@ -103,13 +103,13 @@ public class user_logics
 	{
 		return (db_queries_user.get_user_id(user));
 	}
-	
+
 	public boolean update_name(String new_name, int id, String pass) 
 			throws SQLException
 	{
 		return (db_queries_user.update_name(new_name, id, pass));
 	}
-
+	
 	public boolean update_pass(String new_pass, int id, String old_pass) 
 			throws SQLException
 	{
@@ -144,7 +144,7 @@ public class user_logics
 			// Trim and exit if needed
 			if (activities.size() > limit)
 			{
-				activities = activities.subList(0, limit);
+			activities = activities.subList(0, limit);
 				break;
 			}
 		}
@@ -244,12 +244,12 @@ public class user_logics
 		// Trim the list to fit the limit (if needed)
 		if (returnedList.size() > limit)
 		{
-			returnedList = returnedList.subList(0, limit);
+		returnedList = returnedList.subList(0, limit);
 		}
 		
 		return (returnedList);
 	}
-
+	
 	
 // MISC
 	
@@ -319,7 +319,7 @@ public class user_logics
 	 * @return		- a list of the tags, ordered by popularity
 	 * @throws SQLException 
 	 */
-	public List<String> get_popular_tags(int user_id, int limit) 
+	public List<String> get_user_popular_tags(int user_id, int limit) 
 			throws SQLException
 	{
 		return (db_queries_user.get_prefered_tags(user_id, limit));
@@ -334,7 +334,7 @@ public class user_logics
 	{
 		return (db_queries_user.get_prefered_tags(current_user_id, 5));
 	}
-		
+	
 	public List<entity_user> get_current_user_friends() 
 			throws SQLException
 	{
@@ -376,47 +376,7 @@ public class user_logics
 		return ids;
 	}
 	
-	public List<light_entity_movie> get_unrated_movies(Integer limit) 
-			throws SQLException
-	{
-		return (get_unrated_movies(current_user_id, limit));
-	}
-	
-	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
-			throws SQLException
-	{
-		if (limit == null)
-			limit = 5;
-		
-		return (db_queries_user.get_unrated_movies(user_id, limit));
-	}
-
-	
 // INTERNALS
-	
-	/**
-	 * Rate a movie
-	 * @param rate (-5) - 5
-	 * @return did succeed?
-	 * @throws SQLException 
-	 */
-	public static boolean rate_movie(int movie_id, int user_id,int rate) 
-			throws SQLException
-	{
-		return (db_queries_user.rate_movie(movie_id, user_id, rate));
-	}
-	
-	/**
-	 * Rate a movie tag
-	 * @param rating_radios
-	 * @return did succeed?
-	 * @throws SQLException 
-	 */
-	public static boolean rate_tag_movie(int movie_id, int user_id, int tag_id, int rate) 
-			throws SQLException
-	{
-		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
-	}
 	
 	/**
 	 * just get the toString of each activity

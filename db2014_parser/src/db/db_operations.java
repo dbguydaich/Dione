@@ -14,6 +14,8 @@ import java.util.List;
 import parser_entities.light_entity_movie;
 
 
+import com.mysql.jdbc.StringUtils;
+
 /**
  * The communication with the db is being made
  * by this class methods. All the operation against the DB:
@@ -81,7 +83,7 @@ public abstract class db_operations
 		jdbc_connection_pooling.get_conn().close(conn);
 		return (rows_effected);
 	}
-
+	
 	/** insert tuple
 	 * @param querey - an sql querey fully wrote, using '?' for values
 	 * @param values - an array of values to put where the ?s are

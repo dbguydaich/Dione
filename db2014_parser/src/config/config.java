@@ -40,6 +40,10 @@ public class config {
 		return configFile.getProperty("YagoWikipediaInfoFilePath");
 	}
 	
+	public String get_yago_labels_path(){
+		return configFile.getProperty("YagoMultilingualInfoFilePath");
+	}
+	
 	public String get_imdb_genres_path(){
 		return configFile.getProperty("IMDBgenreListFilePath");
 	}
@@ -97,8 +101,18 @@ public class config {
 	}
 	
 	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_label(){
+		return configFile.getProperty("LABEL");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
 	public String get_yago_tag_directed(){
 		return configFile.getProperty("DIRECTED");
+	}
+	
+	/** get the yago tag name for "acted in" fact **/
+	public String get_yago_tag_created(){
+		return configFile.getProperty("CREATED");
 	}
  
 	/** get the yago tag name for "acted in" fact **/
