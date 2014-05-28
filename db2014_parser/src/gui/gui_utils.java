@@ -185,6 +185,17 @@ public class gui_utils
 			to.add((a.getSelection()));
 		}
 	}
+	
+	public static int get_index_button(List<Button> from)
+	{
+		for (int i =0;i<from.size();i++)
+		{
+			if (from.get(i).getSelection()==true)
+				return i;
+		
+		}
+		return -1;//no button has been pressed
+	}
 
 
 

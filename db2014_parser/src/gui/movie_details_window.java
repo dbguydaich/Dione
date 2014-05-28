@@ -10,6 +10,8 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -26,12 +28,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
 import bl.movie_logics;
+import bl.user_logics;
 import parser_entities.entity_movie;
 import parser_entities.light_entity_movie;
 import config.config;
@@ -67,13 +71,14 @@ public class movie_details_window extends Shell
 	config config = new config();
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
+	int movie_id_number;
 	
 	public movie_details_window(final Display display, int movie_id) throws SQLException
 	{
 		
 
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-	
+		movie_id_number = movie_id;
 		gui_utils.RESULTS_OPEN++;
 		
 		final Color color = display.getSystemColor(SWT.COLOR_GRAY);
@@ -289,8 +294,8 @@ public class movie_details_window extends Shell
 		
 		//tags labels and radios
 		List<Label> tags_labels = new ArrayList<Label>();
-		List<List<Button>> radios_lists = new ArrayList<List<Button>>();
-		List<String> tags;
+		final List<List<Button>> radios_lists = new ArrayList<List<Button>>();
+		final List<String> tags;
 		List<Composite> radios_areas = new ArrayList<Composite>();
 		tags = (List<String>) movie.get_movie_tags();
 	
@@ -326,6 +331,53 @@ public class movie_details_window extends Shell
 		Button tags_button = new Button(tags_area, SWT.PUSH);
 		tags_button.setText("Rate");
 		tags_button.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1, -1, -1));
+		
+		//////////////////
+		tags_button.addMouseListener(new MouseAdapter() {
+			//	@Override
+				public void mouseUp(MouseEvent arg0) {
+					boolean success = true;
+					int rate_number;
+					System.out.println("rated");
+					for ( int i =0;i<radios_lists.size();i++)
+					{
+						rate_number =gui_utils.get_index_button(radios_lists.get(i))+1;
+						try {
+							System.out.println("rating " +tags.get(i) + "   " + rate_number);
+							if(user_logics.rate_tag_movie(movie_id_number, log_in_window.user.get_current_user_id(),tags.get(i),  rate_number)==false)
+								
+							{
+								success =false;
+							}
+						
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							gui_utils.raise_sql_error_window(display);
+							e.printStackTrace();
+						}
+					}
+					if(success)
+					{
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("Error");
+						messageBox.setMessage("Could not rate. sorry.");
+						messageBox.open();
+					}
+					
+					
+					
+					
+				}
+
+			});
+			
+
+	
+		
+		
+	
+		
+		////////////
 		
 		
 		

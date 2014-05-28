@@ -382,6 +382,13 @@ public class user_logics
 		return (get_unrated_movies(current_user_id, limit));
 	}
 	
+	public light_entity_movie get_unrated_movie ()
+			throws SQLException
+	{
+		return  get_unrated_movies(1).get(0);
+	}
+	
+	
 	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
 			throws SQLException
 	{
@@ -394,9 +401,17 @@ public class user_logics
 	
 // INTERNALS
 	
+	
+	/////////////matan please implement
+	public boolean user_rate_movie(int movie_id,int rate) 
+			throws SQLException
+	{
+		return true;
+	}
+	
 	/**
 	 * Rate a movie
-	 * @param rate (-5) - 5
+	 * @param rate (-5) - 5 ///////////////matan wtf (-5)?????????????????????????????????????????????????
 	 * @return did succeed?
 	 * @throws SQLException 
 	 */
@@ -405,6 +420,18 @@ public class user_logics
 	{
 		return (db_queries_user.rate_movie(movie_id, user_id, rate));
 	}
+	
+	
+	
+	
+	/////matan we need the same thing byt with string tag instead of tag id.
+	
+	public static boolean rate_tag_movie(int movie_id, int user_id, String tag, int rate) 
+			throws SQLException
+	{
+		return true;
+	}
+	
 	
 	/**
 	 * Rate a movie tag

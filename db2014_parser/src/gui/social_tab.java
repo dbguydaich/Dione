@@ -65,6 +65,7 @@ public class social_tab extends Composite
 {
 	
 	private Text friend_name_text;
+	private Combo remove_friend_combo;
 	
 	public social_tab(final Display display, Composite parent, int style)
 	{
@@ -158,6 +159,12 @@ public class social_tab extends Composite
 				} else
 					try {
 						System.out.println(add_friend_text.getText());
+						
+						
+						////// implement //// matan please privede the function
+						//check that i am not trying to add myself..
+						
+						
 						if(log_in_window.user.does_user_exists((add_friend_text.getText()))){ //to be implemented next on
 						
 							Integer friend_id = log_in_window.user.get_user_id(add_friend_text.getText());
@@ -167,14 +174,12 @@ public class social_tab extends Composite
 							messageBox.setText("SUCCESS");
 							messageBox.setMessage("Friend has successfully added");
 							messageBox.open();
+							update_friends_ddl();
 			
 						
 						
 						}
 
-
-							
-						
 						else//no user found
 						{
 							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
@@ -213,7 +218,7 @@ public class social_tab extends Composite
 		
 		
 		//remove friend combo
-		final Combo remove_friend_combo = new Combo(add_friend_area, SWT.DROP_DOWN);
+		remove_friend_combo = new Combo(add_friend_area, SWT.DROP_DOWN);
 		remove_friend_combo.setLayoutData(gui_utils.grid_data_factory(100, 15, 10, 5, -1, -1, -1, -1));
 		
 		
@@ -227,14 +232,8 @@ public class social_tab extends Composite
 			e2.printStackTrace();
 		}  // will be used when function exists
 		
-//		//just for check
-//		user_friends = new ArrayList<String>();
-//		user_friends.add("user1");
-//		user_friends.add("user2");
-//		user_friends.add("another user");
-		//
-		
-		final String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);
+
+		final String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);//////////////////////////////
 		remove_friend_combo.setItems(user_friends_arr);
 		
 		//remove friend button
@@ -277,7 +276,7 @@ public class social_tab extends Composite
 								alertBox.setText("Success");
 								alertBox.setMessage("Friend has been removed!");
 								alertBox.open();
-								
+								update_friends_ddl();
 										
 							}
 							
@@ -460,5 +459,23 @@ public class social_tab extends Composite
 	
 	
 	
+	
+	
+private void update_friends_ddl()
+{
+	System.out.println("eneterd function");
+	List<String> user_friends = new ArrayList<String>();
+	
+	try {
+		user_friends = log_in_window.user.get_current_user_friends_names();
+	} catch (SQLException e2) {
+	
+	}  
+	System.out.println(user_friends);
+	final String[] user_friends_arr = user_friends.toArray(new String[user_friends.size()]);//////////////////////////////
+	remove_friend_combo.setItems(user_friends_arr);
+	
+	
+}
 	
 }

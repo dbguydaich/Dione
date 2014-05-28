@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import db.db_queries_user;
 import parser_entities.entity_movie;
+import parser_entities.light_entity_movie;
 import bl.movie_logics;
 import bl.user_logics;
 import bl.verifier;
@@ -84,7 +85,13 @@ public class preferences_window extends Shell
 			}		
 		});
 		
-		final entity_movie current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
+		light_entity_movie current_movie = null;
+		try {
+			current_movie = log_in_window.user.get_unrated_movie();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//movie label
 		Label movie_label = new Label(this, SWT.NONE);
 		movie_label.setAlignment(SWT.CENTER);
@@ -149,16 +156,16 @@ public class preferences_window extends Shell
 				try {
 					List<Boolean> rating_radios = new ArrayList<Boolean>();
 					gui_utils.get_text_button(radios, rating_radios);
-					user_logics.rate_movie(movie_logics.get_movie_id(current_movie.get_movie_name(), current_movie.get_movie_director().get_person_name()), log_in_window.user.get_current_user_id(),rating_radios );
+				//	user_logics.rate_movie(movie_logics.get_movie_id(current_movie.get_movie_name(), current_movie.get_movie_director().get_person_name()), log_in_window.user.get_current_user_id(),rating_radios );
 			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
 					//shahar that's is final we have to see how we make the next movie be availble///
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (SQLException e) {
+				//} catch (SQLException e) {
 					// TODO Auto-generated catch block
-					gui_utils.raise_sql_error_window(display);
-					e.printStackTrace();
+				//	gui_utils.raise_sql_error_window(display);
+				//	e.printStackTrace();
 				}
 				
 			

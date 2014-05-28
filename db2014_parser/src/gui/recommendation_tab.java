@@ -152,7 +152,14 @@ public class recommendation_tab extends Composite
 			//	@Override
 				public void mouseUp(MouseEvent arg0) {
 					System.out.println("hi-1");
-					movie_details_window  movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
+					movie_details_window  movie_details= null;
+				try {
+					movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					movie_details.open();
 				
 				}
 
