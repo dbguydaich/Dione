@@ -26,7 +26,7 @@ INSERT INTO `dbmysql05`.`movie` (`idLanguage`, `idDirector`, `movieName`, `year`
 INSERT INTO `dbmysql05`.`movie` (`idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('2', '1', 'Resorvior dogs', '1992', 'RD@movies.com', '135', 'WooHoo');
 
 -- Users
-INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('shachar the I', '123123');
+INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('w', '119');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('shachar the II', '321321');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('Matan', '1');
 INSERT INTO `dbmysql05`.`users` (`userName`, `hashPassword`) VALUES ('Guy', '1');

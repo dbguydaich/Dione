@@ -56,7 +56,7 @@ public class jdbc_connection_pooling
 	 * a singltone for a pooling connection
 	 * @throws SQLException
 	 */
-	public static jdbc_connection_pooling get_conn() 
+	public static jdbc_connection_pooling get_instance() 
 			throws SQLException
 	{
 		if (instance == null)
@@ -87,11 +87,11 @@ public class jdbc_connection_pooling
 	}
 
 	/**
-	 * A bad nameing convention, this is actually the func that returns a Connection
+	 * returns a java.sql Connection from the available vector
 	 * @return Connection to be used with the DB
 	 * @throws SQLException
 	 */
-	public synchronized Connection connectionCheck() 
+	public synchronized Connection get_connection() 
 			throws SQLException 
 	{
 		Connection newConnection = null;

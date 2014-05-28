@@ -132,24 +132,13 @@ public abstract class db_queries_user extends db_operations
 	public static List<Integer> get_all_users() 
 			throws SQLException
 	{
-		// where string includes "order by" field to get the prefered tags
-		ResultSet result = select("idUsers", "users", null);
-		
-		// Enumerate all movies
-		List<Integer> returnedList = new ArrayList<Integer>();
-		
-		// is table empty
-		if (result != null)
-		{
-			while (result.next())
-			{
-				Integer id = result.getInt(1);
-				
-				returnedList.add(id);
-			}
-		}
-		
-		return (returnedList);
+		return(get_all_ids("idUsers", "users"));
+	}
+	
+	public static List<Integer> get_all_tags() 
+			throws SQLException
+	{
+		return(get_all_ids("idTag", "tags"));
 	}
 	
 	
@@ -487,49 +476,5 @@ public abstract class db_queries_user extends db_operations
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
 
-// BackGrounders
-	
-	public static boolean fill_user_prefence() 
-			throws SQLException
-	{
-		java.sql.PreparedStatement stmt = null;
-		Connection conn = jdbc_connection_pooling.get_conn().connectionCheck();
-		
-		conn.setAutoCommit(false);
-		
-		// Delete old preference
-		stmt = conn.prepareStatement("DELETE FROM user_prefence");
-		stmt.addBatch();
-		
-		if (delete("user_prefence", "", "") < 0)
-			return (false);
-		
-		// Get user list		
-		List<Integer> users = get_all_users();
-		
-		
-		// Fill with new data
-		int batchSize = 0;
-		for (Integer user : users)
-		{
-			// is this a good user
-			if (user != null)
-			{
-				stmt = conn.prepareStatement("");
-				stmt.addBatch();
-				batchSize++;
-				
-				if (batchSize % 1000 > 0)
-				{
-					stmt.executeBatch();
-					batchSize = 0;
-				}
-			}
-		}
-		
-		// Commit
-		
-		return (true);
-	}
 }
 

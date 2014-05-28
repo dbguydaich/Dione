@@ -14,14 +14,16 @@ import java.util.List;
 import parser_entities.light_entity_movie;
 
 
-import com.mysql.jdbc.StringUtils;
-
 /**
  * The communication with the db is being made
  * by this class methods. All the operation against the DB:
  */
 public abstract class db_operations
 {
+	public enum invocation_code {YAFO_UPDATE, USER_PREFENCE};
+	
+// BASIC FUNCTIONS
+	
 	/** insert tuple
 	 * @param table - the table name we want to insert to
 	 * @param 	values 	- the values to insert in the correct order
@@ -37,7 +39,7 @@ public abstract class db_operations
 		
 		// Set the connection
 		Connection conn = null;
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		conn = jdbc_connection_pooling.get_instance().get_connection();
 		
 		// Build insert string
 		String insert_string;
@@ -80,10 +82,10 @@ public abstract class db_operations
 		int rows_effected = stmt.executeUpdate();
 		
 		// Close connection
-		jdbc_connection_pooling.get_conn().close(conn);
+		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
-	
+
 	/** insert tuple
 	 * @param querey - an sql querey fully wrote, using '?' for values
 	 * @param values - an array of values to put where the ?s are
@@ -100,7 +102,7 @@ public abstract class db_operations
 		
 		// Set the connection
 		Connection conn = null;
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		conn = jdbc_connection_pooling.get_instance().get_connection();
 			
 		// Set the statment
 		PreparedStatement stmt = null; 
@@ -131,7 +133,7 @@ public abstract class db_operations
 		int rows_effected = stmt.executeUpdate();
 		
 		// Close connection
-		jdbc_connection_pooling.get_conn().close(conn);
+		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
 	
@@ -169,7 +171,7 @@ public abstract class db_operations
 		
 		// Set the connection
 		Connection conn = null;
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		conn = jdbc_connection_pooling.get_instance().get_connection();
 		
 		// Build insert string
 		String delete_string;
@@ -204,7 +206,7 @@ public abstract class db_operations
 		int rows_effected = stmt.executeUpdate();
 		
 		// Close connection
-		jdbc_connection_pooling.get_conn().close(conn);
+		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
 
@@ -226,7 +228,7 @@ public abstract class db_operations
 		
 		// Set the connection
 		Connection conn = null;
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		conn = jdbc_connection_pooling.get_instance().get_connection();
 		
 		// Build insert string
 		String select_string;
@@ -261,7 +263,7 @@ public abstract class db_operations
 		ResultSet rows_effected = stmt.executeQuery();
 		
 		// Close connection
-		jdbc_connection_pooling.get_conn().close(conn);
+		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
 
@@ -283,7 +285,7 @@ public abstract class db_operations
 		
 		// Set the connection
 		Connection conn = null;
-		conn = jdbc_connection_pooling.get_conn().connectionCheck();
+		conn = jdbc_connection_pooling.get_instance().get_connection();
 		
 		// Build insert string
 		String insert_string;
@@ -320,7 +322,7 @@ public abstract class db_operations
 		ResultSet rows_effected = stmt.executeQuery();
 		
 		// Close connection
-		jdbc_connection_pooling.get_conn().close(conn);
+		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
 
@@ -411,9 +413,9 @@ public abstract class db_operations
 	protected Connection getConnection() 
 			throws SQLException 
 	{
-		jdbc_connection_pooling jdbc_conn = jdbc_connection_pooling.get_conn();
+		jdbc_connection_pooling jdbc_conn = jdbc_connection_pooling.get_instance();
 
-		return (jdbc_conn.connectionCheck());
+		return (jdbc_conn.get_connection());
 	}
 	
 	/** get statement from the conn 
@@ -421,8 +423,8 @@ public abstract class db_operations
 	protected Statement getStatement() 
 			throws SQLException 
 	{
-		jdbc_connection_pooling jdbc_con = jdbc_connection_pooling.get_conn();
-		Connection conn = jdbc_con.connectionCheck();
+		jdbc_connection_pooling jdbc_con = jdbc_connection_pooling.get_instance();
+		Connection conn = jdbc_con.get_connection();
 		
 		return (conn.createStatement());
 	}
@@ -451,6 +453,29 @@ public abstract class db_operations
 		return(new light_entity_movie(0, "", 0, "", "", 0, ""));
 	}
 	
+	protected static List<Integer> get_all_ids(String field, String table) 
+			throws SQLException
+	{
+		// where string includes "order by" field to get the prefered tags
+		ResultSet result = select(field, table, null);
+		
+		// Enumerate all movies
+		List<Integer> returnedList = new ArrayList<Integer>();
+		
+		// is table empty
+		if (result != null)
+		{
+			while (result.next())
+			{
+				Integer id = result.getInt(1);
+				
+				returnedList.add(id);
+			}
+		}
+		
+		return (returnedList);
+	}
+	
 // Internal usage
 	private static int countChar(String str, char c)
 	{
@@ -465,6 +490,52 @@ public abstract class db_operations
 		return (count);
 	}
 	
+// Back Grounders
+
+	public static boolean fill_user_prefence() 
+			throws SQLException
+	{
+		java.sql.PreparedStatement stmt = null;
+		Connection conn = jdbc_connection_pooling.get_instance().get_connection();
+		
+		conn.setAutoCommit(false);
+		
+		// Delete old preference
+		stmt = conn.prepareStatement("DELETE FROM user_prefence");
+		stmt.addBatch();
+		
+		if (delete("user_prefence", "", "") < 0)
+			return (false);
+		
+		// Get user and tag lists 
+		List<Integer> users = get_all_ids("idUsers", "users");
+		
+		// Fill with new data
+		int batchSize = 0;
+		for (Integer user : users)
+		{
+			if (user != null)
+			{
+				stmt = conn.prepareStatement("");
+				stmt.addBatch();
+				batchSize++;
+				
+				if (batchSize % 1000 > 0)
+				{
+					stmt.executeBatch();
+					batchSize = 0;
+				}
+			}
+		}
+		
+		// Invocke 
+		
+		// Commit
+		conn.commit();
+	
+		// If got here succeed
+		return (true);
+	}
 }
 
 

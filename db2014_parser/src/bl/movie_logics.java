@@ -41,7 +41,7 @@ public abstract class movie_logics
 			throws NumberFormatException, SQLException
 	{
 		List<String> result = new ArrayList<String>();
-		List<light_entity_movie> movies = get_relevant_movies( title, director,actor_list, tags_list,	rating_radios_text,genres_numbers);
+		List<light_entity_movie> movies = get_relevant_movies( title, director,actor_list, tags_list, rating_radios_text,genres_numbers);
 		
 		for (light_entity_movie movie: movies)
 		{

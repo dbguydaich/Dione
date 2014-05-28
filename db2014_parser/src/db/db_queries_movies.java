@@ -540,7 +540,7 @@ public abstract class db_queries_movies extends db_operations
 	public static light_entity_movie get_movie_details(int movie_id) 
 			throws SQLException 
 	{
-		String where = "movie.idMovie = ? AND movie.director = person.idPerson";
+		String where = "movie.idMovie = ? AND movie.idDirector = person.idPerson";
 		ResultSet result = select("idMovie, movieName, year, wiki, personName, duration, plot", "movie, person", where, movie_id);
 		
 		// is table empty
@@ -571,17 +571,37 @@ public abstract class db_queries_movies extends db_operations
 	public static int get_movie_rating(int movie_id) 
 			throws SQLException 
 	{
+		// old jdbc driver does not know double and forces usage of CAST()
 		String where = "idMovie = ? ";
-		ResultSet result = select("round(avg(rank))", "user_rank", where, movie_id);
+		ResultSet result = select("CAST(round(avg(rank)) AS char(15)) as rank_avg", "user_rank", where, movie_id);
 		
 		// is table empty
 		if (result != null && result.next())
 		{		
-			return (result.getInt(1));
+			return (int) (Integer.parseInt(result.getString(1)));
 		}
 		
 		return (-1);
 	}
+		
+	public static HashMap <String,Integer> get_genre_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idGenre, genreName", "genre", ""));
+	}
+	
+	public static HashMap <String,Integer> get_language_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idLanguage, languageName", "language", ""));
+	}
+	
+	public static HashMap <String,Integer> get_tag_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idTag, tagName", "tag", ""));
+	}
+
 	
 // ID GETTERS
 	
@@ -605,24 +625,6 @@ public abstract class db_queries_movies extends db_operations
 			return (Integer.parseInt(results.getString("idMovie")));
 		else
 			return (0);
-	}
-	
-	public static HashMap <String,Integer> get_genre_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idGenre, genreName", "genre", ""));
-	}
-	
-	public static HashMap <String,Integer> get_language_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idLanguage, languageName", "language", ""));
-	}
-	
-	public static HashMap <String,Integer> get_tag_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idTag, tagName", "tag", ""));
 	}
 
 	public static int get_movie_id(String movie_name) 
