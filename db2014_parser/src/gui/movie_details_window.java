@@ -14,6 +14,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -81,13 +82,21 @@ public class movie_details_window extends Shell
 		movie_id_number = movie_id;
 		gui_utils.RESULTS_OPEN++;
 		
-		final Color color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(color);
+		
+		this.setLayout(new FormLayout());
+		this.setSize(window_width + 100, window_height);
+		this.setText("Movie Details");
+		
+		
+		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				color.dispose();
+				background.dispose();
 			}		
 		});
 		
@@ -103,11 +112,7 @@ public class movie_details_window extends Shell
 				font_ariel_11.dispose();
 			}		
 		});
-		
-		
-		this.setLayout(new FormLayout());
-		this.setSize(window_width, window_height);
-		this.setText("Movie Details");
+	
 		
 		light_entity_movie movie =  movie_logics.get_movie_details(movie_id);
 		List<Label> movie_details_labels = new ArrayList<Label>();
@@ -132,7 +137,7 @@ public class movie_details_window extends Shell
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		left_area.setLayoutData(gui_utils.form_data_factory(350, 190, 60, 10));
+		left_area.setLayoutData(gui_utils.form_data_factory(390, 190, 60, 10));
 		GridLayout grid_layout_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_area);
 		
@@ -257,20 +262,29 @@ public class movie_details_window extends Shell
 		wiki_label.setFont(font_ariel_11);
 		
 		
-		//wiki link
-		Link wiki_link = new Link(left_area, SWT.NONE);
+		//wiki url
+		Label wiki_url = new Label(left_area, SWT.NONE);
 		String wiki_str;
-		//wiki_str = get_result_movie_wiki(); to be used
 		wiki_str = movie.get_movie_wikipedia_url();
-		wiki_link.setText(wiki_str);
-		wiki_link.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
-		wiki_link.setFont(font_ariel_11);
+		wiki_url.setText(wiki_str);
+		wiki_url.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
+		wiki_url.setFont(font_ariel_11);
 
+		wiki_url.addMouseListener(new MouseAdapter() {
+			//	@Override
+				public void mouseUp(MouseEvent arg0) {
+					/*
+					 * Shcahar: implement - go to wiki page
+					 */
+				}
+
+			});
+		
 		
 		
 		//tags area
 		Composite tags_area = new Composite(this, SWT.NONE);
-		tags_area.setLayoutData(gui_utils.form_data_factory(240, 250, 60, 380));
+		tags_area.setLayoutData(gui_utils.form_data_factory(320, 250, 60, 405));
 		GridLayout grid_layout_area2 = new GridLayout(2, false);
 		tags_area.setLayout(grid_layout_area2);
 		
@@ -317,6 +331,8 @@ public class movie_details_window extends Shell
 			{
 				
 				Button radio = new Button(radios_areas.get(count), SWT.RADIO);
+				if(k == 2)
+					radio.setSelection(true);
 				String temp_str = "" + (k+1);
 				radio.setText(temp_str);
 				radios_lists.get(count).add(radio);
@@ -445,13 +461,72 @@ public class movie_details_window extends Shell
 			}		
 		});
 		
+	
+	
+	
+	
+	//movie rate area
+	Composite rate_movie_area = new Composite(this, SWT.NONE);
+	rate_movie_area.setLayoutData(gui_utils.form_data_factory(300, 60, 370, 250));
+	GridLayout grid_layout_rate_movie_area = new GridLayout(6, false);
+	rate_movie_area.setLayout(grid_layout_rate_movie_area);
+	
+	
+	
+	//movie rate label
+	Label movie_rate_label = new Label(rate_movie_area, SWT.NONE);
+	movie_rate_label.setLayoutData(gui_utils.grid_data_factory(0, 0, 6, -1, -1, -1));
+	movie_rate_label.setText("Rate This Movie (1=lowest, 5=highest)");
+	final Font font_movie_rate_label = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+	movie_rate_label.setFont(font_movie_rate_label);
+	movie_rate_label.addDisposeListener(new DisposeListener()
+	{
+		public void widgetDisposed(DisposeEvent e) 
+		{
+			font_movie_rate_label.dispose();
+		}		
+	});
+	
+	
+	//movie rate radios
+	List<Button> movie_rate_radios = new ArrayList<Button>();
+	for(int i = 0; i < 5; i++)
+	{
+		movie_rate_radios.add(new Button(rate_movie_area, SWT.RADIO));
+		movie_rate_radios.get(i).setText("" + (i + 1));
+		
+		if(i == 2)
+			movie_rate_radios.get(i).setSelection(true);	
 	}
 	
 	
+	//movie rate button
+	Button movie_rate_button = new Button(rate_movie_area, SWT.PUSH);
+	movie_rate_button.setText("Rate Movie");
+	movie_rate_button.setLayoutData(gui_utils.grid_data_factory(80, 30, 10, -1, -1, -1, -1, -1));
+	final Font font_movie_rate_button = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+	movie_rate_button.setFont(font_movie_rate_button);
+	movie_rate_button.addDisposeListener(new DisposeListener()
+	{
+		public void widgetDisposed(DisposeEvent e) 
+		{
+			font_movie_rate_button.dispose();
+		}		
+	});
 	
+	/*
+	 * Shachar: implement here button listener (rate movie)
+	 */
+	
+	
+	
+	}
 	
 
-	private void get_movie_details(int movie_id) {
+	
+	
+	private void get_movie_details(int movie_id) 
+	{
 		// TODO Auto-generated method stub
 		
 	}
