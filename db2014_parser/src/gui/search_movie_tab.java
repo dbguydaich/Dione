@@ -358,6 +358,10 @@ public class search_movie_tab extends Composite
 						     try 
 						     {
 						    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
+						    		movie_details_window movie_details = new movie_details_window( display, movie_id);
+							
+									movie_details.open();
+								
 						     } catch (SQLException e) {
 						    		gui_utils.raise_sql_error_window(display);
 										// TODO Auto-generated catch block

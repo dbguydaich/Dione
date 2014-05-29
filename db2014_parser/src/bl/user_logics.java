@@ -256,6 +256,15 @@ public class user_logics
 	}
 
 	
+	
+	
+	////////matan please implement/////
+	public List<light_entity_movie> get_user_recommended_movies_entities_by_friends(int user_id, int limit) 
+	{
+		return  new ArrayList<light_entity_movie>(); ///for now
+	}
+	
+	
 // MISC
 	
 	/**
@@ -421,6 +430,8 @@ public class user_logics
 		return (db_queries_user.rate_movie(movie_id, user_id, rate));
 	}
 	
+	
+
 	/** Rate a movie
 	 * @return did succeed?
 	 * @throws SQLException 
@@ -431,6 +442,16 @@ public class user_logics
 		return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
 	}
 	
+	
+	
+	
+	
+	///////matan please implement//////
+	////returns true iff user have already rated movies
+	public boolean user_rated()
+	{
+		return false;
+	}
 	
 	/**
 	 * Rate a movie tag
@@ -469,4 +490,6 @@ public class user_logics
 		
 		return (retList);
 	}
+
+	
 }

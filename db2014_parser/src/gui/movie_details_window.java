@@ -489,7 +489,7 @@ public class movie_details_window extends Shell
 	
 	
 	//movie rate radios
-	List<Button> movie_rate_radios = new ArrayList<Button>();
+	final List<Button> movie_rate_radios = new ArrayList<Button>();
 	for(int i = 0; i < 5; i++)
 	{
 		movie_rate_radios.add(new Button(rate_movie_area, SWT.RADIO));
@@ -514,9 +514,45 @@ public class movie_details_window extends Shell
 		}		
 	});
 	
-	/*
-	 * Shachar: implement here button listener (rate movie)
-	 */
+	
+	
+	movie_rate_button.addMouseListener(new MouseAdapter() {
+		//	@Override
+			public void mouseUp(MouseEvent arg0) {
+				boolean success = true;
+				int rate_number;
+				System.out.println("rated");
+					rate_number =gui_utils.get_index_button(movie_rate_radios)+1;
+					try {
+		
+						if(log_in_window.user.rate_movie(movie_id_number,  rate_number)==false)
+							
+						{
+							success =false;
+						}
+					
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						gui_utils.raise_sql_error_window(display);
+						e.printStackTrace();
+					
+					}
+				if(success)
+				{
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Error");
+					messageBox.setMessage("Could not rate. sorry.");
+					messageBox.open();
+				}
+				
+				
+				
+				
+			}
+
+		});
+	
+	//rate_movie(int movie_id,int rate) 
 	
 	
 	

@@ -187,14 +187,32 @@ public class log_in_window extends Shell
 						if( db_queries_user.authenticate_user(username,pass)){
 							user = new user_logics(); //Initializing user to be worked with all session long
 							user.login_user(username, pass);
-							gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 							
-							gui_utils.display = Display.getDefault();
 							
 							//addition needed: in case it is the first log in, go to some other window
-							//else:
-							gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-							gui_utils.tabs_win.open();
+							
+							
+							if (user.user_rated())
+							{
+								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
+								
+								gui_utils.display = Display.getDefault();
+								gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+								gui_utils.tabs_win.open();
+							}
+							
+							else
+							{
+								preferences_window rating_window = new preferences_window(display); ////shahar please check that out.what about dispose?
+							if(rating_window.can_be_opened )
+							{
+								rating_window.open();
+							}
+						
+							}
+							
+					
+							
 							
 						}
 						else{ //no user found

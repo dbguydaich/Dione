@@ -44,10 +44,24 @@ import bl.verifier;
 public class preferences_window extends Shell
 {
 
+	
+	boolean can_be_opened=true;
+	light_entity_movie current_movie = null;
 	public preferences_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-		
+		update_movie();
+		if(current_movie == null)
+		{		
+			MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+			messageBox.setText("Error");
+			messageBox.setMessage("Couldn't find any movies to rate");
+			messageBox.open();
+			go_to_overview();
+			can_be_opened =false;
+			return;
+			
+		}
 		this.setSize(400, 300);
 		this.setText("Movies Preferences");
 				
@@ -85,7 +99,7 @@ public class preferences_window extends Shell
 			}		
 		});
 		
-		light_entity_movie current_movie = null;
+		
 		try {
 			current_movie = log_in_window.user.get_unrated_movie();
 		} catch (SQLException e1) {
@@ -154,13 +168,14 @@ public class preferences_window extends Shell
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
-					List<Boolean> rating_radios = new ArrayList<Boolean>();
-					gui_utils.get_text_button(radios, rating_radios);
-				//	user_logics.rate_movie(movie_logics.get_movie_id(current_movie.get_movie_name(), current_movie.get_movie_director().get_person_name()), log_in_window.user.get_current_user_id(),rating_radios );
+					int rate_desired = gui_utils.get_index_button(radios);
+					handle_rating(rate_desired);
+					gui_utils.raise_sql_error_window(getDisplay());
 			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
 					//shahar that's is final we have to see how we make the next movie be availble///
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
+					gui_utils.raise_sql_error_window(display);
 					e.printStackTrace();
 				//} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -175,6 +190,7 @@ public class preferences_window extends Shell
 			}
 
 		});
+		
 		
 
 		//stop button
@@ -204,6 +220,35 @@ public class preferences_window extends Shell
 		
 	}
 	
+	public void handle_rating(int rate)
+	{
+		try {
+			log_in_window.user.rate_movie(current_movie.get_movie_id(),rate );
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			gui_utils.raise_sql_error_window(getDisplay());
+			e.printStackTrace();
+		}
+	}
+	public void update_movie()
+	{
+		try {
+			current_movie = log_in_window.user.get_unrated_movie();
+		} catch (SQLException e) {
+			gui_utils.raise_sql_error_window(getDisplay());
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void go_to_overview()
+	{
+		gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
+		
+		gui_utils.display = Display.getDefault();
+		gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+		gui_utils.tabs_win.open();
+	}
 	
 	
 
