@@ -44,6 +44,11 @@ public class user_logics
 		}
 	}
 					
+	public void logout()
+	{
+		current_user_id = 0;
+	}
+	
 	/**
 	 * add user to "users" table
 	 * @return true iff succedded adding the user
@@ -382,13 +387,6 @@ public class user_logics
 		return (get_unrated_movies(current_user_id, limit));
 	}
 	
-	public light_entity_movie get_unrated_movie ()
-			throws SQLException
-	{
-		return  get_unrated_movies(1).get(0);
-	}
-	
-	
 	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
 			throws SQLException
 	{
@@ -398,20 +396,22 @@ public class user_logics
 		return (db_queries_user.get_unrated_movies(user_id, limit));
 	}
 
+	public light_entity_movie get_unrated_movie()
+			throws SQLException
+	{
+		List<light_entity_movie> movies = get_unrated_movies(1); 
+		
+		if (movies != null && movies.size() > 0)
+			return  (movies.get(0));
+		else
+			return (null);
+	}
 	
 // INTERNALS
 	
-	
-	/////////////matan please implement
-	public boolean user_rate_movie(int movie_id,int rate) 
-			throws SQLException
-	{
-		return true;
-	}
-	
 	/**
 	 * Rate a movie
-	 * @param rate (-5) - 5 ///////////////matan wtf (-5)?????????????????????????????????????????????????
+	 * @param rate (-5) - 5
 	 * @return did succeed?
 	 * @throws SQLException 
 	 */
@@ -421,15 +421,14 @@ public class user_logics
 		return (db_queries_user.rate_movie(movie_id, user_id, rate));
 	}
 	
-	
-	
-	
-	/////matan we need the same thing byt with string tag instead of tag id.
-	
-	public static boolean rate_tag_movie(int movie_id, int user_id, String tag, int rate) 
+	/** Rate a movie
+	 * @return did succeed?
+	 * @throws SQLException 
+	 */
+	public boolean rate_movie(int movie_id,int rate) 
 			throws SQLException
 	{
-		return true;
+		return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
 	}
 	
 	
@@ -445,12 +444,15 @@ public class user_logics
 		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 	
-	/**
-	 * just get the toString of each activity
-	 * implemented to avoid code duplication
-	 * @param activity_list
-	 * @return - null if activity_list is empty
-	 */
+
+	public static boolean rate_tag_movie(int movie_id, int user_id, String tag_name, int rate) 
+			throws SQLException
+	{
+		int tag_id = db_queries_movies.get_tag_id(tag_name);
+		
+		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
+	}
+
 	private List<String> list_activity_to_list_string(List<abstract_activity> activity_list)
 	{
 		if (activity_list == null || activity_list.size() == 0)
@@ -467,5 +469,4 @@ public class user_logics
 		
 		return (retList);
 	}
-
 }

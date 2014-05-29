@@ -2,13 +2,13 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-CREATE SCHEMA IF NOT EXISTS `dbmysql05` DEFAULT CHARACTER SET utf8 ;
-USE `dbmysql05` ;
+CREATE SCHEMA IF NOT EXISTS `Dione` DEFAULT CHARACTER SET utf8 ;
+USE `Dione` ;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`invocations`
+-- Table `Dione`.`invocations`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`invocations` (
+CREATE TABLE IF NOT EXISTS `Dione`.`invocations` (
   `invokeCode` TINYINT NOT NULL,
   `invokeDate` DATETIME NOT NULL,
   PRIMARY KEY (`invokeCode`, `invokeDate`))
@@ -16,9 +16,9 @@ ENGINE = InnoDB	-- used InnoDB because this should have more writes than selects
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`person`
+-- Table `Dione`.`person`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`person` (
+CREATE TABLE IF NOT EXISTS `Dione`.`person` (
   `idPerson` INT NOT NULL AUTO_INCREMENT,
   `personName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idPerson`),
@@ -27,47 +27,48 @@ ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`actor`
+-- Table `Dione`.`actor`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor` (
+CREATE TABLE IF NOT EXISTS `Dione`.`actor` (
   `idPerson` INT NOT NULL,
   PRIMARY KEY (`idPerson`),
   CONSTRAINT `idPersonActor`
     FOREIGN KEY (`idPerson`)
-    REFERENCES `dbmysql05`.`person` (`idPerson`)
+    REFERENCES `Dione`.`person` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`director`
+-- Table `Dione`.`director`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`director` (
+CREATE TABLE IF NOT EXISTS `Dione`.`director` (
   `idPerson` INT NOT NULL,
   PRIMARY KEY (`idPerson`),
   CONSTRAINT `idPersonDirector`
     FOREIGN KEY (`idPerson`)
-    REFERENCES `dbmysql05`.`person` (`idPerson`)
+    REFERENCES `Dione`.`person` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`language`
+-- Table `Dione`.`language`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`language` (
+CREATE TABLE IF NOT EXISTS `Dione`.`language` (
   `idLanguage` INT NOT NULL AUTO_INCREMENT,
-  `LanguageName` CHAR(20) NOT NULL,
+  `languageName` CHAR(20) NOT NULL,
+  UNIQUE INDEX `user_lang_unq` (`languageName` ASC),
   PRIMARY KEY (`idLanguage`))
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`movie`
+-- Table `Dione`.`movie`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie` (
+CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
   `idMovie` INT NOT NULL AUTO_INCREMENT,
   `idLanguage` INT NULL DEFAULT NULL,
   `idDirector` INT NULL DEFAULT NULL,
@@ -82,53 +83,56 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie` (
   INDEX `movieName` (`movieName` (128)),
   CONSTRAINT `idDirector`
     FOREIGN KEY (`idDirector`)
-    REFERENCES `dbmysql05`.`director` (`idPerson`)
+    REFERENCES `Dione`.`director` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idLanguage`
     FOREIGN KEY (`idLanguage`)
-    REFERENCES `dbmysql05`.`language` (`idLanguage`)
+    REFERENCES `Dione`.`language` (`idLanguage`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`users`
+-- Table `Dione`.`users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`users` (
+CREATE TABLE IF NOT EXISTS `Dione`.`users` (
   `idUsers` INT NOT NULL AUTO_INCREMENT,
   `userName` CHAR(10) NOT NULL,
   `hashPassword` INT NOT NULL,
-  PRIMARY KEY (`idUsers`))
+  PRIMARY KEY (`idUsers`),
+   UNIQUE INDEX `user_name_unq` (`userName` ASC))
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`genre`
+-- Table `Dione`.`genre`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`genre` (
+CREATE TABLE IF NOT EXISTS `Dione`.`genre` (
   `idGenre` INT NOT NULL AUTO_INCREMENT,
   `genreName` CHAR(20) NOT NULL,
-  PRIMARY KEY (`idGenre`))
+  PRIMARY KEY (`idGenre`),
+   UNIQUE INDEX `genre_name_unq` (`genreName` ASC),)
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`tag`
+-- Table `Dione`.`tag`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`tag` (
+CREATE TABLE IF NOT EXISTS `Dione`.`tag` (
   `idTag` INT NOT NULL AUTO_INCREMENT,
   `tagName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idtag`),
+   UNIQUE INDEX `tag_name_unq` (`tagName` ASC),
   INDEX `tagName_idx` USING BTREE (`tagName` ASC))
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`actor_movie`
+-- Table `Dione`.`actor_movie`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor_movie` (
+CREATE TABLE IF NOT EXISTS `Dione`.`actor_movie` (
   `idMovie` INT NOT NULL AUTO_INCREMENT,
   `idActor` INT NOT NULL,
   INDEX `idMovie_idx` (`idMovie` ASC),
@@ -136,42 +140,42 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`actor_movie` (
   PRIMARY KEY (`idMovie`, `idActor`),
   CONSTRAINT `idActor`
     FOREIGN KEY (`idActor`)
-    REFERENCES `dbmysql05`.`actor` (`idPerson`)
+    REFERENCES `Dione`.`actor` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idMovie`
     FOREIGN KEY (`idMovie`)
-    REFERENCES `dbmysql05`.`movie` (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`friend_relation`
+-- Table `Dione`.`friend_relation`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`friend_relation` (
+CREATE TABLE IF NOT EXISTS `Dione`.`friend_relation` (
   `friend1` INT NOT NULL,
   `friend2` INT NOT NULL,
   `friendshipDate` DATETIME NOT NULL,
   PRIMARY KEY (`friend1`, `friend2`),
   CONSTRAINT `friend1_fk`
     FOREIGN KEY (`friend1`)
-    REFERENCES `dbmysql05`.`users` (`idUsers`)
+    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `friend2_fk`
     FOREIGN KEY (`friend2`)
-    REFERENCES `dbmysql05`.`users` (`idUsers`)
+    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`genre_movie`
+-- Table `Dione`.`genre_movie`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`genre_movie` (
+CREATE TABLE IF NOT EXISTS `Dione`.`genre_movie` (
   `idMovie` INT NOT NULL,
   `idGenre` INT NOT NULL,
   PRIMARY KEY (`idMovie`, `idGenre`),
@@ -179,42 +183,42 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`genre_movie` (
   INDEX `idMovie_idx` (`idMovie` ASC),
   CONSTRAINT `idGenre`
     FOREIGN KEY (`idGenre`)
-    REFERENCES `dbmysql05`.`genre` (`idGenre`)
+    REFERENCES `Dione`.`genre` (`idGenre`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `idMovie1`
     FOREIGN KEY (`idMovie`)
-    REFERENCES `dbmysql05`.`movie` (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`movie_tag`
+-- Table `Dione`.`movie_tag`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`movie_tag` (
+CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag` (
   `idMovie` INT NOT NULL,
   `idTag` INT NOT NULL,
   PRIMARY KEY (`idmovie`, `idtag`),
   INDEX `fk_tag_idx` (`idtag` ASC),
   CONSTRAINT `fk_movie`
     FOREIGN KEY (`idMovie`)
-    REFERENCES `dbmysql05`.`movie` (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tag`
     FOREIGN KEY (`idTag`)
-    REFERENCES `dbmysql05`.`tag` (`idTag`)
+    REFERENCES `Dione`.`tag` (`idTag`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`user_prefence`
+-- Table `Dione`.`user_prefence`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_prefence` (
+CREATE TABLE IF NOT EXISTS `Dione`.`user_prefence` (
   `idUser` INT NOT NULL,
   `idTag` INT NOT NULL,
   `tag_user_rate` INT NOT NULL,
@@ -222,21 +226,21 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_prefence` (
   INDEX `tag_id_fk_user_prefences_idx` (`idTag` ASC),
   CONSTRAINT `tag_id_fk_user_prefences`
     FOREIGN KEY (`idTag`)
-    REFERENCES `dbmysql05`.`tag` (`idtag`)
+    REFERENCES `Dione`.`tag` (`idtag`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `user_id_fk_user_prefences`
     FOREIGN KEY (`idUser`)
-    REFERENCES `dbmysql05`.`users` (`idUsers`)
+    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`user_rank`
+-- Table `Dione`.`user_rank`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_rank` (
+CREATE TABLE IF NOT EXISTS `Dione`.`user_rank` (
   `idUser` INT NOT NULL,
   `idMovie` INT NOT NULL,
   `rank` INT NULL DEFAULT NULL,
@@ -245,21 +249,21 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_rank` (
   INDEX `movie_fk_idx` (`idMovie` ASC),
   CONSTRAINT `movie_fk`
     FOREIGN KEY (`idMovie`)
-    REFERENCES `dbmysql05`.`movie` (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `user_fk`
     FOREIGN KEY (`idUser`)
-    REFERENCES `dbmysql05`.`users` (`idUsers`)
+    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `dbmysql05`.`user_tag_movie`
+-- Table `Dione`.`user_tag_movie`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_tag_movie` (
+CREATE TABLE IF NOT EXISTS `Dione`.`user_tag_movie` (
   `idUser` INT NOT NULL,
   `idTag` INT NOT NULL,
   `idMovie` INT NOT NULL,
@@ -270,17 +274,17 @@ CREATE TABLE IF NOT EXISTS `dbmysql05`.`user_tag_movie` (
   INDEX `tag_fk_user_tags_movie_rating_idx` (`idTag` ASC),
   CONSTRAINT `movie_fk_user_tags_movie_rating`
     FOREIGN KEY (`idMovie`)
-    REFERENCES `dbmysql05`.`movie` (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `tag_fk_user_tags_movie_rating`
     FOREIGN KEY (`idTag`)
-    REFERENCES `dbmysql05`.`tag` (`idtag`)
+    REFERENCES `Dione`.`tag` (`idtag`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `user_fk_user_tags_movie_rating`
     FOREIGN KEY (`idUser`)
-    REFERENCES `dbmysql05`.`users` (`idUsers`)
+    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

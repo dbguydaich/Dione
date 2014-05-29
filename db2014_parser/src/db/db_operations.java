@@ -363,20 +363,20 @@ public abstract class db_operations
 	{
 		ResultSet result = select(values, table, where);
 		
-		// is table empty
-		if (!result.next())
-			return (null);
-		
 		// Enumerate all movies
 		HashMap <String,Integer> retMap =  new HashMap<String,Integer>(); 
-		
-		do
-		{
-			Integer id = result.getInt(1);
-			String name = result.getString(2);
-			
-			retMap.put(name,id);
-		} while (result.next());
+				
+		// is table empty
+		if (result.next())
+		{	
+			do
+			{
+				Integer id = result.getInt(1);
+				String name = result.getString(2);
+				
+				retMap.put(name,id);
+			} while (result.next());
+		}
 		
 		return (retMap);
 	}

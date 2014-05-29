@@ -602,6 +602,35 @@ public abstract class db_queries_movies extends db_operations
 		return (generic_get_two_values("idTag, tagName", "tag", ""));
 	}
 
+	/** ordered by user rates
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<light_entity_movie> get_top_rated_movies(int limit) 
+			throws SQLException 
+	{
+		String select = "movie.idMovie as idMovie, movieName, year, wiki, personName, duration, plot, AVG(rank) rate";
+		String from	 = "movie, person, user_rank";
+		String where = " person.idPerson = movie.idDirector AND user_rank.idMovie = movie.idMovie " + 
+						" GROUP BY idMovie ORDER BY rate LIMIT " + limit;
+		
+		// Make the querey
+		ResultSet result = select(select, from, where);
+		
+		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
+		
+		// Add all values to the return list
+		if (result != null)
+		{
+			while (result.next())
+			{
+				returnedList.add(get_light_entity_movie(result));
+			}
+		}
+		
+		return (returnedList);
+	}
+	
 	
 // ID GETTERS
 	

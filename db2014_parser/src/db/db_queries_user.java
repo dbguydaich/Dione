@@ -1,6 +1,5 @@
 package db;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -72,7 +71,7 @@ public abstract class db_queries_user extends db_operations
 			throws SQLException 
 	{
 		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-		int rows_effected = insert("user_tag_movie", "`idUser`, `idTag`, `idMovie`, `rank`, `rankDate`" , user_id , tag_id , movie_id , rate, date);
+		int rows_effected = insert("user_tag_movie", "`idUser`, `idTag`, `idMovie`, `rate`, `reteDate`" , user_id , tag_id , movie_id , rate, date);
 		
 		// did select find souch user
 		if (rows_effected > 0)
@@ -80,7 +79,7 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (false);
 	}
-
+	
 // BOOLEANS
 	
 	public static boolean authenticate_user(String user, String pass) 

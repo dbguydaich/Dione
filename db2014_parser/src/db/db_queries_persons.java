@@ -123,7 +123,7 @@ public class db_queries_persons extends db_operations
 		public static HashMap <String,Integer> get_actor_names_and_ids() 
 				throws SQLException
 		{
-			return (generic_get_two_values("idActor, personName", "actor, person", "person.idPerson = actor.idPerson"));
+			return (generic_get_two_values("person.idPerson, personName", "actor, person", "person.idPerson = actor.idPerson"));
 		}
 		
 		/** get director names and IDs
@@ -133,7 +133,7 @@ public class db_queries_persons extends db_operations
 		public static HashMap <String,Integer> get_director_names_and_ids() 
 					throws SQLException
 			{
-				return (generic_get_two_values("idDirector, personName", "person, director", "person.idPerson = director.idPerson"));
+				return (generic_get_two_values("person.idPerson, personName", "person, director", "person.idPerson = director.idPerson"));
 			}
 				
 	// ID GETTERS
