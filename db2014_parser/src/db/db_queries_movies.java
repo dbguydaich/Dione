@@ -2,9 +2,7 @@ package db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,7 +67,7 @@ public abstract class db_queries_movies extends db_operations
 	public static boolean rank_movie(Integer user_id, Integer movie_id, Integer rank) 
 			throws SQLException
 	{
-		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		String date = get_curr_time();
 		int rows_effected = insert("user_rank", "`idUser`, `idMovie`, `rank`, 'rankDate'" , user_id.toString(), movie_id.toString(), rank.toString(), date);
 		
 		// did select find souch user

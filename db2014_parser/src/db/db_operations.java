@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -490,8 +492,33 @@ public abstract class db_operations
 		return (count);
 	}
 	
-// Back Grounders
+// Publics
 
+	public static String get_curr_time()
+	{
+		return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+	}
+	
+	public static boolean perform_invocation(int code) 
+			throws SQLException
+	{
+		return (insert("invocations", "`invokeCode`, `invokeDate`", code, get_curr_time()) > 0);
+	}
+
+	public static java.sql.Date get_last_invocation(int code) 
+			throws SQLException
+	{
+		String whereClause = "invokeCode = ? ORDER BY invokeDate desc";
+		
+		ResultSet results = select("invokeDate" , "invocations" , whereClause, code);
+	
+		if (results.next())
+			return (results.getDate(1));
+		else
+			return (null);
+	}
+
+	
 	public static boolean fill_user_prefence() 
 			throws SQLException
 	{
