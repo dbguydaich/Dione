@@ -504,5 +504,12 @@ public class user_logics
 		
 		return (retList);
 	}
+	
+	
+	///////matan please implement
+	public static String get_my_name()
+	{
+		return null;
+	}
 
 }

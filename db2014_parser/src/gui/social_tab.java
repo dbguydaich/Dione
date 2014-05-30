@@ -55,9 +55,11 @@ import org.eclipse.swt.layout.GridLayout;
 
 
 
+
 import parser_entities.entity_person;
 import config.config;
 import db.db_queries_user;
+import bl.user_logics;
 //import db.db_queries;
 import bl.verifier;
 
@@ -169,15 +171,25 @@ public class social_tab extends Composite
 						System.out.println(add_friend_text.getText());
 						
 						
+						if(user_logics.get_my_name() == add_friend_text.getText())
+						{
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("Error");
+							messageBox.setMessage("You can not be a friend of your self. Sorry.");
+							messageBox.open();
+							
+						}
+						
+						
 						////// implement //// matan please privede the function
 						//check that i am not trying to add myself..
 						
 						
-						if(log_in_window.user.does_user_exists((add_friend_text.getText()))){ //to be implemented next on
+						if(user_logics.does_user_exists((add_friend_text.getText()))){ //to be implemented next on
 						
-							Integer friend_id = log_in_window.user.get_user_id(add_friend_text.getText());
+							Integer friend_id = user_logics.get_user_id(add_friend_text.getText());
 							Integer current_user_id =   log_in_window.user.get_current_user_id() ;
-							log_in_window.user.add_friendship(friend_id, current_user_id);
+							user_logics.add_friendship(friend_id, current_user_id);
 							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 							messageBox.setText("SUCCESS");
 							messageBox.setMessage("Friend has successfully added");
@@ -343,7 +355,7 @@ public class social_tab extends Composite
 		
 		
 		try {
-			user_social_activities_strings = log_in_window.user.get_friends_recent_string_activities();
+			user_social_activities_strings = log_in_window.user.get_user_recent_string_activities(log_in_window.user.get_current_user_id(), 5) ;
 		} catch (SQLException e1) {
 			user_social_activities_strings = new ArrayList<String>();
 			gui_utils.raise_sql_error_window(display);
