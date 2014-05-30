@@ -332,11 +332,12 @@ public class social_tab extends Composite
 		
 		
 		//user recent social activities labels
-		user_social_activities_strings = new ArrayList<String>();
+		
 		
 		try {
-			List<String> user_activities_strings = log_in_window.user.get_friends_recent_string_activities();
+			user_social_activities_strings = log_in_window.user.get_friends_recent_string_activities();
 		} catch (SQLException e1) {
+			user_social_activities_strings = new ArrayList<String>();
 			gui_utils.raise_sql_error_window(display);
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
