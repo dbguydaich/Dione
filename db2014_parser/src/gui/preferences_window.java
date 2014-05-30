@@ -206,8 +206,54 @@ public class preferences_window extends Shell
 			public void widgetDisposed(DisposeEvent e) 
 			{
 				font_stop_button.dispose();
+		
 			}		
 		});
+		
+		/////////
+		
+		
+		stop_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+				
+				
+				gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
+				
+				gui_utils.display = Display.getDefault();
+				gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+				gui_utils.tabs_win.open();
+				////////shachar please dispose the window
+
+		}});
+
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//////
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		

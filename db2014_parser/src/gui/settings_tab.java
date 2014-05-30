@@ -234,14 +234,14 @@ public class settings_tab extends Composite
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("SUCCESS");
-						messageBox.setMessage("username has been successfully changed" );
+						messageBox.setMessage("Username has been successfully changed" );
 						messageBox.open();
 					}
 					else
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Failure");
-						messageBox.setMessage("username couldn't be changed!" );
+						messageBox.setMessage("Username couldn't be changed! Make sure you enter the right password." );
 						messageBox.open();
 
 					}
@@ -355,7 +355,7 @@ public class settings_tab extends Composite
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Failure");
-						messageBox.setMessage("Password couldn't be changed!" );
+						messageBox.setMessage("Password couldn't be changed!  Make sure you enter the right password" );
 						messageBox.open();
 
 					}
