@@ -35,7 +35,7 @@ public class all_tabs_window extends Shell
 		
 		//String currnt_user_str = get_current_username();
 		String current_user_str = "some username";
-		this.setText("MovieBook, Logged in As: " + current_user_str);
+		this.setText("MovieBook - Logged in As: " + current_user_str);
 		
 		this.setLayout(new FillLayout());
 		TabFolder tab_folder = new TabFolder(this, SWT.NONE);
