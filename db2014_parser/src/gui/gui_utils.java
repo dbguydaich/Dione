@@ -1,5 +1,6 @@
 package gui;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
+import bl.movie_logics;
 import parser_entities.entity_person;
 import parser_entities.light_entity_movie;
 
@@ -197,6 +199,37 @@ public class gui_utils
 		return -1;//no button has been pressed
 	}
 
+	
+	
+	public static boolean[] convert_list_array(List<Boolean> from)
+	{
+		boolean[] result = new boolean[from.size()];
+		int i =0;
+		for ( Boolean a : from)
+		{
+			result[i]= a;
+			i++;
+		}
+		return result;
+	}
+	
+	public static List<Integer> get_genres_id( List<Boolean> pressed_genres, List<String> genres)
+	{
+		List<Integer> result = new ArrayList<Integer>();
+		for (int i=0; i< pressed_genres.size() ; i++)
+		{
+			if(pressed_genres.get(i)==true) //pressed
+			{
+				try {
+					result.add(movie_logics.get_genre_id(genres.get(i)));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
+	}
 
 
 

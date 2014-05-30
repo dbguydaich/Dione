@@ -196,7 +196,13 @@ public class recommendation_tab extends Composite
 		
 		//based on my friends LINKS
 		List<light_entity_movie> movies_friends_taste_entity = null;
-		List<light_entity_movie> movies_freinds_taste_entity = log_in_window.user.get_user_recommended_movies_entities_by_friends(log_in_window.user.get_current_user_id(),5);
+		List<light_entity_movie> movies_freinds_taste_entity = null;
+		try {
+			movies_freinds_taste_entity = log_in_window.user.get_user_recommended_movies_entities_by_friends(log_in_window.user.get_current_user_id(),5);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		movies_friends_taste = gui_utils.convert_movies_entity_to_string(movies_freinds_taste_entity);
 		
 
@@ -208,8 +214,8 @@ public class recommendation_tab extends Composite
 		for(j=0; j< movies_friends_taste.size(); j++)
 		{
 			final int k =j;
-			System.out.println(movies_my_taste.get(j));
-			movies_friends_taste_labels.add(new Label(area1, SWT.BORDER));
+		//	System.out.println(movies_my_taste.get(j));
+			movies_friends_taste_labels.add(new Label(area2, SWT.BORDER));
 			movies_friends_taste_labels.get(j).setText(movies_friends_taste.get(j));
 			movies_friends_taste_labels.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
 			movies_friends_taste_labels.get(j).addMouseListener(new MouseAdapter() {

@@ -312,13 +312,15 @@ public class search_movie_tab extends Composite
 		});
 		
 		
-		
+		final List<String> genres_for_annonymus = genres;
 		//Listener
 		search_button.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
+				
+				
 				String title = title_text.getText();
 				String director =  director_text.getText();
 				
@@ -329,18 +331,28 @@ public class search_movie_tab extends Composite
 				get_text(tags_texts, tags_list);
 				
 				
-				List<Boolean> rating_radios_text = new ArrayList<Boolean>();
-				gui_utils.get_text_button(rating_checkboxes, rating_radios_text);
+				List<Boolean> rating_radios_text_list = new ArrayList<Boolean>();
+				gui_utils.get_text_button(rating_checkboxes, rating_radios_text_list);
 						
-				List<Boolean> genres_numbers =  new ArrayList<Boolean>();
-				gui_utils.get_text_button (genres_checkboxes, genres_numbers );
+				List<Boolean> genres_numbers_list =  new ArrayList<Boolean>();
+				gui_utils.get_text_button (genres_checkboxes, genres_numbers_list );
 				
+				boolean[] rating_radios_text = gui_utils.convert_list_array(rating_radios_text_list);
+				
+				
+			
+				List<Integer> desired_genres = gui_utils.get_genres_id(  genres_numbers_list, genres_for_annonymus);
 				 try {
 					
-					if(movie_logics.does_movie_exists(title,director,actor_list,tags_list,
-								rating_radios_text,genres_numbers))  //to be implemented next on
+					if(movie_logics.does_movie_exists(title,director,null,actor_list,null,
+							desired_genres,rating_radios_text))  //to be implemented next on
+				
 					{
-						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,actor_list,tags_list, rating_radios_text,genres_numbers);
+						
+						
+						movie_list.removeAll();
+						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,null,actor_list,null,
+								desired_genres,rating_radios_text);
 					
 						for(String str: movie_names)
 						{
@@ -371,7 +383,7 @@ public class search_movie_tab extends Composite
 							        
 							      }
 							});
-					movie_list.print(null);
+			
 					//refresh list
 						
 					}

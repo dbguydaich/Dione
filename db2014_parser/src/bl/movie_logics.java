@@ -98,6 +98,11 @@ public abstract class movie_logics
 		return (db_queries_movies.get_movie_id(movie_name));
 	}
 
+	
+	
+	
+	
+	//////matan please return -1 if genre doesn't exists..
 	public static int get_genre_id(String genre_name) 
 			throws SQLException
 	{
@@ -134,5 +139,15 @@ public abstract class movie_logics
 	{
 		return (db_queries_movies.clear_movie_actors());
 	}
+	
+	
+	///matan please implement////
+	public static List<light_entity_movie> get_top_5_rated_movies()
+	{
+		
+		return null;
+	}
+	
+
 
 }

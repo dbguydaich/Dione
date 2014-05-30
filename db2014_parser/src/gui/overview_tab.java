@@ -110,7 +110,7 @@ public class overview_tab extends Composite
 		reco_movies_string.add("movie number 3");
 		reco_movies_string.add("movie number 4");
 		reco_movies_string.add("movie number 5");
-		//
+		
 		
 		int i = 0;
 		for(String str: reco_movies_string)
