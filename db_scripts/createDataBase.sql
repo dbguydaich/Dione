@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
   `idLanguage` INT NULL DEFAULT NULL,
   `idDirector` INT NULL DEFAULT NULL,
   `movieName` VARCHAR(128) NOT NULL,
+  `movie_qualified_name` VARCHAR(100) NULL DEFAULT NULL,
   `year` INT NULL DEFAULT NULL,
   `wiki` TEXT NULL DEFAULT NULL,
   `duration` INT NULL DEFAULT NULL,
