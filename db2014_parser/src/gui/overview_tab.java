@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
+import parser_entities.light_entity_movie;
 import config.config;
 
 ////////// functions the tab is waiting for: //////////////
@@ -41,7 +42,7 @@ import config.config;
 public class overview_tab extends Composite
 {
 	
-	public overview_tab(Display display, Composite parent, int style)
+	public overview_tab(final Display display, Composite parent, int style)
 	{
 		super(parent, style);
 		
@@ -100,57 +101,127 @@ public class overview_tab extends Composite
 		
 		
 		//recommended movie links
+
 		
-		//reco_movies_string = get_user_most_recommended_movies(); //to be used when function exists
+//		//just for check
+//		reco_movies_string = new ArrayList<String>();
+//		reco_movies_string.add("movie number 1");
+//		reco_movies_string.add("movie number 2");
+//		reco_movies_string.add("movie number 3");
+//		reco_movies_string.add("movie number 4");
+//		reco_movies_string.add("movie number 5");
+//		
+//		
+//		int i = 0;
+//		for(String str: reco_movies_string)
+//		{
+//			reco_movies_labels.add(new Label(reco_area, SWT.NONE ));
+//			reco_movies_labels.get(i).setText(str);
+//			reco_movies_labels.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
+//			
+//			reco_movies_labels.get(i).addMouseListener(new MouseAdapter() {
+//				@Override
+//						public void mouseUp(MouseEvent arg0) {
+//						//open_movie_details(str);
+//						
+//					}
+//
+//			});
+//
+//			reco_movies_labels.get(i).setLayoutData(gui_utils.grid_data_factory(250, 18, -1, -1, -1, -1, -1, -1));
+//			i++;
+//		}
+//		
+//		
+//			//recommendation buttom label
+//			Label reco_bottom_label = new Label(reco_area, SWT.NONE);
+//			reco_bottom_label.setText("Click on a Movie Name For Movie Details");
+//			reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
+//			final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+//			reco_bottom_label.setFont(font_reco_bottom_label);
+//			reco_bottom_label.addDisposeListener(new DisposeListener()
+//			{
+//				public void widgetDisposed(DisposeEvent e) 
+//				{
+//					font_reco_bottom_label.dispose();
+//				}		
+//			});
+//
+//		
+//		
+//		
 		
-		//just for check
-		reco_movies_string = new ArrayList<String>();
-		reco_movies_string.add("movie number 1");
-		reco_movies_string.add("movie number 2");
-		reco_movies_string.add("movie number 3");
-		reco_movies_string.add("movie number 4");
-		reco_movies_string.add("movie number 5");
+		//based on what we have learned about you LINKS
+		List<light_entity_movie> movies_my_taste_entity = null;
+		List<String> movies_my_taste = null;
+		try {
+			movies_my_taste_entity = log_in_window.user.get_user_recommended_movies(log_in_window.user.get_current_user_id());
+			movies_my_taste = gui_utils.convert_movies_entity_to_string(movies_my_taste_entity);
+		} catch (SQLException e1) {
+			movies_my_taste = new ArrayList<String>();
+			// TODO Auto-generated catch block
+			gui_utils.raise_sql_error_window(display);
+			
+			e1.printStackTrace();
+		}
 		
+
+		//
 		
 		int i = 0;
-		for(String str: reco_movies_string)
+		int j=0;
+		final List<light_entity_movie> movies_my_taste_entity_for_annonymus = movies_my_taste_entity;
+		for(j=0; j< movies_my_taste.size(); j++)
 		{
+			final int k =j;
 			reco_movies_labels.add(new Label(reco_area, SWT.NONE ));
-			reco_movies_labels.get(i).setText(str);
-			reco_movies_labels.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
-			
-			reco_movies_labels.get(i).addMouseListener(new MouseAdapter() {
-				@Override
-						public void mouseUp(MouseEvent arg0) {
-						//open_movie_details(str);
-						
-					}
+			reco_movies_labels.get(j).setText(movies_my_taste.get(j));
+			reco_movies_labels.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			reco_movies_labels.get(j).addMouseListener(new MouseAdapter() {
+			//	@Override
+				public void mouseUp(MouseEvent arg0) {
+					System.out.println("hi-1");
+					movie_details_window  movie_details= null;
+				try {
+					movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					movie_details.open();
+				
+				}
 
 			});
+			
 
-			reco_movies_labels.get(i).setLayoutData(gui_utils.grid_data_factory(250, 18, -1, -1, -1, -1, -1, -1));
+			
 			i++;
 		}
 		
-		
-			//recommendation buttom label
-			Label reco_bottom_label = new Label(reco_area, SWT.NONE);
-			reco_bottom_label.setText("Click on a Movie Name For Movie Details");
-			reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
-			final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
-			reco_bottom_label.setFont(font_reco_bottom_label);
-			reco_bottom_label.addDisposeListener(new DisposeListener()
+		//recommendation buttom label
+		Label reco_bottom_label = new Label(reco_area, SWT.NONE);
+		reco_bottom_label.setText("Click on a Movie Name For Movie Details");
+		reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
+		final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		reco_bottom_label.setFont(font_reco_bottom_label);
+		reco_bottom_label.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
 			{
-				public void widgetDisposed(DisposeEvent e) 
-				{
-					font_reco_bottom_label.dispose();
-				}		
-			});
+				font_reco_bottom_label.dispose();
+			}		
+		});
 
 		
 		
 		
 		
+		
+		
+		
+		
+		//////////
 		//taste area
 		Composite taste_area = new Composite(this, SWT.NONE);
 		taste_area.setLayoutData(gui_utils.form_data_factory(305, 160, 5, 314));	

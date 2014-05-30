@@ -129,13 +129,7 @@ public class recommendation_tab extends Composite
 			e1.printStackTrace();
 		}
 		
-		//just for check
-//		movies_my_taste = new ArrayList<String>();
-//		movies_my_taste.add("reco by my taste1");
-//		movies_my_taste.add("reco by my taste2");
-//		movies_my_taste.add("reco by my taste3");
-//		movies_my_taste.add("reco by my taste4");
-//		movies_my_taste.add("reco by my taste5");
+
 		//
 		
 		int i = 0;
