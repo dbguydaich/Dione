@@ -354,11 +354,11 @@ public class search_movie_tab extends Composite
 						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,null,actor_list,null,
 								desired_genres,rating_radios_text);
 					
+						
 						for(String str: movie_names)
 						{
 							movie_list.add(str);
 						}
-
 							
 						/* 
 					     * handle selection of movie number selectedItem

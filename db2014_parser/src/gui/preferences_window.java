@@ -63,8 +63,10 @@ public class preferences_window extends Shell
 			
 		}
 		this.setSize(400, 300);
-		this.setText("Movies Preferences");
-				
+		
+		//String currnt_user_str = get_current_username();
+		String current_user_str = "some username";
+		this.setText("Movie Preferences - Logged in As: " + current_user_str);			
 		this.setLayout(new FormLayout());
 
 		

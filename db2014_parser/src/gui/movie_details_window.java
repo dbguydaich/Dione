@@ -85,8 +85,10 @@ public class movie_details_window extends Shell
 		
 		this.setLayout(new FormLayout());
 		this.setSize(window_width + 100, window_height);
-		this.setText("Movie Details");
 		
+		//String currnt_user_str = get_current_username();
+		String current_user_str = "some username";
+		this.setText("Movie Details - Logged in As: " + current_user_str);
 		
 		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
 		final Image background = new Image(display, imgURL);

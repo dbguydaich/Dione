@@ -32,7 +32,10 @@ public class all_tabs_window extends Shell
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 			
 		this.setSize(window_width, window_height);
-		this.setText("MovieBook");
+		
+		//String currnt_user_str = get_current_username();
+		String current_user_str = "some username";
+		this.setText("MovieBook, Logged in As: " + current_user_str);
 		
 		this.setLayout(new FillLayout());
 		TabFolder tab_folder = new TabFolder(this, SWT.NONE);

@@ -203,11 +203,21 @@ public class log_in_window extends Shell
 							
 							else
 							{
-								preferences_window rating_window = new preferences_window(display); ////shahar please check that out.what about dispose?
-							if(rating_window.can_be_opened )
-							{
-								rating_window.open();
-							}
+								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
+								gui_utils.display = Display.getDefault();
+								preferences_window rating_window = new preferences_window(gui_utils.display); 
+								
+								if(rating_window.can_be_opened)
+								{
+									rating_window.open();
+								}
+								
+								else
+								{
+									rating_window.dispose();
+									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+									gui_utils.tabs_win.open();
+								}
 						
 							}
 							
