@@ -1,6 +1,7 @@
 package gui;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -65,9 +66,9 @@ public class settings_tab extends Composite
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Settings");
-		final Font font_headline_label = new Font(display, "Ariel",15, java.awt.Font.PLAIN ); 
+		final Font font_headline_label = new Font(display, "Ariel",21, SWT.BOLD ); 
 		headline_label.setFont(font_headline_label);
-		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 2, 275));	
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 2, 250));	
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -81,7 +82,7 @@ public class settings_tab extends Composite
 		Button update_button = new Button(this, SWT.PUSH);
 		update_button.setText("Data Update");
 		update_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 70, 25));
-		final Font font_update_button = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		final Font font_update_button = new Font(display, "Ariel",11, SWT.NONE );
 		update_button.setFont(font_update_button);
 		update_button.addDisposeListener(new DisposeListener()
 		{
@@ -94,7 +95,7 @@ public class settings_tab extends Composite
 		
 		//update label
 		Label update_label = new Label(this, SWT.NONE);
-		final Font font_update_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_update_label = new Font(display, "Ariel",10, SWT.NONE );
 		update_label.setFont(font_update_label);
 		update_label.setText("Note: This operation may take a while...");
 		update_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 75, 140));
@@ -110,8 +111,8 @@ public class settings_tab extends Composite
 		//log out button
 		Button log_out_button = new Button(this, SWT.PUSH);
 		log_out_button.setText("Log Out");
-		log_out_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 110, 25));
-		final Font font_logout_button = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		log_out_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 10, 550));
+		final Font font_logout_button = new Font(display, "Ariel",11, SWT.NONE );
 		log_out_button.setFont(font_logout_button);
 		log_out_button.addDisposeListener(new DisposeListener()
 		{
@@ -121,20 +122,64 @@ public class settings_tab extends Composite
 			}		
 		});
 		
-		
-		
-		
 		log_out_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-			log_in_window.user=null;
-			log_in_window login_win = new log_in_window(display);
-			login_win.open();
+				log_in_window.user = null;
+				gui_utils.tabs_win.dispose();
+				
+				//closing all current opened movie windows
+				for(movie_details_window win: gui_utils.movie_windows)
+				{
+					if(!win.isDisposed())
+						win.dispose();
+				}
+				gui_utils.movie_windows = new ArrayList<movie_details_window>();
+					
+				if(gui_utils.display.isDisposed())
+					gui_utils.display = Display.getDefault();
+				gui_utils.login_win = new log_in_window(gui_utils.display);
+				gui_utils.login_win.open();
 				
 			}
 		});
 		
 		
+		
+		//rate movies button
+		Button rate_movies_button = new Button(this, SWT.PUSH);
+		rate_movies_button.setText("Rate Random Movies");
+		rate_movies_button.setLayoutData(gui_utils.form_data_factory(-1, -1, 110, 25));
+		final Font font_rate_movies_button = new Font(display, "Ariel",11, SWT.NONE );
+		rate_movies_button.setFont(font_rate_movies_button);
+		
+		rate_movies_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(gui_utils.pref_win != null)
+				{				
+					if(!gui_utils.pref_win.isDisposed())
+					{
+						/*
+						 * Shachar: show messagebox: "you are already rating movies"
+						 */
+					}
+					
+					else
+					{
+						/*
+						 * Shachar: open a pref window
+						 */
+					}
+				}
+				else
+				{
+					/*
+					 * open a pref window
+					 */
+				}
+			}
+		});
 		
 		
 		//username area
@@ -146,7 +191,7 @@ public class settings_tab extends Composite
 		
 		//username label
 		Label username_label = new Label(username_area, SWT.NONE);
-		final Font font_username_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		final Font font_username_label = new Font(display, "Ariel",11, SWT.BOLD );
 		username_label.setFont(font_username_label);
 		username_label.setText("Change Username");
 		username_label.setLayoutData(gui_utils.grid_data_factory(50, -1, 2, 1, -1, -1));
@@ -161,7 +206,7 @@ public class settings_tab extends Composite
 		
 		//new username label
 		Label new_username_label = new Label(username_area, SWT.NONE);
-		final Font font_new_username_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_new_username_label = new Font(display, "Ariel",10, SWT.NONE );
 		new_username_label.setFont(font_new_username_label);
 		new_username_label.setText("New username");
 		new_username_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
@@ -183,7 +228,7 @@ public class settings_tab extends Composite
 		
 		//username password label
 		Label username_password_label = new Label(username_area, SWT.NONE);
-		final Font font_username_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_username_password_label = new Font(display, "Ariel",10, SWT.NONE );
 		username_password_label.setFont(font_username_password_label);
 		username_password_label.setText("Password for verification");
 		username_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
@@ -206,7 +251,7 @@ public class settings_tab extends Composite
 		//username apply button
 		Button username_upply_button = new Button(username_area, SWT.PUSH);
 		username_upply_button.setText("Apply");
-		final Font font_username_upply_button = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_username_upply_button = new Font(display, "Ariel",10, SWT.NONE );
 		username_upply_button .setFont(font_username_upply_button);
 		username_upply_button.setLayoutData(gui_utils.grid_data_factory(90, 15, 2, -1, -1, -1));
 		username_upply_button .addDisposeListener(new DisposeListener()
@@ -264,7 +309,7 @@ public class settings_tab extends Composite
 		
 		//password label
 		Label password_label = new Label(password_area, SWT.NONE);
-		final Font font_password_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		final Font font_password_label = new Font(display, "Ariel",11, SWT.BOLD );
 		password_label.setFont(font_password_label);
 		password_label.setText("Change Password");
 		password_label.setLayoutData(gui_utils.grid_data_factory(50, -1, 2, 1, -1, -1));
@@ -280,7 +325,7 @@ public class settings_tab extends Composite
 		
 		//new password label
 		Label new_password_label = new Label(password_area, SWT.NONE);
-		final Font font_new_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_new_password_label = new Font(display, "Ariel",10, SWT.NONE );
 		new_password_label.setFont(font_new_password_label);
 		new_password_label.setText("New password");
 		new_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
@@ -300,7 +345,7 @@ public class settings_tab extends Composite
 		
 		//old password label
 		Label old_password_label = new Label(password_area, SWT.NONE);
-		final Font font_old_password_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_old_password_label = new Font(display, "Ariel",10, SWT.NONE );
 		old_password_label.setFont(font_old_password_label);
 		old_password_label.setText("Current password");
 		old_password_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
@@ -320,7 +365,7 @@ public class settings_tab extends Composite
 		//password apply button
 		Button password_upply_button = new Button(password_area, SWT.PUSH);
 		password_upply_button.setText("Apply");
-		final Font font_password_upply_button = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_password_upply_button = new Font(display, "Ariel",10, SWT.NONE );
 		password_upply_button.setLayoutData(gui_utils.grid_data_factory(90, 15, 2, -1, -1, -1));
 		password_upply_button .setFont(font_username_upply_button);
 		password_upply_button .addDisposeListener(new DisposeListener()

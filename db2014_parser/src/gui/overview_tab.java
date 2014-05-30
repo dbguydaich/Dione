@@ -77,7 +77,7 @@ public class overview_tab extends Composite
 		
 		//recommendation area
 		Composite reco_area = new Composite(this, SWT.NONE);
-		reco_area.setLayoutData(gui_utils.form_data_factory(295, 175, 5, 10));
+		reco_area.setLayoutData(gui_utils.form_data_factory(295, 200, 5, 10));
 		GridLayout grid_layout_reco_area = new GridLayout(1, false);
 		reco_area.setLayout(grid_layout_reco_area);
 		
@@ -87,13 +87,15 @@ public class overview_tab extends Composite
 		Label reco_headline = new Label(reco_area, SWT.NONE);
 		reco_headline.setText("Recommended Movies For You");
 		reco_headline.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
-		final Font font_reco_headline = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		final Font font_reco_headline = new Font(display, "Ariel",13, SWT.BOLD );
+		final Font font_movie_label = new Font(display, "Ariel", 12, SWT.NONE);
 		reco_headline.setFont(font_reco_headline);
 		reco_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
 				font_reco_headline.dispose();
+				font_movie_label.dispose();
 			}		
 		});
 		
@@ -117,7 +119,7 @@ public class overview_tab extends Composite
 //		{
 //			reco_movies_labels.add(new Label(reco_area, SWT.NONE ));
 //			reco_movies_labels.get(i).setText(str);
-//			reco_movies_labels.get(i).setFont(new Font(display, "Ariel", 11, java.awt.Font.PLAIN));
+//			reco_movies_labels.get(i).setFont(new Font(display, "Ariel", 11, SWT.NONE));
 //			
 //			reco_movies_labels.get(i).addMouseListener(new MouseAdapter() {
 //				@Override
@@ -137,7 +139,7 @@ public class overview_tab extends Composite
 //			Label reco_bottom_label = new Label(reco_area, SWT.NONE);
 //			reco_bottom_label.setText("Click on a Movie Name For Movie Details");
 //			reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
-//			final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+//			final Font font_reco_bottom_label = new Font(display, "Ariel",10,SWT.NONE );
 //			reco_bottom_label.setFont(font_reco_bottom_label);
 //			reco_bottom_label.addDisposeListener(new DisposeListener()
 //			{
@@ -174,9 +176,10 @@ public class overview_tab extends Composite
 		for(j=0; j< movies_my_taste.size(); j++)
 		{
 			final int k =j;
-			reco_movies_labels.add(new Label(reco_area, SWT.NONE ));
+			reco_movies_labels.add(new Label(reco_area, SWT.NONE));
 			reco_movies_labels.get(j).setText(movies_my_taste.get(j));
-			reco_movies_labels.get(j).setLayoutData(gui_utils.grid_data_factory(200, 18, -1, 3, -1, -1, -1, -1));
+			reco_movies_labels.get(j).setFont(font_movie_label);
+			reco_movies_labels.get(j).setLayoutData(gui_utils.grid_data_factory(280, 20, -1, 3, -1, -1, -1, -1));
 			reco_movies_labels.get(j).addMouseListener(new MouseAdapter() {
 			//	@Override
 				public void mouseUp(MouseEvent arg0) {
@@ -199,11 +202,13 @@ public class overview_tab extends Composite
 			i++;
 		}
 		
+		
+		
 		//recommendation buttom label
 		Label reco_bottom_label = new Label(reco_area, SWT.NONE);
 		reco_bottom_label.setText("Click on a Movie Name For Movie Details");
 		reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
-		final Font font_reco_bottom_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_reco_bottom_label = new Font(display, "Ariel",10, SWT.NONE );
 		reco_bottom_label.setFont(font_reco_bottom_label);
 		reco_bottom_label.addDisposeListener(new DisposeListener()
 		{
@@ -233,7 +238,7 @@ public class overview_tab extends Composite
 		Label taste_headline = new Label(taste_area, SWT.NONE);
 		taste_headline.setText("We Found Out You Like Movies Tagged As:");
 		taste_headline.setLayoutData(gui_utils.grid_data_factory(-1, 2, -1, -1, -1, -1));
-		final Font font_taste_headline = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
+		final Font font_taste_headline = new Font(display, "Ariel",10 ,SWT.BOLD);
 		taste_headline.setFont(font_taste_headline);
 		taste_headline.addDisposeListener(new DisposeListener()
 		{
@@ -268,7 +273,7 @@ public class overview_tab extends Composite
 //		user_tags_string.add("tag7");
 		//
 		
-		final Font font_user_tags_label = new Font(display, "Ariel", 11, java.awt.Font.PLAIN);
+		final Font font_user_tags_label = new Font(display, "Ariel", 12, SWT.NONE);
 		i = 0;
 		for(String str: user_tags_string)
 		{
@@ -307,8 +312,8 @@ public class overview_tab extends Composite
 		//user recent activity headline
 		Label user_activity_headline = new Label(user_activity_area, SWT.NONE);
 		user_activity_headline.setText("Your Recent Activity");
-		user_activity_headline.setLayoutData(gui_utils.grid_data_factory(215, 0, -1, -1, -1, -1));
-		final Font font_user_activity_headline = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
+		user_activity_headline.setLayoutData(gui_utils.grid_data_factory(190, 0, -1, -1, -1, -1));
+		final Font font_user_activity_headline = new Font(display, "Ariel",15, SWT.BOLD );
 		user_activity_headline.setFont(font_user_activity_headline);
 		user_activity_headline.addDisposeListener(new DisposeListener()
 		{
@@ -343,7 +348,7 @@ public class overview_tab extends Composite
 //		user_activities_strings.add("recent activity 6");
 //		//
 		
-		final Font font_user_activities_labels = new Font(display, "Ariel", 13, java.awt.Font.PLAIN);
+		final Font font_user_activities_labels = new Font(display, "Ariel", 13, SWT.NONE);
 		i = 0;
 		for(String str: user_activities_strings)
 		{

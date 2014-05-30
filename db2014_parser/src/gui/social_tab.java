@@ -142,7 +142,7 @@ public class social_tab extends Composite
 		//add friend text
 		final Text add_friend_text = new Text(add_friend_area, SWT.NONE);
 		add_friend_text.setLayoutData(gui_utils.grid_data_factory(120, 20, 10, 5, -1, -1, -1, -1));
-		final Font font_add_text = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_add_text = new Font(display, "Ariel",10, SWT.NONE );
 		add_friend_text.setFont(font_add_text);
 		add_friend_text.addDisposeListener(new DisposeListener()
 		{

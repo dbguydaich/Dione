@@ -80,7 +80,7 @@ public class movie_details_window extends Shell
 
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 		movie_id_number = movie_id;
-		gui_utils.RESULTS_OPEN++;
+		gui_utils.movie_windows.add(this);
 		
 		
 		this.setLayout(new FormLayout());
@@ -106,7 +106,7 @@ public class movie_details_window extends Shell
 		
 		this.setLayout(new FormLayout());
 		
-		final Font font_ariel_11 = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_ariel_11 = new Font(display, "Ariel",10, SWT.NONE);
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -125,7 +125,7 @@ public class movie_details_window extends Shell
 		headline_label.setText(movie_name);
 		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 10, 10));
 		headline_label.setAlignment(SWT.CENTER);
-		final Font font1 = new Font(display, "Ariel",15, java.awt.Font.PLAIN );
+		final Font font1 = new Font(display, "Ariel",15, SWT.BOLD);
 		headline_label.setFont(font1);	
 		headline_label.addDisposeListener(new DisposeListener()
 		{
@@ -166,11 +166,8 @@ public class movie_details_window extends Shell
 					
 		//genres2	
 		List<String> genres;
-		//genres = new ArrayList<String>(); //just for check
 		genres = movie_logics.get_movie_genres(movie.get_movie_id());
-		//genres.add("Comedy"); //
-		//genres.add("Action"); //
-		//genres.add("Best Genre Ever"); //
+
 		
 	
 		String genres_str = "";
@@ -296,7 +293,7 @@ public class movie_details_window extends Shell
 		Label headline_tags = new Label(tags_area, SWT.NONE);
 		headline_tags.setText("Tags");
 		headline_tags.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1, -1, -1));
-		final Font font_tags = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
+		final Font font_tags = new Font(display, "Ariel",12, SWT.NONE);
 		headline_tags.setFont(font_tags);
 		headline_tags.addDisposeListener(new DisposeListener()
 		{
@@ -403,7 +400,7 @@ public class movie_details_window extends Shell
 		Label tags_bottom_label = new Label(tags_area, SWT.NONE);
 		tags_bottom_label.setText("Please rate these tags for the movie \n(1=disagree, 5=agree)");
 		tags_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, -1, -1));
-		final Font font_bottom_tags = new Font(display, "Ariel",8, java.awt.Font.PLAIN );
+		final Font font_bottom_tags = new Font(display, "Ariel",8, SWT.NONE);
 		tags_bottom_label.setFont(font_bottom_tags);
 		tags_bottom_label.addDisposeListener(new DisposeListener()
 		{
@@ -419,7 +416,7 @@ public class movie_details_window extends Shell
 		Label plot_headline_label = new Label(this, SWT.NONE);
 		plot_headline_label.setLayoutData(gui_utils.form_data_factory(32, 20, 260, 10));
 		plot_headline_label.setText("Plot:");
-		final Font font_plot_headline_label = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+		final Font font_plot_headline_label = new Font(display, "Ariel",11, SWT.NONE);
 		plot_headline_label.setFont(font_plot_headline_label);
 		plot_headline_label.addDisposeListener(new DisposeListener()
 		{
@@ -452,20 +449,6 @@ public class movie_details_window extends Shell
 				
 		scroller_plot.setContent(plot_label);
 	
-		
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				gui_utils.RESULTS_OPEN --;
-				if(gui_utils.RESULTS_OPEN == 0 && gui_utils.tabs_win.isDisposed())
-					display.dispose();
-			}		
-		});
-		
-	
-	
-	
 	
 	//movie rate area
 	Composite rate_movie_area = new Composite(this, SWT.NONE);
@@ -479,7 +462,7 @@ public class movie_details_window extends Shell
 	Label movie_rate_label = new Label(rate_movie_area, SWT.NONE);
 	movie_rate_label.setLayoutData(gui_utils.grid_data_factory(0, 0, 6, -1, -1, -1));
 	movie_rate_label.setText("Rate This Movie (1=lowest, 5=highest)");
-	final Font font_movie_rate_label = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+	final Font font_movie_rate_label = new Font(display, "Ariel",13, SWT.NONE );
 	movie_rate_label.setFont(font_movie_rate_label);
 	movie_rate_label.addDisposeListener(new DisposeListener()
 	{
@@ -506,7 +489,7 @@ public class movie_details_window extends Shell
 	Button movie_rate_button = new Button(rate_movie_area, SWT.PUSH);
 	movie_rate_button.setText("Rate Movie");
 	movie_rate_button.setLayoutData(gui_utils.grid_data_factory(80, 30, 10, -1, -1, -1, -1, -1));
-	final Font font_movie_rate_button = new Font(display, "Ariel",11, java.awt.Font.PLAIN );
+	final Font font_movie_rate_button = new Font(display, "Ariel",11, SWT.NONE );
 	movie_rate_button.setFont(font_movie_rate_button);
 	movie_rate_button.addDisposeListener(new DisposeListener()
 	{

@@ -60,7 +60,7 @@ public class import_window extends Shell
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Before you run MovieBook on\na new device, a massive data\nimport is needed");
 		headline_label.setLayoutData(gui_utils.form_data_factory(225, 65, 10, 10));
-		final Font font_headline_label = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+		final Font font_headline_label = new Font(display, "Ariel",13, SWT.NONE );
 		headline_label.setFont(font_headline_label);
 		headline_label.addDisposeListener(new DisposeListener()
 		{
@@ -75,7 +75,7 @@ public class import_window extends Shell
 		Button import_button = new Button(this, SWT.PUSH);
 		import_button.setText("Import Data");
 		import_button.setLayoutData(gui_utils.form_data_factory(100, 50, 100, 70));
-		final Font font_import_button = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+		final Font font_import_button = new Font(display, "Ariel",13, SWT.NONE);
 		import_button.setFont(font_import_button);
 		import_button.addDisposeListener(new DisposeListener()
 		{
@@ -104,7 +104,7 @@ public class import_window extends Shell
 		Label note_label = new Label(this, SWT.NONE);
 		note_label.setText("Note: This operation my take a while...");
 		note_label.setLayoutData(gui_utils.form_data_factory(225, 20, 160, 10));
-		final Font font_note_label = new Font(display, "Ariel",10, java.awt.Font.PLAIN );
+		final Font font_note_label = new Font(display, "Ariel",10, SWT.NONE);
 		note_label.setFont(font_note_label);
 		note_label.addDisposeListener(new DisposeListener()
 		{

@@ -95,7 +95,7 @@ public class search_movie_tab extends Composite
 		});
 		
 		
-		final Font font_left_labels = new Font(display, "Ariel",12, java.awt.Font.PLAIN );
+		final Font font_left_labels = new Font(display, "Ariel",12, SWT.NONE );
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -108,9 +108,9 @@ public class search_movie_tab extends Composite
 		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Search Movie");
-		final Font font_headline_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
+		final Font font_headline_label = new Font(display, "Ariel", 21, SWT.BOLD );
 		headline_label.setFont(font_headline_label);
-		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 0, 200));		
+		headline_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 0, 210));		
 		headline_label.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -228,7 +228,7 @@ public class search_movie_tab extends Composite
 		Label rating_label = new Label(rating_area, SWT.NONE);
 		rating_label.setText("Rating (in stars)");
 		rating_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 5, -1, -1, -1));
-		final Font font_rating_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
+		final Font font_rating_label = new Font(display, "Ariel", 12, SWT.NONE); 
 		rating_label.setFont(font_rating_label);
 		rating_label.addDisposeListener(new DisposeListener()
 		{
@@ -262,7 +262,7 @@ public class search_movie_tab extends Composite
 		Label genres_label = new Label(genres_area, SWT.NONE);
 		genres_label.setText("Genres");
 		genres_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
-		final Font font_genres_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_genres_label = new Font(display, "Ariel", 12, SWT.NONE);
 		genres_label.setFont(font_genres_label);
 		genres_label.addDisposeListener(new DisposeListener()
 		{
@@ -301,7 +301,7 @@ public class search_movie_tab extends Composite
 		Button search_button = new Button(this, SWT.PUSH | SWT.WRAP);
 		search_button.setLayoutData(gui_utils.form_data_factory(80, 47, 337, 50));
 		search_button.setText("Search");
-		final Font font_search_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN); 
+		final Font font_search_button = new Font(display, "Ariel", 12, SWT.NONE); 
 		search_button.setFont(font_search_button);
 		search_button.addDisposeListener(new DisposeListener()
 		{
@@ -423,7 +423,7 @@ public class search_movie_tab extends Composite
 		Label results_headline = new Label(results_area, SWT.NONE);
 		results_headline.setText("Search Results");
 		results_headline.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
-		final Font font_results_headline = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_results_headline = new Font(display, "Ariel", 12, SWT.NONE);
 		results_headline.setFont(font_results_headline);
 		results_headline.addDisposeListener(new DisposeListener()
 		{

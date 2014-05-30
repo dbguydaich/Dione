@@ -21,6 +21,7 @@ public class gui_utils
 {
 	
 	static int RESULTS_OPEN = 0;
+	static List<movie_details_window> movie_windows = new ArrayList<movie_details_window>();
 	static all_tabs_window tabs_win = null;
 	static log_in_window login_win = null;
 	static preferences_window pref_win = null;

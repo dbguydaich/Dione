@@ -94,7 +94,7 @@ public class log_in_window extends Shell
 		Label log_in_label = new Label(this, SWT.NONE);
 		log_in_label.setText("Log In Or Sign Up");
 		log_in_label.setLayoutData(gui_utils.grid_data_factory(27, 15, 2, -1, SWT.CENTER, SWT.CENTER));
-		final Font font_log_in_label = new Font(display, "Ariel",20, java.awt.Font.PLAIN );
+		final Font font_log_in_label = new Font(display, "Ariel",20, SWT.NONE);
 		log_in_label.setFont(font_log_in_label);
 		log_in_label.addDisposeListener(new DisposeListener()
 		{
@@ -110,7 +110,7 @@ public class log_in_window extends Shell
 		Label username_label = new Label(this, SWT.NONE);
 		username_label.setText("Username:");
 		username_label.setLayoutData(gui_utils.grid_data_factory(31, 20, -1, -1, -1, -1));
-		final Font font_username_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_username_label = new Font(display, "Ariel", 12, SWT.NONE);
 		username_label.setFont(font_username_label);
 		username_label.addDisposeListener(new DisposeListener()
 		{
@@ -133,7 +133,7 @@ public class log_in_window extends Shell
 		Label password_label = new Label(this, SWT.NONE);
 		password_label.setText("Password:");
 		password_label.setLayoutData(gui_utils.grid_data_factory(31, 10, -1, -1, -1, -1));
-		final Font font_password_label = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_password_label = new Font(display, "Ariel", 12, SWT.NONE);
 		password_label.setFont(font_password_label);
 		password_label.addDisposeListener(new DisposeListener()
 		{
@@ -155,7 +155,7 @@ public class log_in_window extends Shell
 		//log in button
 		Button log_in_button = new Button(this, SWT.PUSH);
 		log_in_button.setText("Log In");
-		final Font font_login_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_login_button = new Font(display, "Ariel", 12, SWT.NONE);
 		log_in_button.setFont(font_login_button);
 		log_in_button.addDisposeListener(new DisposeListener()
 		{
@@ -192,7 +192,7 @@ public class log_in_window extends Shell
 							//addition needed: in case it is the first log in, go to some other window
 							
 							
-							if (user.user_rated())
+							if (user.user_rated()) //user already rated movies
 							{
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 								
@@ -205,16 +205,16 @@ public class log_in_window extends Shell
 							{
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 								gui_utils.display = Display.getDefault();
-								preferences_window rating_window = new preferences_window(gui_utils.display); 
+								gui_utils.pref_win = new preferences_window(gui_utils.display); 
 								
-								if(rating_window.can_be_opened)
+								if(gui_utils.pref_win.can_be_opened)
 								{
-									rating_window.open();
+									gui_utils.pref_win.open();
 								}
 								
 								else
 								{
-									rating_window.dispose();
+									gui_utils.pref_win.dispose();
 									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 									gui_utils.tabs_win.open();
 								}
@@ -252,7 +252,7 @@ public class log_in_window extends Shell
 		Button sign_up_button = new Button(this, SWT.PUSH);
 		sign_up_button.setText("Sign Up");
 		sign_up_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 20, 30, -1, -1, -1, -1));
-		final Font font_signup_button = new Font(display, "Ariel", 12, java.awt.Font.PLAIN);
+		final Font font_signup_button = new Font(display, "Ariel", 12, SWT.NONE);
 		sign_up_button.setFont(font_login_button);
 		sign_up_button.addDisposeListener(new DisposeListener()
 		{

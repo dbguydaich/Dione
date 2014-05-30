@@ -50,6 +50,7 @@ public class preferences_window extends Shell
 	public preferences_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
+	
 		update_movie();
 		if(current_movie == null)
 		{		
@@ -91,7 +92,7 @@ public class preferences_window extends Shell
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Please Rate The Following Movies:");
 		headline_label.setLayoutData(gui_utils.form_data_factory(360, 30, 10, 20));
-		final Font font_headline_label = new Font(display, "Ariel",17, java.awt.Font.PLAIN );
+		final Font font_headline_label = new Font(display, "Ariel",17, SWT.NONE );
 		headline_label.setFont(font_headline_label);
 		headline_label.addDisposeListener(new DisposeListener()
 		{
@@ -114,7 +115,7 @@ public class preferences_window extends Shell
 		movie_label.setText(current_movie.get_movie_name());
 		movie_label.setText(current_movie.get_movie_name());
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
-		final Font font_movie_label = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
+		final Font font_movie_label = new Font(display, "Ariel",14, SWT.NONE );
 		movie_label.setFont(font_movie_label);
 		movie_label.addDisposeListener(new DisposeListener()
 		{
@@ -156,7 +157,7 @@ public class preferences_window extends Shell
 		Button rate_button = new Button(this, SWT.PUSH);	
 		rate_button.setText("Rate");
 		rate_button.setLayoutData(gui_utils.form_data_factory(50, 30, 160, 200));
-		final Font font_rate_button = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+		final Font font_rate_button = new Font(display, "Ariel",13, SWT.NONE );
 		rate_button.setFont(font_rate_button);
 		rate_button.addDisposeListener(new DisposeListener()
 		{
@@ -197,9 +198,9 @@ public class preferences_window extends Shell
 
 		//stop button
 		Button stop_button = new Button(this, SWT.PUSH);
-		stop_button.setText("Stop");
-		stop_button.setLayoutData(gui_utils.form_data_factory(50, 30, 160, 300));
-		final Font font_stop_button = new Font(display, "Ariel",13, java.awt.Font.PLAIN );
+		stop_button.setText("Stop Rating");
+		stop_button.setLayoutData(gui_utils.form_data_factory(100, 30, 160, 280));
+		final Font font_stop_button = new Font(display, "Ariel",13, SWT.NONE );
 		stop_button.setFont(font_stop_button);
 		stop_button.addDisposeListener(new DisposeListener()
 		{
@@ -217,15 +218,21 @@ public class preferences_window extends Shell
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				
+				gui_utils.pref_win.dispose();
+				if(gui_utils.display.isDisposed())
+					gui_utils.display = Display.getDefault();
 				
+				if(gui_utils.tabs_win == null)
+				{
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+					gui_utils.tabs_win.open();
+				}
+				else if(gui_utils.tabs_win.isDisposed())
+				{
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+					gui_utils.tabs_win.open();
+				}
 				
-				gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-				
-				gui_utils.display = Display.getDefault();
-				gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-				gui_utils.tabs_win.open();
-				////////shachar please dispose the window
-
 		}});
 
 		

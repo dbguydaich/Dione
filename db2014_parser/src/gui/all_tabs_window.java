@@ -52,7 +52,7 @@ public class all_tabs_window extends Shell
 		  
 	    //tab3
 		TabItem tab3 = new TabItem(tab_folder, SWT.NONE);
-	    tab3.setText("Social Tab");
+	    tab3.setText("Social Zone");
 	    
 	  	   
 	    //tab4
@@ -84,10 +84,13 @@ public class all_tabs_window extends Shell
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				if(gui_utils.RESULTS_OPEN == 0)
+				for(movie_details_window win: gui_utils.movie_windows)
 				{
-					display.dispose();
+					if(!win.isDisposed())
+						win.dispose();
 				}
+				
+				display.dispose();
 			}		
 		});
 	}
