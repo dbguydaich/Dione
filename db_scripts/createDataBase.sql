@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`person` (
   `personName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idPerson`),
   INDEX `personName_idx` USING BTREE (`personName` ASC))
-ENGINE = MyISAM
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`language` (
   `languageName` CHAR(20) NOT NULL,
   UNIQUE INDEX `user_lang_unq` (`languageName` ASC),
   PRIMARY KEY (`idLanguage`))
-ENGINE = MyISAM
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`users` (
   `hashPassword` INT NOT NULL,
   PRIMARY KEY (`idUsers`),
    UNIQUE INDEX `user_name_unq` (`userName` ASC))
-ENGINE = MyISAM
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`genre` (
   `genreName` CHAR(20) NOT NULL,
   PRIMARY KEY (`idGenre`),
    UNIQUE INDEX `genre_name_unq` (`genreName` ASC))
-ENGINE = MyISAM
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`tag` (
   PRIMARY KEY (`idtag`),
    UNIQUE INDEX `tag_name_unq` (`tagName` ASC),
   INDEX `tagName_idx` USING BTREE (`tagName` ASC))
-ENGINE = MyISAM
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------

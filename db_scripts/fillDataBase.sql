@@ -20,9 +20,9 @@ INSERT INTO `Dione`.`language` (`LanguageName`) VALUES ('Italian');
 INSERT INTO `Dione`.`language` (`LanguageName`) VALUES ('Hebrew');
 
 -- Movies
-INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('1', '1', 'Pulp fiction', '1995', 'a@a.com', '150', 'aaasdf');
-INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('1', '2', 'E.T', '1989', 'et@movies.com', '135', 'fasdfsa');
-INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `year`, `wiki`, `duration`, `plot`) VALUES ('2', '1', 'Resorvior dogs', '1992', 'RD@movies.com', '135', 'WooHoo');
+INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `movie_qualified_name`,`year`, `wiki`, `duration`, `plot`) VALUES ('1', '1', 'Pulp fiction', '', '1995', 'a@a.com', '150', 'aaasdf');
+INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `movie_qualified_name`, `year`, `wiki`, `duration`, `plot`) VALUES ('1', '2', 'E.T', '', '1989', 'et@movies.com', '135', 'fasdfsa');
+INSERT INTO `Dione`.`movie` (`idLanguage`, `idDirector`, `movieName`, `movie_qualified_name`, `year`, `wiki`, `duration`, `plot`) VALUES ('2', '1', 'Resorvior dogs', '', '1992', 'RD@movies.com', '135', 'WooHoo');
 
 -- Users
 INSERT INTO `Dione`.`users` (`userName`, `hashPassword`) VALUES ('w', '119');
