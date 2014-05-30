@@ -25,23 +25,19 @@ public abstract class movie_logics
 		return (ret);
 	}
 
-	public static boolean does_movie_exists(String title,String director,List<String>actor_list,List<String> tags_list, List<Boolean>	rating_radios_text,List<Boolean>genres_numbers) 
-			throws NumberFormatException, SQLException
+	public static boolean does_movie_exists(String title, String director, Integer year,
+			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			throws SQLException
 	{
-		return (false);//db_queries_movies.movie_exists(title, director, actor_list, tags_list, rating_radios_text, genres_numbers));
-	}
-
-	public static List<light_entity_movie> get_relevant_movies(String title,String director,List<String>actor_list,List<String> tags_list, List<Boolean>	rating_radios_text,List<Boolean>genres_numbers) 
-			throws NumberFormatException, SQLException
-	{
-		return (null);//db_queries_movies.get_relevant_movies(title, director, actor_list, tags_list, rating_radios_text, genres_numbers));
+		return (get_relevant_movies(title, director,year, actor_list, tags_list, genre_list, rating).size() > 0);
 	}
 	
-	public static List<String> get_relevant_movies_names(String title,String director,List<String> actor_list,List<String> tags_list, List<Boolean> rating_radios_text,List<Boolean> genres_numbers) 
-			throws NumberFormatException, SQLException
+	public static List<String> get_relevant_movies_names(String title, String director, Integer year,
+			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			throws SQLException
 	{
 		List<String> result = new ArrayList<String>();
-		List<light_entity_movie> movies = get_relevant_movies( title, director,actor_list, tags_list, rating_radios_text,genres_numbers);
+		List<light_entity_movie> movies = get_relevant_movies( title, director , year , actor_list, tags_list, genre_list, rating);
 		
 		for (light_entity_movie movie: movies)
 		{

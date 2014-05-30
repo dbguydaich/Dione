@@ -128,6 +128,20 @@ public abstract class db_queries_user extends db_operations
 	}
 	
 // GETTERS
+	
+	public static int user_rated_count(int user_id) 
+			throws SQLException 
+	{
+		String whereClause = "idUser = ?";
+		
+		ResultSet results = select("CAST(count(idMovie) as CHAR(20))" , "user_rank" , whereClause, user_id);
+	
+		if (results.next())
+			return (Integer.parseInt(results.getString(1)));
+		else
+			return (0);
+	}
+	
 	public static List<Integer> get_all_users() 
 			throws SQLException
 	{
@@ -139,8 +153,7 @@ public abstract class db_queries_user extends db_operations
 	{
 		return(get_all_ids("idTag", "tags"));
 	}
-	
-	
+		
 	public static List<String> get_prefered_tags(int user_id, int limit) 
 			throws SQLException
 	{
@@ -223,9 +236,10 @@ public abstract class db_queries_user extends db_operations
 	public static List<entity_user> get_user_friends(int current_user_id) 
 			throws SQLException 
 	{
-		String where = 	"((users.idUsers = friend_relation.friend1 OR users.idUsers = friend_relation.friend2) AND " +
-						"(friend_relation.friend1 = ? OR friend_relation.friend1 = ?))";
-		ResultSet result = select("idUsers, userName", "users, friend_relation", where, current_user_id, current_user_id);
+		String where = 	"idUsers IN (SELECT distinct(friend1) FROM friend_relation WHERE friend2 = ? UNION " + 
+									"SELECT distinct(friend2) FROM friend_relation WHERE friend1 = ? ) AND " +
+						" (idUsers <> ?)";
+		ResultSet result = select(" idUsers, userName", "users", where, current_user_id, current_user_id, current_user_id);
 		
 		// Enumerate all movies
 		List<entity_user> returnedList = new ArrayList<entity_user>();
@@ -474,6 +488,7 @@ public abstract class db_queries_user extends db_operations
 		
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
+
 
 }
 

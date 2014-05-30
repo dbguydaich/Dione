@@ -54,37 +54,37 @@ public class user_logics
 	 * @return true iff succedded adding the user
 	 * @throws SQLException
 	 */
-	public boolean add_user(String user, String pass)
+	public static boolean add_user(String user, String pass)
 			throws SQLException
 	{
 		return (db_queries_user.add_user(user, pass));
 	}
 	
-	public boolean authenticate_user(String user, String pass) 
+	public static boolean authenticate_user(String user, String pass) 
 			throws SQLException
 	{
 		return (db_queries_user.authenticate_user(user, pass));
 	}
 	
-	public boolean does_user_exists(String user_name) 
+	public static boolean does_user_exists(String user_name) 
 			throws SQLException
 	{
 		return (db_queries_user.user_exists(user_name));
 	}
 
-	public boolean add_friendship(Integer user1_id, Integer user2_id) 
+	public static boolean add_friendship(Integer user1_id, Integer user2_id) 
 			throws SQLException
 	{
 		return (db_queries_user.add_friendship(user1_id, user2_id));
 	}
 
-	public boolean remove_friendship(Integer user1_id, Integer user2_id) 
+	public static boolean remove_friendship(Integer user1_id, Integer user2_id) 
 			throws SQLException
 	{
 		return (db_queries_user.remove_friendship(user1_id, user2_id));
 	}
 
-	public boolean remove_friendship(Integer current_user, String name_of_friend) 
+	public static boolean remove_friendship(Integer current_user, String name_of_friend) 
 			throws SQLException
 	{
 		// Get friend id
@@ -103,19 +103,19 @@ public class user_logics
 		return (current_user_id);
 	}
 	
-	public Integer get_user_id(String user) 
+	public static Integer get_user_id(String user) 
 			throws SQLException
 	{
 		return (db_queries_user.get_user_id(user));
 	}
 	
-	public boolean update_name(String new_name, int id, String pass) 
+	public static boolean update_name(String new_name, int id, String pass) 
 			throws SQLException
 	{
 		return (db_queries_user.update_name(new_name, id, pass));
 	}
 
-	public boolean update_pass(String new_pass, int id, String old_pass) 
+	public static boolean update_pass(String new_pass, int id, String old_pass) 
 			throws SQLException
 	{
 		return (db_queries_user.update_pass(new_pass, id, old_pass));
@@ -128,7 +128,7 @@ public class user_logics
 	 * @return activity list
 	 * @throws SQLException 
 	 */
-	public List<abstract_activity> get_friends_recent_activities(int user_id, int limit) 
+	public static List<abstract_activity> get_friends_recent_activities(int user_id, int limit) 
 			throws SQLException
 	{
 		// Get a list of friend's IDs
@@ -163,7 +163,7 @@ public class user_logics
 	 * @return
 	 * @throws SQLException 
 	 */
-	List<abstract_activity> get_friends_recent_activities() 
+	public List<abstract_activity> get_friends_recent_activities() 
 			throws SQLException
 	{
 		config settings = new config();
@@ -189,7 +189,7 @@ public class user_logics
 	 * @return - pretty much List<abstract_activities>.toString()
 	 * @throws SQLException 
 	 */
-	public List<String> get_user_recent_string_activities(int user, int limit) 
+	public static List<String> get_user_recent_string_activities(int user, int limit) 
 			throws SQLException
 	{
 		return (list_activity_to_list_string(get_user_recent_social_activities(user, limit)));
@@ -200,7 +200,7 @@ public class user_logics
 	 * 					NULL there is not even ine activity(!!!)
 	 * @throws SQLException 
 	 */
-	public abstract_activity get_user_recent_social_activity() 
+	public  abstract_activity get_user_recent_social_activity() 
 			throws SQLException
 	{
 		// Get a list of a single activity
@@ -232,7 +232,7 @@ public class user_logics
 	 * @return		- list of at mos 'limit' activities
 	 * @throws SQLException 
 	 */
-	public List<abstract_activity> get_user_recent_social_activities(int user, int limit) 
+	public static List<abstract_activity> get_user_recent_social_activities(int user, int limit) 
 			throws SQLException
 	{
 		// Init the returned list
@@ -254,34 +254,18 @@ public class user_logics
 		
 		return (returnedList);
 	}
-
-	
-	
-	
-	////////matan please implement/////
-	public List<light_entity_movie> get_user_recommended_movies_entities_by_friends(int user_id, int limit) 
-	{
-		return  new ArrayList<light_entity_movie>(); ///for now
-	}
-	
 	
 // MISC
 	
-	/**
-	 * get the user_id's random friends most recomended movies
-	 * 		this according to the tags he like from the user_preference
-	 * @return
-	 * @throws SQLException 
-	 */
-	public List<String> get_user_recommended_movies_by_friends(int user_id, int limit) 
+	public static List<light_entity_movie> get_user_recommended_movies_entities_by_friends(int user_id, int limit) 
 			throws SQLException 
 	{
 		List<Integer> friends = get_user_friends_ids(user_id);
-		List<String> movies = new ArrayList<String>();
+		List<light_entity_movie> movies = new ArrayList<light_entity_movie>();
 		
 		for (Integer friend : friends)
 		{
-			List<String> friends_movies = get_user_recommended_movie_names(friend);
+			List<light_entity_movie> friends_movies = get_user_recommended_movies(friend);
 			
 			movies.addAll(friends_movies);
 			
@@ -297,12 +281,24 @@ public class user_logics
 	}
 	
 	/**
+	 * get the user_id's random friends most recomended movies
+	 * 		this according to the tags he like from the user_preference
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static List<String> get_user_recommended_movies_by_friends(int user_id, int limit) 
+			throws SQLException 
+	{
+		return (list_activity_to_list_string(get_user_recommended_movies_entities_by_friends(user_id, limit)));
+	}
+	
+	/**
 	 * get the current user's most recomended movies
 	 * 		this according to the tags he like from the user_preference
 	 * @return
 	 * @throws SQLException 
 	 */
-	public List<String> get_user_recommended_movie_names(int user_id) 
+	public static List<String> get_user_recommended_movie_names(int user_id) 
 			throws SQLException
 	{
 		List<light_entity_movie> movies = db_queries_user.get_movies_prefered_by_user(user_id, 50);
@@ -322,7 +318,7 @@ public class user_logics
 	 * @return
 	 * @throws SQLException 
 	 */
-	public List<light_entity_movie> get_user_recommended_movies(int user_id) 
+	public static List<light_entity_movie> get_user_recommended_movies(int user_id) 
 			throws SQLException
 	{
 		return (db_queries_user.get_movies_prefered_by_user(user_id, 50));
@@ -333,7 +329,7 @@ public class user_logics
 	 * @return		- a list of the tags, ordered by popularity
 	 * @throws SQLException 
 	 */
-	public List<String> get_popular_tags(int user_id, int limit) 
+	public static List<String> get_popular_tags(int user_id, int limit) 
 			throws SQLException
 	{
 		return (db_queries_user.get_prefered_tags(user_id, limit));
@@ -375,10 +371,10 @@ public class user_logics
 	 * @param user_id
 	 * @throws SQLException 
 	 */
-	public List<Integer> get_user_friends_ids(int user_id) 
+	public static List<Integer> get_user_friends_ids(int user_id) 
 			throws SQLException
 	{
-		List<entity_user> users = get_current_user_friends();
+		List<entity_user> users = db_queries_user.get_user_friends(user_id);
 		List<Integer> ids = new ArrayList<Integer>();
 		
 		// Convert entities to Names 
@@ -429,9 +425,7 @@ public class user_logics
 	{
 		return (db_queries_user.rate_movie(movie_id, user_id, rate));
 	}
-	
-	
-
+		
 	/** Rate a movie
 	 * @return did succeed?
 	 * @throws SQLException 
@@ -442,15 +436,35 @@ public class user_logics
 		return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
 	}
 	
-	
-	
-	
-	
-	///////matan please implement//////
-	////returns true iff user have already rated movies
-	public boolean user_rated()
+	/**
+	 * did user rate any movies yet
+	 * @return true iff user have already rated movies
+	 * @throws SQLException 
+	 */
+	public boolean user_rated() 
+			throws SQLException
 	{
-		return false;
+		return (user_rated_count() > 0);
+	}
+	
+	/**
+	 * how many movies did the current user rate
+	 * @throws SQLException 
+	 */
+	public int user_rated_count() 
+			throws SQLException
+	{
+		return (user_rated_count(current_user_id));
+	}
+
+	/**
+	 * how many movies did a user rate
+	 * @throws SQLException 
+	 */
+	public static int user_rated_count(int user_id) 
+			throws SQLException
+	{
+		return (db_queries_user.user_rated_count(user_id));
 	}
 	
 	/**
@@ -465,7 +479,6 @@ public class user_logics
 		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 	
-
 	public static boolean rate_tag_movie(int movie_id, int user_id, String tag_name, int rate) 
 			throws SQLException
 	{
@@ -474,7 +487,8 @@ public class user_logics
 		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 
-	private List<String> list_activity_to_list_string(List<abstract_activity> activity_list)
+	@SuppressWarnings("rawtypes")
+	private static List<String> list_activity_to_list_string(List activity_list)
 	{
 		if (activity_list == null || activity_list.size() == 0)
 			return (new ArrayList<String>());
@@ -483,7 +497,7 @@ public class user_logics
 		List<String> retList = new ArrayList<String>();
 		
 		// Go over all activities and add their string representation
-		for(abstract_activity act : activity_list)
+		for(Object act : activity_list)
 		{
 			retList.add(act.toString());
 		}
@@ -491,5 +505,4 @@ public class user_logics
 		return (retList);
 	}
 
-	
 }

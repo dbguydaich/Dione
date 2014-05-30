@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`genre` (
   `idGenre` INT NOT NULL AUTO_INCREMENT,
   `genreName` CHAR(20) NOT NULL,
   PRIMARY KEY (`idGenre`),
-   UNIQUE INDEX `genre_name_unq` (`genreName` ASC),)
+   UNIQUE INDEX `genre_name_unq` (`genreName` ASC))
 ENGINE = MyISAM
 DEFAULT CHARACTER SET = utf8;
 
@@ -250,11 +250,6 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_rank` (
   CONSTRAINT `movie_fk`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `user_fk`
-    FOREIGN KEY (`idUser`)
-    REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
