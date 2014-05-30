@@ -110,7 +110,7 @@ public class preferences_window extends Shell
 		Label movie_label = new Label(this, SWT.NONE);
 		movie_label.setAlignment(SWT.CENTER);
 		movie_label.setText(current_movie.get_movie_name());
-		movie_label.setText("this is a movie to reate");
+		movie_label.setText(current_movie.get_movie_name());
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
 		final Font font_movie_label = new Font(display, "Ariel",14, java.awt.Font.PLAIN );
 		movie_label.setFont(font_movie_label);
