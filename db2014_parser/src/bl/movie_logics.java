@@ -26,14 +26,14 @@ public abstract class movie_logics
 	}
 
 	public static boolean does_movie_exists(String title, String director, Integer year,
-			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
 	{
 		return (get_relevant_movies(title, director,year, actor_list, tags_list, genre_list, rating).size() > 0);
 	}
 	
 	public static List<String> get_relevant_movies_names(String title, String director, Integer year,
-			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
 	{
 		List<String> result = new ArrayList<String>();
@@ -48,7 +48,7 @@ public abstract class movie_logics
 	}
 
 	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year,
-			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
 	{
 		return (db_queries_movies.get_relevant_movies(title, director, year, actor_list, tags_list, genre_list, rating));
@@ -64,6 +64,19 @@ public abstract class movie_logics
 			throws SQLException
 	{
 		return (db_queries_movies.get_movie_top_tags(movie_id, limit));				
+	}
+
+	/** ordered by user rates
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<light_entity_movie> get_top_rated_movies(Integer limit) 
+			throws SQLException 
+	{
+		if (limit == null)
+			limit = 5;
+			
+		return (db_queries_movies.get_top_rated_movies(limit));
 	}
 	
 	public static light_entity_movie get_movie_details(int movie_id) 
@@ -98,11 +111,6 @@ public abstract class movie_logics
 		return (db_queries_movies.get_movie_id(movie_name));
 	}
 
-	
-	
-	
-	
-	//////matan please return -1 if genre doesn't exists..
 	public static int get_genre_id(String genre_name) 
 			throws SQLException
 	{
@@ -139,15 +147,5 @@ public abstract class movie_logics
 	{
 		return (db_queries_movies.clear_movie_actors());
 	}
-	
-	
-	///matan please implement////
-	public static List<light_entity_movie> get_top_5_rated_movies()
-	{
-		
-		return null;
-	}
-	
-
 
 }

@@ -103,6 +103,18 @@ public class user_logics
 		return (current_user_id);
 	}
 	
+	public String get_my_name() 
+			throws SQLException
+	{
+		return (get_user_name(current_user_id));
+	}
+	
+	private String get_user_name(int user_id) 
+			throws SQLException 
+	{
+		return (db_queries_user.get_name_of_user(user_id));
+	}
+
 	public static Integer get_user_id(String user) 
 			throws SQLException
 	{
@@ -433,7 +445,10 @@ public class user_logics
 	public boolean rate_movie(int movie_id,int rate) 
 			throws SQLException
 	{
-		return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
+		if (db_queries_user.did_user_rate_movie(movie_id, current_user_id))
+			return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
+		else
+			return (db_queries_user.update_rate_movie(movie_id, current_user_id, rate));
 	}
 	
 	/**
@@ -503,13 +518,6 @@ public class user_logics
 		}
 		
 		return (retList);
-	}
-	
-	
-	///////matan please implement
-	public static String get_my_name()
-	{
-		return null;
 	}
 
 }

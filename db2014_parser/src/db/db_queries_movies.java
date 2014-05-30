@@ -309,7 +309,7 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws SQLException
 	 */
 	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, 
-			List<String> actor_list, List<Integer> tags_list, List<Integer> genre_list, boolean[] rating) 
+			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
 		String select = "idMovie, movieName, year, wiki, personName, duration, plot";
@@ -369,14 +369,15 @@ public abstract class db_queries_movies extends db_operations
 			String tagsCond = " AND idMovie IN (SELECT tagMovie.idMovie FROM movie as tagMovie WHERE 'a' = 'a' ";
 			
 			// For every actor add a constraint
-			for (Integer tag : tags_list)
+			for (String tag : tags_list)
 			{
-				tagsCond += "AND EXISTS (SELECT * FROM movie_tag WHERE " + 
+				tagsCond += "AND EXISTS (SELECT * FROM movie_tag, tag WHERE " + 
+								" movie_tag.idTag = tag.idTag AND " +
 								" movie_tag.idMovie = tagMovie.idMovie AND " +
-								" movie_tag.idTag = ?)";
+								" tag.tagName like ?)";
 				
 				// Add it in order 
-				values.add(tag);
+				values.add( "%" + tag + "%");
 			}
 			
 			// This closes the IN clause
@@ -391,14 +392,15 @@ public abstract class db_queries_movies extends db_operations
 			String genreCond = " AND idMovie IN (SELECT genreMovie.idMovie FROM movie as genreMovie WHERE 'a' = 'a' ";
 			
 			// For every actor add a constraint
-			for (Integer genre : genre_list)
+			for (String genre : genre_list)
 			{
-				genreCond += " AND EXISTS (SELECT * FROM genre_movie WHERE " + 
+				genreCond += " AND EXISTS (SELECT * FROM genre_movie, genre WHERE " + 
+								" genre.idGenre = genre_movie.idGenre AND " +
 								" genre_movie.idMovie = genreMovie.idMovie AND " +
-								" genre_movie.idGenre = ?)";
+								" genre.genreName like ?)";
 				
 				// Add it in order 
-				values.add(genre);
+				values.add( "%" + genre + "%");
 			}
 			
 			// This closes the IN clause

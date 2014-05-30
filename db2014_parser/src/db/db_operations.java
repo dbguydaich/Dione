@@ -517,7 +517,6 @@ public abstract class db_operations
 		else
 			return (null);
 	}
-
 	
 	public static boolean fill_user_prefence() 
 			throws SQLException

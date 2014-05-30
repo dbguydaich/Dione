@@ -80,6 +80,22 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 	
+// UPDATERS
+	public static boolean update_rate_movie(int movie_id, int user_id, int rate) 
+			throws SQLException 
+	{
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+	
+		String querey = "UPDATE user_rank SET rank = ? rankDate = ? WHERE idUser= ? and idMovie=?";
+		int rows_effected = run_querey(querey, rate, date, user_id , movie_id);
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+	
 // BOOLEANS
 	
 	public static boolean authenticate_user(String user, String pass) 
@@ -127,8 +143,18 @@ public abstract class db_queries_user extends db_operations
 			return (null);
 	}
 	
-// GETTERS
+	public static boolean did_user_rate_movie(int movie_id, int user_id) 
+			throws SQLException 
+	{
+		String whereClause = "idUser = ? AND idMovie = ?";
+		
+		ResultSet results = select("idUser" , "user_rank" , whereClause, user_id, movie_id);
 	
+		return (results.next());
+	}
+	
+// GETTERS
+		
 	public static int user_rated_count(int user_id) 
 			throws SQLException 
 	{
@@ -488,6 +514,9 @@ public abstract class db_queries_user extends db_operations
 		
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
+
+
+
 
 
 }
