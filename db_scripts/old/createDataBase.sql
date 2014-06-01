@@ -2,7 +2,7 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-CREATE SCHEMA IF NOT EXISTS `Dione` DEFAULT CHARACTER SET utf8;
+CREATE SCHEMA IF NOT EXISTS `Dione` DEFAULT CHARACTER SET utf8 ;
 USE `Dione` ;
 
 -- -----------------------------------------------------
@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`invocations` (
   `invokeCode` TINYINT NOT NULL,
   `invokeDate` DATETIME NOT NULL,
   PRIMARY KEY (`invokeCode`, `invokeDate`))
-ENGINE = MyISAM;
+ENGINE = MyISAM
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`person`
@@ -22,7 +23,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`person` (
   `personName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idPerson`),
   INDEX `personName_idx` USING BTREE (`personName` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`actor`
@@ -35,7 +37,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`actor` (
     REFERENCES `Dione`.`person` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`director`
@@ -48,30 +51,32 @@ CREATE TABLE IF NOT EXISTS `Dione`.`director` (
     REFERENCES `Dione`.`person` (`idPerson`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`language`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`language` (
-  `idLanguage` TINYINT NOT NULL AUTO_INCREMENT,
+  `idLanguage` INT NOT NULL AUTO_INCREMENT,
   `languageName` CHAR(20) NOT NULL,
   UNIQUE INDEX `user_lang_unq` (`languageName` ASC),
   PRIMARY KEY (`idLanguage`))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
   `idMovie` INT NOT NULL AUTO_INCREMENT,
-  `idLanguage` TINYINT NULL DEFAULT NULL,
+  `idLanguage` INT NULL DEFAULT NULL,
   `idDirector` INT NULL DEFAULT NULL,
   `movieName` VARCHAR(128) NOT NULL,
   `movie_qualified_name` VARCHAR(100) NULL DEFAULT NULL,
-  `year` SMALLINT NULL DEFAULT NULL,
+  `year` INT NULL DEFAULT NULL,
   `wiki` TEXT NULL DEFAULT NULL,
-  `duration` SMALLINT NULL DEFAULT NULL,
+  `duration` INT NULL DEFAULT NULL,
   `plot` TEXT NULL DEFAULT NULL,
   PRIMARY KEY (`idMovie`),
   INDEX `idLanguage_idx` (`idLanguage` ASC),
@@ -87,7 +92,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
     REFERENCES `Dione`.`language` (`idLanguage`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`users`
@@ -98,28 +104,31 @@ CREATE TABLE IF NOT EXISTS `Dione`.`users` (
   `hashPassword` INT NOT NULL,
   PRIMARY KEY (`idUsers`),
    UNIQUE INDEX `user_name_unq` (`userName` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`genre`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`genre` (
-  `idGenre` SMALLINT NOT NULL AUTO_INCREMENT,
+  `idGenre` INT NOT NULL AUTO_INCREMENT,
   `genreName` CHAR(20) NOT NULL,
   PRIMARY KEY (`idGenre`),
    UNIQUE INDEX `genre_name_unq` (`genreName` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`tag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`tag` (
-  `idTag` SMALLINT NOT NULL AUTO_INCREMENT,
+  `idTag` INT NOT NULL AUTO_INCREMENT,
   `tagName` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`idtag`),
    UNIQUE INDEX `tag_name_unq` (`tagName` ASC),
   INDEX `tagName_idx` USING BTREE (`tagName` ASC))
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`actor_movie`
@@ -140,7 +149,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`actor_movie` (
     REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`friend_relation`
@@ -160,14 +170,15 @@ CREATE TABLE IF NOT EXISTS `Dione`.`friend_relation` (
     REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`genre_movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`genre_movie` (
   `idMovie` INT NOT NULL,
-  `idGenre` SMALLINT NOT NULL,
+  `idGenre` INT NOT NULL,
   PRIMARY KEY (`idMovie`, `idGenre`),
   INDEX `idGenre_idx` (`idGenre` ASC),
   INDEX `idMovie_idx` (`idMovie` ASC),
@@ -181,14 +192,15 @@ CREATE TABLE IF NOT EXISTS `Dione`.`genre_movie` (
     REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`movie_tag`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag` (
   `idMovie` INT NOT NULL,
-  `idTag` SMALLINT NOT NULL,
+  `idTag` INT NOT NULL,
   PRIMARY KEY (`idmovie`, `idtag`),
   INDEX `fk_tag_idx` (`idtag` ASC),
   CONSTRAINT `fk_movie`
@@ -201,14 +213,15 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag` (
     REFERENCES `Dione`.`tag` (`idTag`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`user_prefence`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`user_prefence` (
   `idUser` INT NOT NULL,
-  `idTag` SMALLINT NOT NULL,
+  `idTag` INT NOT NULL,
   `tag_user_rate` INT NOT NULL,
   PRIMARY KEY (`idUser`, `idTag`),
   INDEX `tag_id_fk_user_prefences_idx` (`idTag` ASC),
@@ -222,7 +235,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_prefence` (
     REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`user_rank`
@@ -230,7 +244,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Dione`.`user_rank` (
   `idUser` INT NOT NULL,
   `idMovie` INT NOT NULL,
-  `rank` TINYINT NULL DEFAULT NULL,
+  `rank` INT NULL DEFAULT NULL,
   `rankDate` DATETIME NOT NULL,
   PRIMARY KEY (`idUser`, `idMovie`),
   INDEX `movie_fk_idx` (`idMovie` ASC),
@@ -239,16 +253,17 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_rank` (
     REFERENCES `Dione`.`movie` (`idMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
 -- Table `Dione`.`user_tag_movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Dione`.`user_tag_movie` (
   `idUser` INT NOT NULL,
-  `idTag` SMALLINT NOT NULL,
+  `idTag` INT NOT NULL,
   `idMovie` INT NOT NULL,
-  `rate` TINYINT NOT NULL,
+  `rate` INT NOT NULL,
   `reteDate` DATETIME NOT NULL,
   PRIMARY KEY (`idUser`, `idTag`, `idMovie`),
   INDEX `movie_fk_user_tags_movie_rating_idx` (`idMovie` ASC),
@@ -268,7 +283,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_tag_movie` (
     REFERENCES `Dione`.`users` (`idUsers`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
