@@ -1,4 +1,4 @@
-package parser_entities;
+package parser_entities.TBDs;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,6 +20,8 @@ import java.sql.BatchUpdateException;
 
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import parser_entities.entity_movie;
 
 import db.db_operations;
 import db.db_queries_movies;

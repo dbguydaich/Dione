@@ -78,12 +78,27 @@ public class entity_movie  implements Serializable{
 	public void set_fq_name()
 	{
 		/*major fq name*/
-		this.entity_movie_fq_name = build_fq_name(this.get_movie_name());
+		if (this.get_movie_director() != null)
+			this.entity_movie_fq_name = build_fq_name(this.get_movie_name(), this.get_movie_director().get_person_name());
+		else 
+			this.entity_movie_fq_name = build_fq_name(this.get_movie_name(), null);
+		/*now, for every label (foreign film names, other spelling of directors name)*/
 		for (String label : this.entity_movie_labels)
 		{
-			String label_fq_name = build_fq_name(label);
-			if (label_fq_name != null)
+			if (this.get_movie_director() == null)
+			{
+				String label_fq_name = build_fq_name(label,null);
 				this.entity_movie_labels_fq.add(label_fq_name);
+			}
+			else 
+			{
+				for (String director_name : this.get_movie_director().get_person_names())
+				{
+					String label_fq_name = build_fq_name(label,director_name);
+					if (label_fq_name != null)
+						this.entity_movie_labels_fq.add(label_fq_name);
+				}
+			}
 		}
 			
 	}
@@ -95,7 +110,7 @@ public class entity_movie  implements Serializable{
 	
 	/**uses a passed name parameter, and director/year 
 	 * attributes of the object itself to construct fq names**/
-	private String build_fq_name(String movie_name)
+	private String build_fq_name(String movie_name, String director_name)
 	{
 		StringBuilder sb = new StringBuilder();
 		if (movie_name == null)
@@ -113,7 +128,7 @@ public class entity_movie  implements Serializable{
 		else
 			sb.append(" (NAN)");
 		
-		if (this.get_movie_director() != null)
+		if (director_name != null)
 			sb.append(" (" + this.get_movie_director() + ")");
 		else
 			sb.append(" (NAN)");

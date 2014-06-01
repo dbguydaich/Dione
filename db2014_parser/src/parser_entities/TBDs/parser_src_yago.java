@@ -1,10 +1,13 @@
-package parser_entities;
+package parser_entities.TBDs;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.io.File;
+
+import parser_entities.entity_movie;
+import parser_entities.entity_person;
 
 import config.config;
 
@@ -304,6 +307,7 @@ public class parser_src_yago {
 					if (splitted_line[yago_label_offset].contains(properties.get_yago_tag_label()))
 					{
 						update_movies_by_label(splitted_line);
+						update_person_by_label(splitted_line);
 					}
 				}
 				br.close();
@@ -569,6 +573,26 @@ public class parser_src_yago {
 			return; 
 		
 		movie.add_to_labels(parse_movie_label(fact_value));
+	}
+	
+	/** enrich movie with fact literals: year, duration**/
+	private void update_person_by_label(String[] splitted_line)
+	{		
+		String person_name, fact_value;
+		
+		fact_value = splitted_line[yago_label_value_offset];
+		if (fact_value == null)
+			return;
+		
+		person_name = clean_format(splitted_line[yago_label_movie_offset]);
+		if (person_name == null)
+			return;
+		
+		entity_person person = this.parser_map_director.get(person_name);
+		if (person == null)
+			return; 
+		
+		person.add_to_person_names(parse_movie_label(fact_value));
 	}
 	
 

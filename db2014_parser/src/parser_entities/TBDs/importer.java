@@ -1,4 +1,4 @@
-package parser_entities;
+package parser_entities.TBDs;
 
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import parser_entities.entity_movie;
+import parser_entities.entity_person;
 
 import db.db_operations;
 import db.db_queries_movies;
