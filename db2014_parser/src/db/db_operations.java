@@ -562,6 +562,7 @@ public abstract class db_operations
 		// If got here succeed
 		return (true);
 	}
+
 }
 
 

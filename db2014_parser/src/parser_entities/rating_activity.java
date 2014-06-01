@@ -1,13 +1,13 @@
 package parser_entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class rating_activity extends abstract_activity 
 {
 	private int rating;
-	private int movie;
+	private String movie;
 	
-	public rating_activity(String user, int movie, int rating, Date date) 
+	public rating_activity(String user, String movie, int rating, Timestamp date) 
 	{
 		super("rating", user, date);
 		
@@ -20,7 +20,7 @@ public class rating_activity extends abstract_activity
 		return rating;
 	}
 	
-	public int get_movie()
+	public String get_movie()
 	{
 		return movie;
 	}

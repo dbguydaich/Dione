@@ -343,24 +343,31 @@ public abstract class db_queries_movies extends db_operations
 		// Actor filter
 		if (actor_list != null && actor_list.size() > 0)
 		{
-			String actorsCond = " AND idMovie IN (SELECT actorMovie.idMovie FROM movie as actorMovie WHERE 'a' = 'a' ";
-			
-			// For every actor add a constraint
+			int actorcount = 0;
 			for (String actor : actor_list)
+				actorcount += actor.length();
+			
+			if (actorcount > 0)
 			{
-				actorsCond += " AND EXISTS (SELECT * FROM actor_movie, person as actors WHERE " + 
-									" actor_movie.idMovie = actorMovie.idMovie AND " +		
-									" actor_movie.idActor = actors.idPerson AND " +
-									" actors.personName like ?)";
+				String actorsCond = " AND idMovie IN (SELECT actorMovie.idMovie FROM movie as actorMovie WHERE 'a' = 'a' ";
 				
-				// Add it in order 
-				values.add( "%" + actor + "%");
+				// For every actor add a constraint
+				for (String actor : actor_list)
+				{
+					actorsCond += " AND EXISTS (SELECT * FROM actor_movie, person as actors WHERE " + 
+										" actor_movie.idMovie = actorMovie.idMovie AND " +		
+										" actor_movie.idActor = actors.idPerson AND " +
+										" actors.personName like ?)";
+					
+					// Add it in order 
+					values.add( "%" + actor + "%");
+				}
+				
+				// This closes the IN clause
+				actorsCond += ")";
+				
+				where += actorsCond;
 			}
-			
-			// This closes the IN clause
-			actorsCond += ")";
-			
-			where += actorsCond;
 		}
 		
 		// Tag filter

@@ -1,6 +1,6 @@
 package parser_entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class tag_activity extends abstract_activity 
 {
@@ -8,7 +8,7 @@ public class tag_activity extends abstract_activity
 	private String movie;
 	private String tag;
 	
-	public tag_activity(String user, int rating, String movie, String tag, Date date)
+	public tag_activity(String user, int rating, String movie, String tag, Timestamp date)
 	{
 		super("tagging", user, date);
 		

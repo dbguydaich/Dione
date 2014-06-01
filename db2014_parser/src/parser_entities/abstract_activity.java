@@ -1,14 +1,14 @@
 package parser_entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public abstract class abstract_activity implements Iactivity, Comparable<abstract_activity>
 {
 	private String activity_type; 
 	private String activity_user;
-	private Date activity_time;
+	private Timestamp activity_time;
 	
-	protected abstract_activity(String activity_type, String activity_user, Date activity_time)
+	protected abstract_activity(String activity_type, String activity_user, Timestamp activity_time)
 	{
 		this.activity_type = activity_type;
 		this.activity_user = activity_user;
@@ -28,7 +28,7 @@ public abstract class abstract_activity implements Iactivity, Comparable<abstrac
 	}
 	
 	@Override
-	public Date get_activity_time() 
+	public Timestamp get_activity_time() 
 	{
 		return activity_time;
 	}

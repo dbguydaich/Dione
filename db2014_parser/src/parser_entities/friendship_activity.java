@@ -1,12 +1,12 @@
 package parser_entities;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class friendship_activity extends abstract_activity 
 {
 	private String 	friendName;
 	
-	public friendship_activity(String user, String name, Date date) 
+	public friendship_activity(String user, String name, Timestamp date) 
 	{
 		super("friending", user, date);
 		

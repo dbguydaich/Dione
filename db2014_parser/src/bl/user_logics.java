@@ -57,7 +57,10 @@ public class user_logics
 	public static boolean add_user(String user, String pass)
 			throws SQLException
 	{
-		return (db_queries_user.add_user(user, pass));
+		if (db_queries_user.user_exists(user))
+			return (db_queries_user.add_user(user, pass));
+		else
+			return (false);
 	}
 	
 	public static boolean authenticate_user(String user, String pass) 
@@ -445,7 +448,7 @@ public class user_logics
 	public boolean rate_movie(int movie_id,int rate) 
 			throws SQLException
 	{
-		if (db_queries_user.did_user_rate_movie(movie_id, current_user_id))
+		if (!db_queries_user.did_user_rate_movie(movie_id, current_user_id))
 			return (db_queries_user.rate_movie(movie_id, current_user_id, rate));
 		else
 			return (db_queries_user.update_rate_movie(movie_id, current_user_id, rate));
@@ -499,7 +502,10 @@ public class user_logics
 	{
 		int tag_id = db_queries_movies.get_tag_id(tag_name);
 		
-		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
+		if (!db_queries_user.rated_tag(movie_id, user_id, tag_id))
+			return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
+		else
+			return (db_queries_user.update_rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 
 	@SuppressWarnings("rawtypes")

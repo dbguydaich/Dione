@@ -26,13 +26,21 @@ public abstract class db_queries_user extends db_operations
 	public static boolean add_user(String user, String pass) 
 			throws SQLException
 	{
-		int rows_effected = insert("users", "`userName`, `hashPassword`" , user, Integer.toString(pass.hashCode()));
-		
-		// did select find souch user
-		if (rows_effected > 0)
-			return (true);
+		if (pass.length() < 4)
+		{
+			return (false);	
+		}
 		else
-			return (false);
+		{
+			int rows_effected = insert("users", "`userName`, `hashPassword`" , user, Integer.toString(pass.hashCode()));
+			
+			// did select find souch user
+			if (rows_effected > 0)
+				return (true);
+			else
+				return (false);
+		}
+			
 	}
 	
 	/**
@@ -80,22 +88,6 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 	
-// UPDATERS
-	public static boolean update_rate_movie(int movie_id, int user_id, int rate) 
-			throws SQLException 
-	{
-		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
-	
-		String querey = "UPDATE user_rank SET rank = ? rankDate = ? WHERE idUser= ? and idMovie=?";
-		int rows_effected = run_querey(querey, rate, date, user_id , movie_id);
-		
-		// did select find souch user
-		if (rows_effected > 0)
-			return (true);
-		else
-			return (false);
-	}
-	
 // BOOLEANS
 	
 	public static boolean authenticate_user(String user, String pass) 
@@ -129,7 +121,29 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (false);
 	}
+	
+	public static boolean did_user_rate_movie(int movie_id, int user_id) 
+			throws SQLException 
+	{
+		String whereClause = "idUser = ? AND idMovie = ?";
 		
+		ResultSet results = select("idUser" , "user_rank" , whereClause, user_id, movie_id);
+	
+		return (results.next());
+	}
+	
+	public static boolean rated_tag(int movie_id, int user_id, int tag_id) 
+			throws SQLException 
+	{
+		String whereClause = "idUser = ? AND idMovie = ? AND idTag = ?";
+		
+		ResultSet results = select("idUser" , "user_tag_movie" , whereClause, user_id, movie_id, tag_id);
+	
+		return (results.next());
+	}
+
+// GETTERS
+	
 	public static String get_name_of_user(Integer user_id) 
 			throws SQLException
 	{
@@ -141,17 +155,7 @@ public abstract class db_queries_user extends db_operations
 			return (results.getString(1));
 		else
 			return (null);
-	}
-	
-	public static boolean did_user_rate_movie(int movie_id, int user_id) 
-			throws SQLException 
-	{
-		String whereClause = "idUser = ? AND idMovie = ?";
-		
-		ResultSet results = select("idUser" , "user_rank" , whereClause, user_id, movie_id);
-	
-		return (results.next());
-	}
+}
 	
 // GETTERS
 		
@@ -333,9 +337,10 @@ public abstract class db_queries_user extends db_operations
 	public static List<rating_activity> get_user_recent_rank_activities(int user_id, int limit) 
 			throws SQLException 
 	{
-		String whereClause = "idUser = ? ORDER BY rankDate LIMIT "+ limit;
+		String whereClause = "user_rank.idMovie = movie.idMovie AND " + 
+								" user_rank.idUser = ? ORDER BY rankDate LIMIT "+ limit;
 		
-		ResultSet results = select("idMovie, rank, rankDate" , "user_rank" , whereClause, user_id);
+		ResultSet results = select("movieName, rank, rankDate" , "user_rank, movie" , whereClause, user_id);
 	
 		// Create a list of the recent activities
 					List<rating_activity> retList = new ArrayList<rating_activity>();
@@ -349,9 +354,9 @@ public abstract class db_queries_user extends db_operations
 			{
 				// create and add the activity
 				retList.add(new rating_activity(user_name,
-												results.getInt("idMovie"),
+												results.getString("movieName"),
 												results.getInt("rank"),
-												results.getDate("rankDate")));
+												results.getTimestamp("rankDate")));
 				
 			} while(results.next());
 		}
@@ -386,7 +391,7 @@ public abstract class db_queries_user extends db_operations
 				// create and add the activity
 				retList.add(new friendship_activity(user_name,
 													results.getString("userName"),
-													results.getDate("friendshipDate")));
+													results.getTimestamp("friendshipDate")));
 				
 			} while(results.next());
 		}
@@ -422,7 +427,7 @@ public abstract class db_queries_user extends db_operations
 											 results.getInt("rate"),
 											 results.getString("movieName"), 
 											 results.getString("tagName"), 
-											 results.getDate("reteDate")));
+											 results.getTimestamp("reteDate")));
 				
 			} while(results.next());
 		}
@@ -449,6 +454,8 @@ public abstract class db_queries_user extends db_operations
 			return (0);
 	}
 		
+// REMOVERS	
+	
 // REMOVERS
 	
 	/**
@@ -487,6 +494,8 @@ public abstract class db_queries_user extends db_operations
 		return (delete("users", whereCol, userName) > 0);
 	}
 
+// UPDATES	
+	
 	/**
 	 * update a name of user that has that id, only if the pass is correct
 	 * @param pass	- non hashed pass (will hash it here)
@@ -515,8 +524,35 @@ public abstract class db_queries_user extends db_operations
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
 
-
-
+	public static boolean update_rate_movie(int movie_id, int user_id, int rate) 
+			throws SQLException 
+	{
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+	
+		String querey = "UPDATE user_rank SET rank = ?, rankDate = ? WHERE idUser= ? and idMovie=?";
+		int rows_effected = run_querey(querey, rate, date, user_id , movie_id);
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
+	
+	public static boolean update_rate_tag(int movie_id, int user_id, int tag_id, int rate) 
+			throws SQLException 
+	{
+		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		
+		String querey = "UPDATE user_tag_movie SET rate = ?, reteDate = ? WHERE idUser= ? and idMovie=? and idTag=?";
+		int rows_effected = run_querey(querey, rate, date, user_id , movie_id, tag_id);
+		
+		// did select find souch user
+		if (rows_effected > 0)
+			return (true);
+		else
+			return (false);
+	}
 
 
 }
