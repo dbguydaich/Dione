@@ -22,7 +22,7 @@ public class tag_movie_loader extends abstract_loader {
 	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	HashMap<String,Integer> tag_table;
-	Set<String> attribute_set;
+
 	
 	public tag_movie_loader() throws SQLException {
 		super();
@@ -46,12 +46,14 @@ public class tag_movie_loader extends abstract_loader {
 
 	@Override
 	protected void set_perpared_statments(Connection db_conn) throws SQLException {
-		insert = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag, scoreTag) VALUES(?,?,?)");
+		//insert = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag, scoreTag) VALUES(?,?,?)");
+		insert = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag) VALUES(?,?)");
 	}
 
 	@Override
 	protected int create_statments(Object obj) throws SQLException {
 		
+		Set<String> attribute_set = new HashSet<String>();
 		entity_movie movie = (entity_movie)obj;
 		attribute_set = movie.get_movie_tags(); 
 		Integer movie_id = entity_map.get(movie.get_movie_qualified_name());
@@ -67,9 +69,11 @@ public class tag_movie_loader extends abstract_loader {
 				return 0;
 			insert.setInt(1,movie_id);
 			insert.setInt(2,tag_id);
-			insert.setInt(3,DEFAULT_TAG_SCORE);
+			//insert.setInt(3,DEFAULT_TAG_SCORE);
+			insert.addBatch();
+			return 1;
 		}
-		return 1;
+		return 0;
 	}
 
 	@Override

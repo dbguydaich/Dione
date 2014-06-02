@@ -14,7 +14,7 @@ public class imdb_parser_all {
 	private HashSet<String> parser_tag_set;					/* imdb entities - tags*/
 	
 	/*helper maps*/
-	private HashMap<String,String> imdb_to_yago;			/*holds all possible imdb names, that are relevant to yago films*/
+	private HashMap<String,String> imdb_to_yago;			/* holds all possible imdb names, that are relevant to yago films*/
 	private HashMap<String,Integer> parser_tag_count_map;	/* handles tag counts, to establish top 10 per movie*/
 	private HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/ 
 	
@@ -79,6 +79,8 @@ public class imdb_parser_all {
 		imdb_tag_movie_parser tag_movie = 
 				new imdb_tag_movie_parser(parser_movie_map,imdb_name_to_director,imdb_to_yago,parser_tag_count_map);
 		tag_movie.parse_imdb_file();
+		
+		
 		
 	}
 	

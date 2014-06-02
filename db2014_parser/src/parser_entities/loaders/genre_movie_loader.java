@@ -19,7 +19,7 @@ public class genre_movie_loader extends abstract_loader {
 	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	HashMap<String,Integer> genres_table;
-	Set<String> attribute_set;
+
 	
 	public genre_movie_loader() throws SQLException {
 		super();
@@ -49,6 +49,7 @@ public class genre_movie_loader extends abstract_loader {
 
 	@Override
 	protected int create_statments(Object obj) throws SQLException {
+		Set<String> attribute_set = new HashSet<String>();
 		
 		entity_movie movie = (entity_movie)obj;
 		attribute_set = movie.get_movie_genres(); 
@@ -65,8 +66,10 @@ public class genre_movie_loader extends abstract_loader {
 				return 0;
 			insert.setInt(1,movie_id);
 			insert.setInt(2,genre_id);
+			insert.addBatch();
+			return 1;
 		}
-		return 1;
+		return 0;
 	}
 
 	@Override

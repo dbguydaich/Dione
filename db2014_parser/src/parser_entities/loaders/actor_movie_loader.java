@@ -20,7 +20,6 @@ public class actor_movie_loader extends abstract_loader {
 	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	HashMap<String,Integer> actors_table;
-	Set<String> attribute_set;
 	
 	public actor_movie_loader() throws SQLException {
 		super();
@@ -36,7 +35,7 @@ public class actor_movie_loader extends abstract_loader {
 			entity_map = new HashMap<String,Integer>();
 		
 		
-		this.actors_table =  db_queries_movies.get_genre_names_and_ids();
+		this.actors_table =  db_queries_persons.get_actor_names_and_ids();
 		if (actors_table==null)
 			actors_table = new HashMap<String,Integer>();
 		
@@ -46,14 +45,16 @@ public class actor_movie_loader extends abstract_loader {
 
 	@Override
 	protected void set_perpared_statments(Connection db_conn) throws SQLException {
-		insert = db_conn.prepareStatement("INSERT INTO actor_movie(idActor, idGenre) VALUES(?,?)");
+		insert = db_conn.prepareStatement("INSERT INTO actor_movie(idActor, idMovie) VALUES(?,?)");
 	}
 
 	@Override
 	protected int create_statments(Object obj) throws SQLException {
+
+		Set<String> attribute_set = new HashSet<String>();
 		
 		entity_movie movie = (entity_movie)obj;
-		if (movie.get_movie_actors() == null)
+		if (movie.get_movie_actors() == null || movie.get_movie_actors().size() ==0 )
 			return 0;
 		for (entity_person actor : movie.get_movie_actors())
 			attribute_set.add(actor.get_person_name());
@@ -62,17 +63,19 @@ public class actor_movie_loader extends abstract_loader {
 		
 		if (movie_id == null)
 			return 0;
-		if (attribute_set == null)
+		if (attribute_set == null || attribute_set.size() == 0)
 			return 0;
 		for (String attribute : attribute_set)
 		{
-			Integer genre_id = actors_table.get(attribute);
-			if (genre_id == null)
+			Integer actor_id = actors_table.get(attribute);
+			if (actor_id == null)
 				return 0;
-			insert.setInt(1,movie_id);
-			insert.setInt(2,genre_id);
+			insert.setInt(1,actor_id);
+			insert.setInt(2,movie_id);
+			insert.addBatch();
+			return 1;
 		}
-		return 1;
+		return 0;
 	}
 
 	@Override

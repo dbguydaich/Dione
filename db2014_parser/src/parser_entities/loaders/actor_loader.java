@@ -41,7 +41,7 @@ public class actor_loader extends abstract_loader {
 
 	@Override
 	protected void set_perpared_statments(Connection db_conn) throws SQLException {
-		insert = db_conn.prepareStatement("Insert INTO actor(idPersonActor) VALUES (?)");
+		insert = db_conn.prepareStatement("Insert INTO actor(idPerson) VALUES (?)");
 	}
 
 	@Override
