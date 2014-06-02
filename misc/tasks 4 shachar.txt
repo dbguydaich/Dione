@@ -19,6 +19,9 @@ Dear Shachar,
 
 	Crash on Login when empty DB
 
+
+	shahar please implement year in search. search for your name - i need you to cloese windows and go to log in in 	preferences
+
 	
 	shahar's addition:
 		please make sure you limit the result of every query that returns a "list of something"
