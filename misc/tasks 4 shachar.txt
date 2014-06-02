@@ -1,16 +1,21 @@
 Dear Shachar,
 	Use the function get_top_rated_movies(Integer limit)
-
-	On social_tab.java you are referring to get_my_name as static which it is not
 	
 	When updating movie-rates and tag-rates you are showing false-errors
 	
 	On user created message place a space after the user name :)
 	
-	Activities are running out of the screen
+	Activities are running out of the screen (Avital)
 	
 	When signing up with short password write an informative message 
 	
+	Use all search options in the movie search
+
+	After first rating a movie - nothing happends tough the rate gets in the DB
+	
+	Use db_operations.fill_user_prefence()
+
+	Crash on Login when empty DB
 
 When finished tell me to re run checks and fix more of my bugs...
 regards ;)

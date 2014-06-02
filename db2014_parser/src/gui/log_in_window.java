@@ -279,7 +279,7 @@ public class log_in_window extends Shell
 					messageBox.open();
 				} else
 					try {
-						if ( db_queries_user.add_user(username, pass))
+						if ( user_logics.add_user(username, pass))
 						{
 							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 							messageBox.setText("SUCCESS");

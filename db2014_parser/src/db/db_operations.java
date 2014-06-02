@@ -22,7 +22,7 @@ import parser_entities.light_entity_movie;
  */
 public abstract class db_operations
 {
-	public enum invocation_code {YAFO_UPDATE, USER_PREFENCE};
+	public enum invocation_code {YAGO_UPDATE, USER_PREFENCE};
 	
 // BASIC FUNCTIONS
 	
@@ -499,13 +499,13 @@ public abstract class db_operations
 		return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 	}
 	
-	public static boolean perform_invocation(int code) 
+	public static boolean perform_invocation(invocation_code code) 
 			throws SQLException
 	{
 		return (insert("invocations", "`invokeCode`, `invokeDate`", code, get_curr_time()) > 0);
 	}
 
-	public static java.sql.Date get_last_invocation(int code) 
+	public static Timestamp get_last_invocation(invocation_code code) 
 			throws SQLException
 	{
 		String whereClause = "invokeCode = ? ORDER BY invokeDate desc";
@@ -513,56 +513,50 @@ public abstract class db_operations
 		ResultSet results = select("invokeDate" , "invocations" , whereClause, code);
 	
 		if (results.next())
-			return (results.getDate(1));
+			return (results.getTimestamp(1));
 		else
 			return (null);
 	}
 	
-	public static boolean fill_user_prefence() 
+	public static boolean was_there_db_update() 
 			throws SQLException
 	{
-		java.sql.PreparedStatement stmt = null;
-		Connection conn = jdbc_connection_pooling.get_instance().get_connection();
+		String whereSegment = "invocationCode = 1 ";
+		ResultSet result = select("invocationCode", "invocations", whereSegment);
 		
-		conn.setAutoCommit(false);
-		
-		// Delete old preference
-		stmt = conn.prepareStatement("DELETE FROM user_prefence");
-		stmt.addBatch();
-		
-		if (delete("user_prefence", "", "") < 0)
-			return (false);
-		
-		// Get user and tag lists 
-		List<Integer> users = get_all_ids("idUsers", "users");
-		
-		// Fill with new data
-		int batchSize = 0;
-		for (Integer user : users)
-		{
-			if (user != null)
-			{
-				stmt = conn.prepareStatement("");
-				stmt.addBatch();
-				batchSize++;
-				
-				if (batchSize % 1000 > 0)
-				{
-					stmt.executeBatch();
-					batchSize = 0;
-				}
-			}
-		}
-		
-		// Invocke 
-		
-		// Commit
-		conn.commit();
-	
-		// If got here succeed
-		return (true);
+		// did select find souch user
+		return (result.next());
 	}
 
+	public static boolean fill_movie_tag_relation() 
+			throws SQLException
+	{
+		// Is it ok not to redo this
+		if (was_there_db_update())
+		{		
+			Timestamp now = new Timestamp(new java.util.Date().getTime());
+			Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
+		
+			if (ts.before(now))
+				return (true);
+		}	
+	
+		// Invoke performance
+		if (!perform_invocation(invocation_code.USER_PREFENCE))
+			return (false);
+		
+		// delete old
+		if (delete("movie_tag_rate", "") < 0)
+			return (false);
+		
+		// perform
+		return (run_querey("INSERT INTO user_prefence (idUser, idTag, tag_user_rate) " +
+							" SELECT idMovie, idTag, round(avg(rate)) " +
+							" FROM user_tag_movie " +
+							" GROUP BY idMovie, idTag") >= 0);
+		
+	
+	}
 }
 
 

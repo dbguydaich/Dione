@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`actor` (
   CONSTRAINT `idPersonActor`
     FOREIGN KEY (`idPerson`)
     REFERENCES `Dione`.`person` (`idPerson`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`director` (
   CONSTRAINT `idPersonDirector`
     FOREIGN KEY (`idPerson`)
     REFERENCES `Dione`.`person` (`idPerson`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -80,13 +80,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
   CONSTRAINT `idDirector`
     FOREIGN KEY (`idDirector`)
     REFERENCES `Dione`.`director` (`idPerson`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `idLanguage`
     FOREIGN KEY (`idLanguage`)
     REFERENCES `Dione`.`language` (`idLanguage`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -133,13 +133,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`actor_movie` (
   CONSTRAINT `idActor`
     FOREIGN KEY (`idActor`)
     REFERENCES `Dione`.`actor` (`idPerson`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `idMovie`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -153,13 +153,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`friend_relation` (
   CONSTRAINT `friend1_fk`
     FOREIGN KEY (`friend1`)
     REFERENCES `Dione`.`users` (`idUsers`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `friend2_fk`
     FOREIGN KEY (`friend2`)
     REFERENCES `Dione`.`users` (`idUsers`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -174,13 +174,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`genre_movie` (
   CONSTRAINT `idGenre`
     FOREIGN KEY (`idGenre`)
     REFERENCES `Dione`.`genre` (`idGenre`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `idMovie1`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -194,13 +194,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag` (
   CONSTRAINT `fk_movie`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `fk_tag`
     FOREIGN KEY (`idTag`)
     REFERENCES `Dione`.`tag` (`idTag`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -215,13 +215,13 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_prefence` (
   CONSTRAINT `tag_id_fk_user_prefences`
     FOREIGN KEY (`idTag`)
     REFERENCES `Dione`.`tag` (`idtag`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `user_id_fk_user_prefences`
     FOREIGN KEY (`idUser`)
     REFERENCES `Dione`.`users` (`idUsers`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -237,8 +237,8 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_rank` (
   CONSTRAINT `movie_fk`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -256,20 +256,39 @@ CREATE TABLE IF NOT EXISTS `Dione`.`user_tag_movie` (
   CONSTRAINT `movie_fk_user_tags_movie_rating`
     FOREIGN KEY (`idMovie`)
     REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `tag_fk_user_tags_movie_rating`
     FOREIGN KEY (`idTag`)
     REFERENCES `Dione`.`tag` (`idtag`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
   CONSTRAINT `user_fk_user_tags_movie_rating`
     FOREIGN KEY (`idUser`)
     REFERENCES `Dione`.`users` (`idUsers`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
+-- -----------------------------------------------------
+-- Table `Dione`.`movie_tag_rate`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag_rate` (
+  `idMovie` SMALLINT NOT NULL,
+  `idTag` INT NOT NULL,
+  `rate` TINYINT NOT NULL,
+  PRIMARY KEY (`idTag`, `idMovie`),
+  CONSTRAINT `movie_fk_user_tags_movie_rating`
+    FOREIGN KEY (`idMovie`)
+    REFERENCES `Dione`.`movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `tag_fk_user_tags_movie_rating`
+    FOREIGN KEY (`idTag`)
+    REFERENCES `Dione`.`tag` (`idtag`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

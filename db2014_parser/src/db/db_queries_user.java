@@ -216,7 +216,8 @@ public abstract class db_queries_user extends db_operations
 		String where = 	" movie.idDirector = person.idPerson AND " +
 						" NOT EXISTS (SELECT idMovie FROM user_rank " + 
 									" WHERE (user_rank.idMovie = movie.idMovie AND idUser = ?)) " + 
-						" LIMIT " + limit;
+						" ORDER BY RAND() " + 
+						"LIMIT " + limit;
 		
 		ResultSet result = select("idMovie, movieName, year, wiki, personName, duration, plot", "movie, person", where, user_id);
 		
@@ -554,6 +555,19 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 
-
+	
+	public static boolean fill_user_prefence(int user_id) 
+			throws SQLException 
+	{
+		// delete old user preferences
+		if (delete("user_prefence", "idUser = ?", user_id) < 0)
+			return (false);
+		
+		return (run_querey("INSERT INTO user_prefence (idUser, idTag, tag_user_rate) " +
+					" (SELECT idUser, idTag, round(avg(UR.rank * MTR.rate)) " +
+					" FROM user_rank as UR, movie_tag_relation as MTR " +
+					" WHERE idUser = ? " +
+					" GROUP BY idTag)", user_id) >= 0);
+	}
 }
 

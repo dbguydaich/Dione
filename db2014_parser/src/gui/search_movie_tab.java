@@ -345,14 +345,14 @@ public class search_movie_tab extends Composite
 				 try {
 					
 					if(movie_logics.does_movie_exists(title,director,null,actor_list,null,
-							desired_genres,rating_radios_text))  //to be implemented next on
+							null,rating_radios_text))  //to be implemented next on
 				
 					{
 						
 						
 						movie_list.removeAll();
 						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,null,actor_list,null,
-								desired_genres,rating_radios_text);
+								null,rating_radios_text);
 					
 						
 						for(String str: movie_names)

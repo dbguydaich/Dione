@@ -57,7 +57,7 @@ public class user_logics
 	public static boolean add_user(String user, String pass)
 			throws SQLException
 	{
-		if (db_queries_user.user_exists(user))
+		if (!db_queries_user.user_exists(user))
 			return (db_queries_user.add_user(user, pass));
 		else
 			return (false);
@@ -425,6 +425,17 @@ public class user_logics
 			return  (movies.get(0));
 		else
 			return (null);
+	}
+	
+	/**
+	 * Fills the table user_prefence with the useres preference of each tag
+	 * @return true on success
+	 * @throws SQLException
+	 */
+	public boolean fill_user_prefence() 
+			throws SQLException
+	{
+		return (db_queries_user.fill_user_prefence(current_user_id));
 	}
 	
 // INTERNALS

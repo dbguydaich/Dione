@@ -54,7 +54,7 @@ public class preferences_window extends Shell
 		update_movie();
 		if(current_movie == null)
 		{		
-			MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+			MessageBox messageBox = new MessageBox(this, SWT.ICON_WARNING);
 			messageBox.setText("Error");
 			messageBox.setMessage("Couldn't find any movies to rate");
 			messageBox.open();
@@ -173,7 +173,6 @@ public class preferences_window extends Shell
 				try {
 					int rate_desired = gui_utils.get_index_button(radios);
 					handle_rating(rate_desired);
-					gui_utils.raise_sql_error_window(getDisplay());
 			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
 					//shahar that's is final we have to see how we make the next movie be availble///
 				} catch (NumberFormatException e) {

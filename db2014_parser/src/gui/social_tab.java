@@ -171,7 +171,7 @@ public class social_tab extends Composite
 						System.out.println(add_friend_text.getText());
 						
 						
-						if(user_logics.get_my_name() == add_friend_text.getText())
+						if(log_in_window.user.get_my_name() == add_friend_text.getText())
 						{
 							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 							messageBox.setText("Error");
