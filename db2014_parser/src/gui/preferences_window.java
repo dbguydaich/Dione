@@ -44,25 +44,17 @@ import bl.verifier;
 public class preferences_window extends Shell
 {
 
-	
+	Label movie_label;
 	boolean can_be_opened=true;
 	light_entity_movie current_movie = null;
 	public preferences_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-	
+		
+		movie_label = new Label(this, SWT.NONE);
+		
 		update_movie();
-		if(current_movie == null)
-		{		
-			MessageBox messageBox = new MessageBox(this, SWT.ICON_WARNING);
-			messageBox.setText("Error");
-			messageBox.setMessage("Couldn't find any movies to rate");
-			messageBox.open();
-			go_to_overview();
-			can_be_opened =false;
-			return;
-			
-		}
+
 		this.setSize(400, 300);
 		
 		//String currnt_user_str = get_current_username();
@@ -110,10 +102,9 @@ public class preferences_window extends Shell
 			e1.printStackTrace();
 		}
 		//movie label
-		Label movie_label = new Label(this, SWT.NONE);
 		movie_label.setAlignment(SWT.CENTER);
 		movie_label.setText(current_movie.get_movie_name());
-		movie_label.setText(current_movie.get_movie_name());
+
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
 		final Font font_movie_label = new Font(display, "Ariel",14, SWT.NONE );
 		movie_label.setFont(font_movie_label);
@@ -173,6 +164,7 @@ public class preferences_window extends Shell
 				try {
 					int rate_desired = gui_utils.get_index_button(radios);
 					handle_rating(rate_desired);
+					update_movie();
 			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
 					//shahar that's is final we have to see how we make the next movie be availble///
 				} catch (NumberFormatException e) {
@@ -288,6 +280,24 @@ public class preferences_window extends Shell
 	{
 		try {
 			current_movie = log_in_window.user.get_unrated_movie();
+			movie_label.setText(current_movie.get_movie_name());
+			
+			if(current_movie == null)
+			{		
+				MessageBox messageBox = new MessageBox(this, SWT.ICON_WARNING); ////shahar check
+				messageBox.setText("Error");
+				messageBox.setMessage("Couldn't find any movies to rate");
+				messageBox.open();
+				go_to_overview();
+				can_be_opened =false;
+				return;
+				
+			}
+			
+			
+			
+			
+			
 		} catch (SQLException e) {
 			gui_utils.raise_sql_error_window(getDisplay());
 			e.printStackTrace();

@@ -312,37 +312,90 @@ public class recommendation_tab extends Composite
 		
 		//movies_top_rated = get_top_rated_movies(); //to be used when function exists
 		
-		//just for check
-		movies_top_rated = new ArrayList<String>();
-		movies_top_rated.add("top rated movie 1");
-		movies_top_rated.add("top rated movie 2 and some more shit");
-		movies_top_rated.add("top rated movie 3 and some more shit");
-		movies_top_rated.add("top rated movie 4 and some more shit");
-		movies_top_rated.add("top rated movie 5 and some more shit");
+//		//just for check
+//		movies_top_rated = new ArrayList<String>();
+//		movies_top_rated.add("top rated movie 1");
+//		movies_top_rated.add("top rated movie 2 and some more shit");
+//		movies_top_rated.add("top rated movie 3 and some more shit");
+//		movies_top_rated.add("top rated movie 4 and some more shit");
+//		movies_top_rated.add("top rated movie 5 and some more shit");
+//
+//		
+//		i = 0;
+//		for(String str: movies_top_rated)
+//		{
+//			movies_top_rated_labels.add(new Label(area3, SWT.NONE));
+//			movies_top_rated_labels.get(i).setText(str);
+//			movies_top_rated_labels.get(i).setFont(font_based_on_learned_about_you);
+//			movies_top_rated_labels.get(i).setLayoutData(gui_utils.grid_data_factory(280, 20, -1, 3, -1, -1, -1, -1));
+//			
+//			movies_top_rated_labels.get(i).addMouseListener(new MouseAdapter() {
+//				@Override
+//				public void mouseUp(MouseEvent arg0) {
+//				System.out.println("hi-3");
+//
+//				}
+//
+//			});
+//
+//			
+//			i++;
+//			if(i == 5)
+//				break;
+//		}
+//		
+		
+		
+		
+		
+		
+		//based on my friends LINKS
+		List<light_entity_movie> top_movies_entity = null;
+		//List<light_entity_movie> movies_freinds_taste_entity = null;
+		try {
+			top_movies_entity = movie_logics.get_top_rated_movies(5);  //shahar please change to constant
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		movies_top_rated = gui_utils.convert_movies_entity_to_string(top_movies_entity);
+		
 
+		//
 		
 		i = 0;
-		for(String str: movies_top_rated)
+		j = 0;
+		final List<light_entity_movie> top_movies_entity_for_annonymus = top_movies_entity;
+		for(j=0; j< movies_top_rated.size(); j++)
 		{
+			final int k =j;
+		//	System.out.println(movies_my_taste.get(j));
 			movies_top_rated_labels.add(new Label(area3, SWT.NONE));
-			movies_top_rated_labels.get(i).setText(str);
-			movies_top_rated_labels.get(i).setFont(font_based_on_learned_about_you);
-			movies_top_rated_labels.get(i).setLayoutData(gui_utils.grid_data_factory(280, 20, -1, 3, -1, -1, -1, -1));
-			
-			movies_top_rated_labels.get(i).addMouseListener(new MouseAdapter() {
-				@Override
+			movies_top_rated_labels.get(j).setText( movies_top_rated.get(j));
+			movies_top_rated_labels.get(j).setFont(font_based_on_learned_about_you);
+			movies_top_rated_labels.get(j).setLayoutData(gui_utils.grid_data_factory(280, 20, -1, 3, -1, -1, -1, -1));
+			movies_top_rated_labels.get(j).addMouseListener(new MouseAdapter() {
+			//	@Override
 				public void mouseUp(MouseEvent arg0) {
-				System.out.println("hi-3");
-
+					movie_details_window  movie_details= null;
+				try {
+					movie_details =new movie_details_window( display ,top_movies_entity_for_annonymus.get(k).get_movie_id());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					movie_details.open();
+				
 				}
 
 			});
-
 			
-			i++;
-			if(i == 5)
+
+			if(j == 4)
 				break;
 		}
+		
+		
 		
 		
 	}

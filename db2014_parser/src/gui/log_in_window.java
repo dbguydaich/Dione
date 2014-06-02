@@ -272,18 +272,18 @@ public class log_in_window extends Shell
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
-				}else if(!verifier.verifyname( pass)){ // invalid password
+				}else if(!verifier.verifyPassSignUp( pass)){ // invalid password
 					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
-					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox.setMessage("Password must contain 4-10 alphanumeric chars.");
 					messageBox.open();
 				} else
 					try {
 						if ( user_logics.add_user(username, pass))
 						{
-							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
 							messageBox.setText("SUCCESS");
-							messageBox.setMessage("User "+ username + "has been succesfully signed up");
+							messageBox.setMessage("User "+ username + " has been succesfully signed up");
 							messageBox.open();
 						}
 						else {  //there was error during registration
