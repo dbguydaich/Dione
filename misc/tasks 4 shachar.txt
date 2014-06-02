@@ -17,5 +17,14 @@ Dear Shachar,
 
 	Crash on Login when empty DB
 
+	
+	shahar's addition:
+		please make sure you limit the result of every query that returns a "list of something"
+
+		do not create a new display without telling me about it
+
+		search movie: be ready to support a language and year(from - to)
+
+
 When finished tell me to re run checks and fix more of my bugs...
 regards ;)
