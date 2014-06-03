@@ -33,6 +33,9 @@ public class all_tabs_window extends Shell
 			
 		this.setSize(window_width, window_height);
 		
+		System.out.println("tabs win creating...");
+		
+		
 		//String currnt_user_str = get_current_username();
 		String current_user_str = "some username";
 		this.setText("MovieBook - Logged in As: " + current_user_str);
@@ -90,7 +93,15 @@ public class all_tabs_window extends Shell
 						win.dispose();
 				}
 				
+				if(gui_utils.pref_win != null)
+					if(!gui_utils.pref_win.isDisposed())
+					{
+						gui_utils.EXIT_ON_LOGIN = false;
+						gui_utils.pref_win.dispose();
+					}
+				
 				display.dispose();
+				//shachar: app is exiting here
 			}		
 		});
 	}

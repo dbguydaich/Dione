@@ -31,7 +31,8 @@ public class cron implements Runnable {
 
 
     public void run() {
-    	Display display =new Display();
+    	
+    	Display display = new Display();
     	Shell shell =new Shell(display);
    
 	    while(!Thread.currentThread().isInterrupted())
@@ -39,7 +40,6 @@ public class cron implements Runnable {
 	        while (true)
 	        {
 	        	try {
-	        		
 	        		
 	        		try {
 						db_operations.fill_movie_tag_relation();

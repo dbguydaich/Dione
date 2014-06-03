@@ -27,15 +27,14 @@ public class gui_utils
 	static preferences_window pref_win = null;
 	static import_window import_win = null;
 	static Display display;
-	
+	static boolean EXIT_ON_LOGIN = true;
 	
 	
 	public static void main(String args[])
 	{
 
 		display = new Display();
-
-		
+	
 		login_win = new log_in_window(display);
 		//movie_details_window movie_win = new movie_details_window(display, 1);
 		//tabs_win = new all_tabs_window(display);
@@ -220,24 +219,7 @@ public class gui_utils
 		return result;
 	}
 	
-//	public static List<Integer> get_genres_id( List<Boolean> pressed_genres, List<String> genres) ////we don
-//	{
-//		List<Integer> result = new ArrayList<Integer>();
-//		for (int i=0; i< pressed_genres.size() ; i++)
-//		{
-//			if(pressed_genres.get(i)==true) //pressed
-//			{
-//				try {
-//					result.add(movie_logics.get_genre_id(genres.get(i)));
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		return result;
-//	}
-	
+
 	public static List<String> get_genres_string( List<Boolean> pressed_genres, List<String> genres)
 	{
 		List<String> result = new ArrayList<String>();

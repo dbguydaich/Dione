@@ -337,10 +337,10 @@ public class social_tab extends Composite
 		
 		//user recent activity headline
 		Label user_social_activity_headline = new Label(user_social_activity_area, SWT.NONE);
-		user_social_activity_headline.setText("Your Recent Social Activity");
+		user_social_activity_headline.setText("Your Recent Social Activities");
 		final Font font_user_social_activity_headline = new Font(display, "Ariel",14, SWT.BOLD ); 
 		user_social_activity_headline.setFont(font_user_social_activity_headline);
-		user_social_activity_headline.setLayoutData(gui_utils.grid_data_factory(180, 0, -1, -1, -1, -1));
+		user_social_activity_headline.setLayoutData(gui_utils.grid_data_factory(155, 0, -1, -1, -1, -1));
 		user_social_activity_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -363,17 +363,8 @@ public class social_tab extends Composite
 			e1.printStackTrace();
 		} //to be used when function exists
 				
-		//just for check
-//		user_social_activities_strings = new ArrayList<String>();
-//		user_social_activities_strings.add("recent activity 1");
-//		user_social_activities_strings.add("recent activity 2");
-//		user_social_activities_strings.add("recent activity 3");
-//		user_social_activities_strings.add("recent activity 4");
-//		user_social_activities_strings.add("recent activity 5");
-//		user_social_activities_strings.add("recent activity 6");
-		//
 				
-		final Font font_user_social_activities_labels = new Font(display, "Ariel", 11, SWT.NONE);
+		final Font font_user_social_activities_labels = new Font(display, "Ariel", 9, SWT.NONE);
 		int i = 0;
 		for(String str: user_social_activities_strings)
 		{
@@ -410,10 +401,10 @@ public class social_tab extends Composite
 		
 		//friends recent activity headline
 		Label friends_activity_headline = new Label(friends_activity_area, SWT.NONE);
-		friends_activity_headline.setText("Your Friends Recent Activity");
+		friends_activity_headline.setText("Your Friends Recent Activities");
 		final Font font_friends_activity_headline = new Font(display, "Ariel",14, SWT.BOLD );
 		friends_activity_headline.setFont(font_friends_activity_headline);
-		friends_activity_headline.setLayoutData(gui_utils.grid_data_factory(180, -1, -1, -1, -1, -1));
+		friends_activity_headline.setLayoutData(gui_utils.grid_data_factory(155, -1, -1, -1, -1, -1));
 		friends_activity_headline.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -438,18 +429,9 @@ public class social_tab extends Composite
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} //to be used when function exists
+
 		
-		//just for check
-//		friends_activities_strings = new ArrayList<String>();
-//		friends_activities_strings.add("friend recent activity 1");
-//		friends_activities_strings.add("friend recent activity 2");
-//		friends_activities_strings.add("friend recent activity 3");
-//		friends_activities_strings.add("friend recent activity 4");
-//		friends_activities_strings.add("friend recent activity 5");
-//		friends_activities_strings.add("friend recent activity 6");
-		//
-		
-		final Font font_friends_activities_labels = new Font(display, "Ariel", 11, SWT.NONE);
+		final Font font_friends_activities_labels = new Font(display, "Ariel", 9, SWT.NONE);
 		i = 0;
 		for(String str: friends_activities_strings)
 		{

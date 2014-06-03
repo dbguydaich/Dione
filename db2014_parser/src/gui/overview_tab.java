@@ -101,58 +101,6 @@ public class overview_tab extends Composite
 		
 		
 		
-		
-		//recommended movie links
-
-		
-//		//just for check
-//		reco_movies_string = new ArrayList<String>();
-//		reco_movies_string.add("movie number 1");
-//		reco_movies_string.add("movie number 2");
-//		reco_movies_string.add("movie number 3");
-//		reco_movies_string.add("movie number 4");
-//		reco_movies_string.add("movie number 5");
-//		
-//		
-//		int i = 0;
-//		for(String str: reco_movies_string)
-//		{
-//			reco_movies_labels.add(new Label(reco_area, SWT.NONE ));
-//			reco_movies_labels.get(i).setText(str);
-//			reco_movies_labels.get(i).setFont(new Font(display, "Ariel", 11, SWT.NONE));
-//			
-//			reco_movies_labels.get(i).addMouseListener(new MouseAdapter() {
-//				@Override
-//						public void mouseUp(MouseEvent arg0) {
-//						//open_movie_details(str);
-//						
-//					}
-//
-//			});
-//
-//			reco_movies_labels.get(i).setLayoutData(gui_utils.grid_data_factory(250, 18, -1, -1, -1, -1, -1, -1));
-//			i++;
-//		}
-//		
-//		
-//			//recommendation buttom label
-//			Label reco_bottom_label = new Label(reco_area, SWT.NONE);
-//			reco_bottom_label.setText("Click on a Movie Name For Movie Details");
-//			reco_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, 0, -1, -1, -1, -1));
-//			final Font font_reco_bottom_label = new Font(display, "Ariel",10,SWT.NONE );
-//			reco_bottom_label.setFont(font_reco_bottom_label);
-//			reco_bottom_label.addDisposeListener(new DisposeListener()
-//			{
-//				public void widgetDisposed(DisposeEvent e) 
-//				{
-//					font_reco_bottom_label.dispose();
-//				}		
-//			});
-//
-//		
-//		
-//		
-		
 		//based on what we have learned about you LINKS
 		List<light_entity_movie> movies_my_taste_entity = null;
 		List<String> movies_my_taste = null;
@@ -261,17 +209,7 @@ public class overview_tab extends Composite
 			gui_utils.raise_sql_error_window(display);
 			e1.printStackTrace();
 		} //to be used when function exists
-		
-		//just for check
-//		user_tags_string = new ArrayList<String>();
-//		user_tags_string.add("tag1");
-//		user_tags_string.add("tag2");
-//		user_tags_string.add("tag3");
-//		user_tags_string.add("tag4");
-//		user_tags_string.add("tag5");
-//		user_tags_string.add("tag6");
-//		user_tags_string.add("tag7");
-		//
+
 		
 		final Font font_user_tags_label = new Font(display, "Ariel", 12, SWT.NONE);
 		i = 0;
@@ -337,16 +275,7 @@ public class overview_tab extends Composite
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} 
-		
-		//just for check
-//		user_activities_strings = new ArrayList<String>();
-//		user_activities_strings.add("recent activity 1");
-//		user_activities_strings.add("recent activity 2");
-//		user_activities_strings.add("recent activity 3");
-//		user_activities_strings.add("recent activity 4");
-//		user_activities_strings.add("recent activity 5");
-//		user_activities_strings.add("recent activity 6");
-//		//
+
 		
 		final Font font_user_activities_labels = new Font(display, "Ariel", 9, SWT.NONE);
 		i = 0;

@@ -49,9 +49,9 @@ public class log_in_window extends Shell
 	public static user_logics user;
 	
 	/////
-	config config = new config();
-	int window_height = config.get_window_height();
-	int window_width = config.get_window_width();
+	//config config = new config();
+	//int window_height = config.get_window_height();
+	//int window_width = config.get_window_width();
 
 
 	
@@ -70,8 +70,17 @@ public class log_in_window extends Shell
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				cron.interrupt();
-				display.dispose();
+
+				if(gui_utils.EXIT_ON_LOGIN == true)
+				{
+					display.dispose();
+					//cron.interrupt();
+					//shachar: app is exiting here
+				}
+				
+				else
+					gui_utils.EXIT_ON_LOGIN = true;
+				
 			}		
 		});
 		
@@ -192,26 +201,25 @@ public class log_in_window extends Shell
 						if( db_queries_user.authenticate_user(username,pass)){
 							user = new user_logics(); //Initializing user to be worked with all session long
 							user.login_user(username, pass);
-							
-							
-							//addition needed: in case it is the first log in, go to some other window
-							
-							
+														
+											
 							if (user.user_rated()) //user already rated movies
 							{
+								gui_utils.EXIT_ON_LOGIN = false;
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 								
-								gui_utils.display = new Display();
 								gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 								gui_utils.tabs_win.open();
 							}
 							
 							else
 							{
+								gui_utils.EXIT_ON_LOGIN = false;
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-								gui_utils.display =  new Display();
-								gui_utils.pref_win = new preferences_window(gui_utils.display); 
-								
+
+								if(gui_utils.display.isDisposed())
+									gui_utils.display = new Display();
+								gui_utils.pref_win = new preferences_window(gui_utils.display);
 								if(gui_utils.pref_win.can_be_opened)
 								{
 									gui_utils.pref_win.open();
@@ -219,16 +227,22 @@ public class log_in_window extends Shell
 								
 								else
 								{
+									gui_utils.EXIT_ON_LOGIN = false;
 									gui_utils.pref_win.dispose();
-								////////shahar here we got the problem we talked on the phone
+									if(gui_utils.display.isDisposed())
+										gui_utils.display = new Display();
+									
 									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 									gui_utils.tabs_win.open();
+									
+									MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING); ////shahar check
+									messageBox.setText("Error");
+									messageBox.setMessage("Couldn't find any movies to rate");
+									messageBox.open();
+									
 								}
 						
 							}
-							
-					
-							
 							
 						}
 						else{ //no user found
@@ -250,9 +264,6 @@ public class log_in_window extends Shell
 		});
 		////
 
-		
-		
-		
 		
 		//sign up button
 		Button sign_up_button = new Button(this, SWT.PUSH);
@@ -310,9 +321,6 @@ public class log_in_window extends Shell
 }
 
 		
-	
-	
-	
 	protected void checkSubclass()
 	{
 	}

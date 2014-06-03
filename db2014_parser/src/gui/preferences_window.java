@@ -53,36 +53,50 @@ public class preferences_window extends Shell
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 		
 		movie_label = new Label(this, SWT.NONE);
+
+		//window background
+		String imgURL = ".\\src\\gui\\images\\blue_400_300.jpg";
+		final Image background = new Image(display, imgURL);
+		this.setBackgroundImage(background);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		
+		
+		this.addDisposeListener(new DisposeListener()
+		{
+			/*
+			 * Possible Scenarios:
+			 * 1. user has been rated movies for the first time - nothing is open, so we exit
+			 * 2. user has been reted movies on demand (all tabs still open) - go back
+			 */
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				System.out.println("disposing pref...");
+				background.dispose();
+				if(gui_utils.EXIT_ON_LOGIN == true)
+				{
+					display.dispose();
+					//shachar: app is exiting here
+				}
+				
+				else
+					gui_utils.EXIT_ON_LOGIN = true;
+			
+			}		
+		});
 		
 		update_movie();
-		
+			
 		if(can_be_opened==false)
 		{
 			return;
 		}
-
+		
 		this.setSize(400, 300);
 		
 		//String currnt_user_str = get_current_username();
 		String current_user_str = "some username";
 		this.setText("Movie Preferences - Logged in As: " + current_user_str);			
 		this.setLayout(new FormLayout());
-
-		
-	
-		//window background
-		String imgURL = ".\\src\\gui\\images\\blue_400_300.jpg";
-		final Image background = new Image(display, imgURL);
-		this.setBackgroundImage(background);
-		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				background.dispose();
-			}		
-		});
-
 		
 		
 		
@@ -232,23 +246,9 @@ public class preferences_window extends Shell
 				
 		}});
 		
+	
 		
-		this.addDisposeListener(new DisposeListener()
-		{
-			/*
-			 * Possible Scenarios:
-			 * 1. user has been rated movies for the first time - nothing is open, so we exit
-			 * 2. user has been reted movies on demand (all tabs still open) - go back
-			 */
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				if(gui_utils.tabs_win == null)
-					display.dispose();	
-				
-				else if(gui_utils.tabs_win.isDisposed())
-					display.dispose();
-			}		
-		});
+		
 	}
 	
 	public void handle_rating(int rate)
@@ -268,10 +268,6 @@ public class preferences_window extends Shell
 			current_movie = log_in_window.user.get_unrated_movie();
 			if(current_movie == null)
 			{		
-				MessageBox messageBox = new MessageBox(this, SWT.ICON_WARNING); ////shahar check
-				messageBox.setText("Error");
-				messageBox.setMessage("Couldn't find any movies to rate");
-				messageBox.open();
 		//		go_to_overview();
 				can_be_opened = false;
 				return;
