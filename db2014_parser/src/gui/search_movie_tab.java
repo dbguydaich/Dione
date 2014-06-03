@@ -21,7 +21,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
@@ -46,6 +48,9 @@ import config.config;
 
 public class search_movie_tab extends Composite
 {
+	
+	org.eclipse.swt.widgets.List	movie_list = null;
+	List<String> movie_names ;
 
 	public search_movie_tab(final Display display, Composite parent, int style)
 	{
@@ -65,7 +70,7 @@ public class search_movie_tab extends Composite
 		List<String> genres;
 		
 		//results area
-		Composite results_area = new Composite(this, SWT.NONE);
+		Composite  results_area = new Composite(this, SWT.NONE);
 		
 		//results headline
 		Label results_headline = new Label(results_area, SWT.BOLD);
@@ -82,7 +87,7 @@ public class search_movie_tab extends Composite
 		});
 		
 		//result list
-		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+		movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
 		movie_list.setLayoutData(gui_utils.grid_data_factory(353, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
 		
 		
@@ -385,6 +390,23 @@ public class search_movie_tab extends Composite
 				String title = title_text.getText();
 				String director =  director_text.getText();
 				
+				String language = language_text.getText();
+			
+				Integer year_from = null;
+				Integer year_until = null;
+				if( !year_from_text.getText().equals(""))
+				{
+					 year_from  = Integer.parseInt(year_from_text.getText());
+				}
+				
+				if( !year_until_text.getText().equals(""))
+				{
+					 year_until  = Integer.parseInt(year_until_text.getText());
+				}
+				
+			
+	
+				
 				List<String> actor_list = new  ArrayList<String>();
 				get_text(actors_texts, actor_list);
 				
@@ -396,24 +418,29 @@ public class search_movie_tab extends Composite
 				gui_utils.get_text_button(rating_checkboxes, rating_radios_text_list);
 						
 				List<Boolean> genres_numbers_list =  new ArrayList<Boolean>();
-				gui_utils.get_text_button (genres_checkboxes, genres_numbers_list );
+				gui_utils.get_text_button(genres_checkboxes, genres_numbers_list );
 				
 				boolean[] rating_radios_text = gui_utils.convert_list_array(rating_radios_text_list);
 				
 				
 			
-				List<Integer> desired_genres = gui_utils.get_genres_id(  genres_numbers_list, genres_for_annonymus);
+				List<String> desired_genres = gui_utils.get_genres_string(  genres_numbers_list, genres_for_annonymus);
 				 try {
 					
-					if(movie_logics.does_movie_exists(title,director,null,actor_list,null,
-							null,rating_radios_text))  //to be implemented next on
+					if(movie_logics.does_movie_exists(title,director,language,year_from ,year_until ,actor_list,tags_list,
+							desired_genres,rating_radios_text))  //to be implemented next on
 				
 					{
 						
-						
+					//	.//movie_list.removeSelectionListener(arg0);
 						movie_list.removeAll();
-						final List<String> movie_names = movie_logics.get_relevant_movies_names(title,director,null,actor_list,null,
-								null,rating_radios_text);
+						movie_list.removeListener(SWT.MouseUp,list_listener);
+						
+						//movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+						
+						
+						 movie_names = movie_logics.get_relevant_movies_names(title,director,language,year_from ,year_until ,actor_list,tags_list,
+								desired_genres,rating_radios_text);
 					
 						
 						for(String str: movie_names)
@@ -424,27 +451,30 @@ public class search_movie_tab extends Composite
 						/* 
 					     * handle selection of movie number selectedItem
 					     */
-					        
-						movie_list.addSelectionListener(new SelectionAdapter() {
-							public void widgetSelected(SelectionEvent event) {
-						     int selectedItem = movie_list.getSelectionIndex();
-						     try 
-						     {
-						    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
-						    		movie_details_window movie_details = new movie_details_window( display, movie_id);
-							
-									movie_details.open();
-								
-						     } catch (SQLException e) {
-						    		gui_utils.raise_sql_error_window(display);
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-							        
-							        
-							      }
-							});
-			
+					    
+//						movie_list.addSelectionListener(new SelectionAdapter() {
+//							public void widgetSelected(SelectionEvent event) {
+//						     int selectedItem = movie_list.getSelectionIndex();
+//						     try 
+//						     {
+//						    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
+//						    		movie_details_window movie_details = new movie_details_window( display, movie_id);
+//							
+//									movie_details.open();
+//								
+//						     } catch (SQLException e) {
+//						    		gui_utils.raise_sql_error_window(display);
+//										// TODO Auto-generated catch block
+//										e.printStackTrace();
+//									}
+//							        
+//							        
+//							      }
+//							});
+//			
+						
+						movie_list.addListener(SWT.MouseUp,list_listener);
+						
 					//refresh list
 						
 					}
@@ -481,6 +511,8 @@ public class search_movie_tab extends Composite
 		
 		
 		
+		
+	
 		
 		
 		
@@ -530,12 +562,38 @@ public class search_movie_tab extends Composite
 	
 	
 	
-	void show_search_results(List<String> movies)
-	{
-		
-	}
 	
+	Listener list_listener = new Listener(){
+				public void handleEvent(Event event) {
+			     int selectedItem = movie_list.getSelectionIndex();
+			     try 
+			     {
+			    	 System.out.println(selectedItem );
+			    	 System.out.println(movie_names.size());
+			    	 if ( selectedItem!=-1)
+			    	 {
+			    		
+			    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
+			    		movie_details_window movie_details = new movie_details_window( gui_utils.display, movie_id);
+				
+						movie_details.open();
+			    	 }
+			    	 
+					
+			     } catch (SQLException e) {
+			    		gui_utils.raise_sql_error_window(gui_utils.display);
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				        
+				        
+				      }
+			};
+
 	
+
+	
+
 	
 	void get_text(List<Text> from,List<String> to)
 	{

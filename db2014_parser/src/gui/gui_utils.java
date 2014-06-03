@@ -44,6 +44,12 @@ public class gui_utils
 		
 		
 		login_win.open();
+		
+		
+		
+	
+		
+		
 		//movie_win.open();
 		//tabs_win.open();
 		//pref_win.open();
@@ -214,19 +220,32 @@ public class gui_utils
 		return result;
 	}
 	
-	public static List<Integer> get_genres_id( List<Boolean> pressed_genres, List<String> genres)
+//	public static List<Integer> get_genres_id( List<Boolean> pressed_genres, List<String> genres) ////we don
+//	{
+//		List<Integer> result = new ArrayList<Integer>();
+//		for (int i=0; i< pressed_genres.size() ; i++)
+//		{
+//			if(pressed_genres.get(i)==true) //pressed
+//			{
+//				try {
+//					result.add(movie_logics.get_genre_id(genres.get(i)));
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		return result;
+//	}
+	
+	public static List<String> get_genres_string( List<Boolean> pressed_genres, List<String> genres)
 	{
-		List<Integer> result = new ArrayList<Integer>();
+		List<String> result = new ArrayList<String>();
 		for (int i=0; i< pressed_genres.size() ; i++)
 		{
 			if(pressed_genres.get(i)==true) //pressed
 			{
-				try {
-					result.add(movie_logics.get_genre_id(genres.get(i)));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+					result.add(genres.get(i));	
 			}
 		}
 		return result;

@@ -7,17 +7,19 @@ Dear Shachar,
 	
 	----On user created message place a space after the user name :)
 	
-	Activities are running out of the screen (Avital)
+	------Activities are running out of the screen (Avital)
 	
 	----When signing up with short password write an informative message 
 	
-	Use all search options in the movie search
+	-----Use all search options in the movie search
 
 	-----After first rating a movie - nothing happends tough the rate gets in the DB
 	
 	Use db_operations.fill_user_prefence()
 
-	Crash on Login when empty DB
+	-----Crash on Login when empty DB
+		avital please check why mimimazied: after log in find that there are no movies to show, it does open the 
+		overview window but it s minimized...
 
 
 	shahar please implement year in search. search for your name - i need you to cloese windows and go to log in in 	preferences
@@ -28,12 +30,8 @@ Dear Shachar,
 
 		do not create a new display without telling me about it
 
-		search movie:  support language and year(from - until) - neccesary textboxs has been added
-				also make sure you search by genres (it seems you dont...)                          
+		search movie: be ready to support a language and year(from - to)
 
-		overview tab: make sure "your recent activities" are general activities (i.e rate movies, tags, and social activities - all mixed up!)
-
-		
 
 When finished tell me to re run checks and fix more of my bugs...
 regards ;)

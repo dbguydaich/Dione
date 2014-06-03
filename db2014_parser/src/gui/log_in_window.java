@@ -59,6 +59,10 @@ public class log_in_window extends Shell
 	{
 		super(display);
 		
+		
+		final Thread cron = new Thread(new cron());
+		cron.start(); ///cron for matan
+		
 		this.setSize(300, 300);
 		this.setText("MovieBook");
 		
@@ -66,6 +70,7 @@ public class log_in_window extends Shell
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
+				cron.interrupt();
 				display.dispose();
 			}		
 		});
@@ -215,6 +220,7 @@ public class log_in_window extends Shell
 								else
 								{
 									gui_utils.pref_win.dispose();
+								////////shahar here we got the problem we talked on the phone
 									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 									gui_utils.tabs_win.open();
 								}

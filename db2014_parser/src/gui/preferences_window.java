@@ -55,6 +55,11 @@ public class preferences_window extends Shell
 		movie_label = new Label(this, SWT.NONE);
 		
 		update_movie();
+		
+		if(can_be_opened==false)
+		{
+			return;
+		}
 
 		this.setSize(400, 300);
 		
@@ -261,19 +266,20 @@ public class preferences_window extends Shell
 	{
 		try {
 			current_movie = log_in_window.user.get_unrated_movie();
-			movie_label.setText(current_movie.get_movie_name());
-			
 			if(current_movie == null)
 			{		
 				MessageBox messageBox = new MessageBox(this, SWT.ICON_WARNING); ////shahar check
 				messageBox.setText("Error");
 				messageBox.setMessage("Couldn't find any movies to rate");
 				messageBox.open();
-				go_to_overview();
+		//		go_to_overview();
 				can_be_opened = false;
 				return;
 				
 			}
+			movie_label.setText(current_movie.get_movie_name());
+			
+	
 			
 		} catch (SQLException e) {
 			gui_utils.raise_sql_error_window(getDisplay());
@@ -282,15 +288,15 @@ public class preferences_window extends Shell
 	}
 	
 	
-	public void go_to_overview()
-	{
-		gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-		
-		gui_utils.display = new Display();
-		gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-		gui_utils.tabs_win.open();
-	}
-	
+//	public void go_to_overview()
+//	{
+//		gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
+//		
+//		//gui_utils.display = new Display();
+//		gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
+//		gui_utils.tabs_win.open();
+//	}
+//	
 	
 
 
