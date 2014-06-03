@@ -51,8 +51,6 @@ public class search_movie_tab extends Composite
 	{
 		super(parent, style);
 		
-		Composite results_area = new Composite(this, SWT.NONE);
-		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
 		
 		List<Label> tags_labels = new ArrayList<Label>();	
 		List<Label> actors_labels = new ArrayList<Label>();
@@ -65,6 +63,27 @@ public class search_movie_tab extends Composite
 		final List<Button> genres_checkboxes;
 		
 		List<String> genres;
+		
+		//results area
+		Composite results_area = new Composite(this, SWT.NONE);
+		
+		//results headline
+		Label results_headline = new Label(results_area, SWT.BOLD);
+		results_headline.setText("Search Results");
+		results_headline.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
+		final Font font_results_headline = new Font(display, "Ariel", 12, SWT.NONE);
+		results_headline.setFont(font_results_headline);
+		results_headline.addDisposeListener(new DisposeListener()
+		{
+			public void widgetDisposed(DisposeEvent e) 
+			{
+				font_results_headline.dispose();
+			}		
+		});
+		
+		//result list
+		final org.eclipse.swt.widgets.List movie_list = new org.eclipse.swt.widgets.List(results_area, SWT.V_SCROLL);
+		movie_list.setLayoutData(gui_utils.grid_data_factory(353, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
 		
 		
 	
@@ -123,7 +142,7 @@ public class search_movie_tab extends Composite
 		
 		//left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		left_area.setLayoutData(gui_utils.form_data_factory(180, 250, 40, 10));
+		left_area.setLayoutData(gui_utils.form_data_factory(180, 210, 40, 10));
 		GridLayout grid_layout_left_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_left_area);
 		
@@ -150,25 +169,25 @@ public class search_movie_tab extends Composite
 		Label director_label = new Label(left_area, SWT.NONE);
 		director_label.setText("Director");
 		director_label.setFont(font_left_labels);
-		director_label.setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
+		director_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
 		
 		
 		
 		//director text
 		final Text director_text = new Text(left_area, SWT.BORDER);
-		director_text.setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
+		director_text.setLayoutData(gui_utils.grid_data_factory(15, 15, -1, -1, -1, -1));
 		
 		
 		//language label
 		Label language_label = new Label(left_area, SWT.NONE);
 		language_label.setText("Language");
 		language_label.setFont(font_left_labels);
-		language_label.setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
+		language_label.setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
 		
 		
 		//language text
 		final Text language_text = new Text(left_area, SWT.BORDER);
-		language_text.setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
+		language_text.setLayoutData(gui_utils.grid_data_factory(15, 15, -1, -1, -1, -1));
 		
 		
 		
@@ -180,24 +199,66 @@ public class search_movie_tab extends Composite
 			actors_labels.get(i).setText("Actor" + (i+1));
 			actors_labels.get(i).setFont(font_left_labels);
 			if(i == 0)
-				actors_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 20, -1, -1, -1, -1));
+				actors_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 15, -1, -1, -1, -1));
 			else
 				actors_labels.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1, -1));
 			
 			actors_texts.add(new Text(left_area, SWT.BORDER));
 			if(i == 0)
-				actors_texts.get(i).setLayoutData(gui_utils.grid_data_factory(15, 20, -1, -1, -1, -1));
+				actors_texts.get(i).setLayoutData(gui_utils.grid_data_factory(15, 15, -1, -1, -1, -1));
 			else
 				actors_texts.get(i).setLayoutData(gui_utils.grid_data_factory(15, 5, -1, -1, -1, -1));
 		}
 		
 		
 		
+		
+		
+		//year area
+		Composite year_area = new Composite(this, SWT.NONE);
+		year_area.setLayoutData(gui_utils.form_data_factory(377, 43, 250, 10));
+		GridLayout grid_layout_year_area = new GridLayout(4, false);
+		year_area.setLayout(grid_layout_year_area);
+		
+		
+		
+		//year from label
+		Label year_from_label = new Label(year_area, SWT.NONE);
+		year_from_label.setText("Year(from)");
+		year_from_label.setFont(font_left_labels);
+		year_from_label.setLayoutData(gui_utils.grid_data_factory(-1, 10, -1, -1, -1, -1));
+		
+		
+		
+		
+		//year from text
+		final Text year_from_text = new Text(year_area, SWT.BORDER);
+		year_from_text.setLayoutData(gui_utils.grid_data_factory(14, 10, -1, -1, -1, -1));
+		
+		
+		
+		
+		//year until label
+		Label year_until_label = new Label(year_area, SWT.NONE);
+		year_until_label.setText("Year(until)");
+		year_until_label.setFont(font_left_labels);
+		year_until_label.setLayoutData(gui_utils.grid_data_factory(-1, 10, -1, -1, -1, -1));
+		
+		
+		
+		
+		//year until text
+		final Text year_until_text = new Text(year_area, SWT.BORDER);
+		year_until_text.setLayoutData(gui_utils.grid_data_factory(9, 10, -1, -1, -1, -1));
+		
+		
+		
 		//tags area
 		Composite tags_area = new Composite(this, SWT.NONE);
-		tags_area.setLayoutData(gui_utils.form_data_factory(197, 190, 100, 190));
+		tags_area.setLayoutData(gui_utils.form_data_factory(197, 155, 95, 190));
 		GridLayout grid_layout_tags_area = new GridLayout(2, false);
 		tags_area.setLayout(grid_layout_tags_area);
+		
 		
 		
 		
@@ -252,7 +313,7 @@ public class search_movie_tab extends Composite
 		
 		//genres area
 		Composite genres_area = new Composite(this, SWT.NONE);
-		genres_area.setLayoutData(gui_utils.form_data_factory(210, 250, 40, 410));
+		genres_area.setLayoutData(gui_utils.form_data_factory(210, 320, 40, 410));
 		GridLayout grid_layout_genres_area = new GridLayout(2, false);
 		genres_area.setLayout(grid_layout_genres_area);
 		
@@ -291,7 +352,7 @@ public class search_movie_tab extends Composite
 		for(int i = 0; i < genres.size(); i++)
 		{
 			Button checkbox = new Button(genres_area, SWT.CHECK);		
-			checkbox.setLayoutData(gui_utils.grid_data_factory(5, 5, -1, -1, -1, -1));
+			checkbox.setLayoutData(gui_utils.grid_data_factory(5, -1, -1, -1, -1, -1));
 			checkbox.setText(genres.get(i));
 			genres_checkboxes.add(checkbox);
 		}
@@ -299,7 +360,7 @@ public class search_movie_tab extends Composite
 		
 		//search button
 		Button search_button = new Button(this, SWT.PUSH | SWT.WRAP);
-		search_button.setLayoutData(gui_utils.form_data_factory(80, 47, 337, 50));
+		search_button.setLayoutData(gui_utils.form_data_factory(80, 47, 367, 410));
 		search_button.setText("Search");
 		final Font font_search_button = new Font(display, "Ariel", 12, SWT.NONE); 
 		search_button.setFont(font_search_button);
@@ -413,25 +474,14 @@ public class search_movie_tab extends Composite
 		
 		
 		//results area
-		results_area.setLayoutData(gui_utils.form_data_factory(416, 120, 295, 190));
+		results_area.setLayoutData(gui_utils.form_data_factory(377, 120, 300, 10));
 		GridLayout grid_layout_results_area = new GridLayout(1, false);
 		results_area.setLayout(grid_layout_results_area);
 		
 		
 		
-		//results headline
-		Label results_headline = new Label(results_area, SWT.NONE);
-		results_headline.setText("Search Results");
-		results_headline.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2, -1, SWT.CENTER, -1));
-		final Font font_results_headline = new Font(display, "Ariel", 12, SWT.NONE);
-		results_headline.setFont(font_results_headline);
-		results_headline.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				font_results_headline.dispose();
-			}		
-		});
+		
+		
 		
 		
 //		//results scroller
@@ -449,7 +499,7 @@ public class search_movie_tab extends Composite
 		
 		
 		
-		movie_list.setLayoutData(gui_utils.grid_data_factory(390, 90, -1, -1, SWT.FILL, -1, SWT.FILL, -1));
+
 		
 		
 		//// TO BE USED WHEN IMPLEMENTED /////	

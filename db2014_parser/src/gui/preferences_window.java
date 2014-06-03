@@ -47,6 +47,7 @@ public class preferences_window extends Shell
 	Label movie_label;
 	boolean can_be_opened=true;
 	light_entity_movie current_movie = null;
+	
 	public preferences_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
@@ -165,8 +166,6 @@ public class preferences_window extends Shell
 					int rate_desired = gui_utils.get_index_button(radios);
 					handle_rating(rate_desired);
 					update_movie();
-			//		current_movie = movie_logics.get_unrated_movie_by_user(log_in_window.user.get_current_user_id());
-					//shahar that's is final we have to see how we make the next movie be availble///
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block
 					gui_utils.raise_sql_error_window(display);
@@ -210,14 +209,16 @@ public class preferences_window extends Shell
 			public void widgetSelected(SelectionEvent arg0) {
 				
 				gui_utils.pref_win.dispose();
+					
 				if(gui_utils.display.isDisposed())
-					gui_utils.display = Display.getDefault();
+					gui_utils.display = new Display();
 				
 				if(gui_utils.tabs_win == null)
 				{
 					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 					gui_utils.tabs_win.open();
 				}
+				
 				else if(gui_utils.tabs_win.isDisposed())
 				{
 					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
@@ -225,45 +226,24 @@ public class preferences_window extends Shell
 				}
 				
 		}});
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		//////
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		
 		this.addDisposeListener(new DisposeListener()
 		{
+			/*
+			 * Possible Scenarios:
+			 * 1. user has been rated movies for the first time - nothing is open, so we exit
+			 * 2. user has been reted movies on demand (all tabs still open) - go back
+			 */
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				display.dispose();
+				if(gui_utils.tabs_win == null)
+					display.dispose();	
+				
+				else if(gui_utils.tabs_win.isDisposed())
+					display.dispose();
 			}		
 		});
-		
 	}
 	
 	public void handle_rating(int rate)
@@ -276,6 +256,7 @@ public class preferences_window extends Shell
 			e.printStackTrace();
 		}
 	}
+	
 	public void update_movie()
 	{
 		try {
@@ -289,14 +270,10 @@ public class preferences_window extends Shell
 				messageBox.setMessage("Couldn't find any movies to rate");
 				messageBox.open();
 				go_to_overview();
-				can_be_opened =false;
+				can_be_opened = false;
 				return;
 				
 			}
-			
-			
-			
-			
 			
 		} catch (SQLException e) {
 			gui_utils.raise_sql_error_window(getDisplay());
@@ -309,7 +286,7 @@ public class preferences_window extends Shell
 	{
 		gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 		
-		gui_utils.display = Display.getDefault();
+		gui_utils.display = new Display();
 		gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 		gui_utils.tabs_win.open();
 	}

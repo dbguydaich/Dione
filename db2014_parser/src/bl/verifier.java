@@ -21,5 +21,4 @@ public class verifier {
 			return false;
 		return true;
 	}
-	
 }

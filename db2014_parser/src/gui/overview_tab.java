@@ -348,7 +348,7 @@ public class overview_tab extends Composite
 //		user_activities_strings.add("recent activity 6");
 //		//
 		
-		final Font font_user_activities_labels = new Font(display, "Ariel", 13, SWT.NONE);
+		final Font font_user_activities_labels = new Font(display, "Ariel", 9, SWT.NONE);
 		i = 0;
 		for(String str: user_activities_strings)
 		{

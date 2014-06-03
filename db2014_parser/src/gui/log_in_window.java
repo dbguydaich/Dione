@@ -196,7 +196,7 @@ public class log_in_window extends Shell
 							{
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
 								
-								gui_utils.display = Display.getDefault();
+								gui_utils.display = new Display();
 								gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 								gui_utils.tabs_win.open();
 							}
@@ -204,7 +204,7 @@ public class log_in_window extends Shell
 							else
 							{
 								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-								gui_utils.display = Display.getDefault();
+								gui_utils.display =  new Display();
 								gui_utils.pref_win = new preferences_window(gui_utils.display); 
 								
 								if(gui_utils.pref_win.can_be_opened)
