@@ -25,19 +25,19 @@ public abstract class movie_logics
 		return (ret);
 	}
 
-	public static boolean does_movie_exists(String title, String director, Integer year,
+	public static boolean does_movie_exists(String title, String director, String language, Integer min_year, Integer max_year,
 			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
 	{
-		return (get_relevant_movies(title, director,year, actor_list, tags_list, genre_list, rating).size() > 0);
+		return (get_relevant_movies(title, director,language, min_year, max_year, actor_list, tags_list, genre_list, rating).size() > 0);
 	}
 	
-	public static List<String> get_relevant_movies_names(String title, String director, Integer year,
-			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
+	public static List<String> get_relevant_movies_names(String title, String director, String language, Integer min_year, Integer max_year,
+			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating)
 			throws SQLException
 	{
 		List<String> result = new ArrayList<String>();
-		List<light_entity_movie> movies = get_relevant_movies( title, director , year , actor_list, tags_list, genre_list, rating);
+		List<light_entity_movie> movies = get_relevant_movies( title, director ,language, min_year, max_year , actor_list, tags_list, genre_list, rating);
 		
 		for (light_entity_movie movie: movies)
 		{
@@ -47,11 +47,11 @@ public abstract class movie_logics
 		return (result);
 	}
 
-	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year,
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, String language, Integer min_year, Integer max_year,
 			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
 	{
-		return (db_queries_movies.get_relevant_movies(title, director, year, actor_list, tags_list, genre_list, rating));
+		return (db_queries_movies.get_relevant_movies(title, director, language, min_year, max_year, actor_list, tags_list, genre_list, rating));
 	}
 	
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 

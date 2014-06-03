@@ -66,7 +66,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Dione`.`movie` (
   `idMovie` INT NOT NULL AUTO_INCREMENT,
   `idLanguage` TINYINT NULL DEFAULT NULL,
-  `idDirector` INT NULL DEFAULT NULL,
+  `idDirector` INT NULL DEFAULT 1,
   `movieName` VARCHAR(128) NOT NULL,
   `movie_qualified_name` VARCHAR(100) NULL DEFAULT NULL,
   `year` SMALLINT NULL DEFAULT NULL,
@@ -277,17 +277,7 @@ CREATE TABLE IF NOT EXISTS `Dione`.`movie_tag_rate` (
   `idMovie` SMALLINT NOT NULL,
   `idTag` INT NOT NULL,
   `rate` TINYINT NOT NULL,
-  PRIMARY KEY (`idTag`, `idMovie`),
-  CONSTRAINT `movie_fk_user_tags_movie_rating`
-    FOREIGN KEY (`idMovie`)
-    REFERENCES `Dione`.`movie` (`idMovie`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT,
-  CONSTRAINT `tag_fk_user_tags_movie_rating`
-    FOREIGN KEY (`idTag`)
-    REFERENCES `Dione`.`tag` (`idtag`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT)
+  PRIMARY KEY (`idTag`, `idMovie`))
 ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;

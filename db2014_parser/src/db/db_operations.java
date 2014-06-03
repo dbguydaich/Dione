@@ -502,7 +502,7 @@ public abstract class db_operations
 	public static boolean perform_invocation(invocation_code code) 
 			throws SQLException
 	{
-		return (insert("invocations", "`invokeCode`, `invokeDate`", code, get_curr_time()) > 0);
+		return (insert("invocations", "`invokeCode`, `invokeDate`", code.ordinal(), get_curr_time()) > 0);
 	}
 
 	public static Timestamp get_last_invocation(invocation_code code) 
@@ -510,7 +510,7 @@ public abstract class db_operations
 	{
 		String whereClause = "invokeCode = ? ORDER BY invokeDate desc";
 		
-		ResultSet results = select("invokeDate" , "invocations" , whereClause, code);
+		ResultSet results = select("invokeDate" , "invocations" , whereClause, code.ordinal());
 	
 		if (results.next())
 			return (results.getTimestamp(1));
@@ -518,26 +518,28 @@ public abstract class db_operations
 			return (null);
 	}
 	
-	public static boolean was_there_db_update() 
+	public static boolean was_there_an_invocation(invocation_code code) 
 			throws SQLException
 	{
-		String whereSegment = "invocationCode = 1 ";
+		String whereSegment = "invocationCode = " + code;
 		ResultSet result = select("invocationCode", "invocations", whereSegment);
 		
 		// did select find souch user
 		return (result.next());
 	}
-
+	
 	public static boolean fill_movie_tag_relation() 
 			throws SQLException
 	{
+		Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
+		
 		// Is it ok not to redo this
-		if (was_there_db_update())
+		if (ts != null)
 		{		
 			Timestamp now = new Timestamp(new java.util.Date().getTime());
-			Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
-		
-			if (ts.before(now))
+			
+			// was this performed in the last 15 minutes
+			if (now.before(ts))
 				return (true);
 		}	
 	
@@ -550,13 +552,14 @@ public abstract class db_operations
 			return (false);
 		
 		// perform
-		return (run_querey("INSERT INTO user_prefence (idUser, idTag, tag_user_rate) " +
-							" SELECT idMovie, idTag, round(avg(rate)) " +
+		return (run_querey("INSERT INTO movie_tag_rate (idMovie, idTag, rate) " +
+							" SELECT idMovie, idTag, round(avg(rate)) as rate" +
 							" FROM user_tag_movie " +
 							" GROUP BY idMovie, idTag") >= 0);
 		
 	
 	}
+
 }
 
 

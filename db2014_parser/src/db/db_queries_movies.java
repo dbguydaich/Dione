@@ -308,8 +308,8 @@ public abstract class db_queries_movies extends db_operations
 	 * @throws NumberFormatException
 	 * @throws SQLException
 	 */
-	public static List<light_entity_movie> get_relevant_movies(String title, String director, Integer year, 
-			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
+	public static List<light_entity_movie> get_relevant_movies(String title, String director, String language, Integer min_year, 
+			Integer max_year, List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
 		String select = "idMovie, movieName, year, wiki, personName, duration, plot";
@@ -333,11 +333,26 @@ public abstract class db_queries_movies extends db_operations
 			values.add(director);
 		}
 		
-		// year filter
-		if (year != null)
+		// Language filter
+		if (language != null && language != "")
 		{
-			where += " AND (movie.year = ?)";
-			values.add(year);
+			from += ", language";
+			where += " AND language.idLanguage = movie.idLanguage" + 
+					" AND (language.languageName like ?)";
+			values.add("%" + language + "%");
+		}
+		
+		// year filter
+		if (min_year != null)
+		{
+			where += " AND (movie.year > ?)";
+			values.add(min_year);
+		}
+		
+		if (max_year != null)
+		{
+			where += " AND (movie.year < ?)";
+			values.add(max_year);
 		}
 		
 		// Actor filter
