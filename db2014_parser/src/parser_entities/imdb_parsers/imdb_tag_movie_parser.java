@@ -78,7 +78,8 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser{
 		/*if less then Max, simply add*/
 		if (tags.size() < MAX_TAGS)
 		{
-			tags.add(new_tag);
+			movie.add_to_tags(new_tag);
+			this.parser_movie_map.put(movie.get_movie_qualified_name(), movie);
 			c_tags++;
 		}
 		else /*more than max - replace if less popular tag exists possible*/
