@@ -61,7 +61,7 @@ public class imdb_language_parser extends abstract_imdb_parser{
 		return 1;
 	}
 
-	public HashSet<String> get_parser_languages()
+	public HashSet<String> get_enrichment_set()
 	{
 		return this.parser_language_set;
 	}

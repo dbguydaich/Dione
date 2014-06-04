@@ -158,7 +158,7 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 					file_line_progress++;
 					
 					/*notify importer we've made some progress*/
-					if (file_line_progress % 10000 == 0)
+					if (file_line_progress % 1000000 == 0)
 						this.notifyListeners(this, "file_line_progress", "0", (new Integer(file_line_progress)).toString());
 					
 					if (splitted_line[0] == null) // bad line
@@ -241,5 +241,11 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 		}
 		return null;
 	}
+	
+	public HashMap<String,entity_movie> get_parser_movies()
+	{
+		return this.parser_map_movie;
+	}
+	
 
 }

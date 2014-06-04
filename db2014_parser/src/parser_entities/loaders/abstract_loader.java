@@ -1,14 +1,18 @@
 package parser_entities.loaders;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import parser_entities.entity_person;
@@ -28,11 +32,36 @@ public abstract class abstract_loader extends db_operations{
 		public static final int 		BATCH_SIZE =			  	1000;
 		protected String 				entity_table_name; 	/* the table updated*/
 		public static final boolean 	DEBUG_LOAD = false; 
+		private int 					task_size = 0;			
 		
 		
 		public abstract_loader()
 		{
 			
+		}
+		
+		public int get_task_size()
+		{
+			return task_size;
+			
+		}
+		
+		private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+
+		private void notifyListeners(Object object, String property,
+				String oldValue, String newValue) {
+			for (PropertyChangeListener name : listener) {
+				name.propertyChange(new PropertyChangeEvent(this, property,
+						oldValue, newValue));
+			}
+		}
+		
+		public void addChangeListener(PropertyChangeListener newListener) {
+			listener.add(newListener);
+		}
+
+		public void removeChangeListener(PropertyChangeListener newListener) {
+			listener.remove(newListener);
 		}
 		
 		abstract protected void sync_update_tables() throws SQLException;
@@ -46,6 +75,8 @@ public abstract class abstract_loader extends db_operations{
 		{
 			int batch_count = 0;
 			int fail_count=0;
+			int progress = 0;
+			task_size = update_entity.size();
 			Iterable<Object> update_entities;
 			try {
 				/*update relevant tables with db*/
@@ -56,6 +87,9 @@ public abstract class abstract_loader extends db_operations{
 				set_perpared_statments(db_conn);
 				for (Object obj : update_entity) 
 				{
+					progress++;
+					if (progress % 10000 == 0)
+						this.notifyListeners(this, "progress", "0", (new Integer(progress)).toString());
 					batch_count += create_statments(obj);
 					if (batch_count % BATCH_SIZE == 0)
 					{
