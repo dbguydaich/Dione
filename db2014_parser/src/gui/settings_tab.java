@@ -99,7 +99,7 @@ public class settings_tab extends Composite
 				if(gui_utils.import_progress_win != null)
 					if(!gui_utils.import_progress_win.isDisposed())
 					{
-						//shachar: show messagebox: "you are already importing data..."
+						//shachar: check spell for the following:
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Already Importing");
 						messageBox.setMessage("Data import is already running");
@@ -193,18 +193,13 @@ public class settings_tab extends Composite
 						 */
 					}
 					
-					else
-					{
-						/*
-						 * Shachar: open a pref window
-						 */
-					}
+					else /* open preferences window */
+						open_pref_win();
+						
 				}
 				else
-				{
-					/*
-					 * Shachar: open a pref window
-					 */
+				{ /* open preferences window */
+					open_pref_win();
 				}
 			}
 		});
@@ -444,6 +439,33 @@ public class settings_tab extends Composite
 
 		
 		
+	}
+	
+	
+	private static void open_pref_win()
+	{
+		gui_utils.pref_win = new preferences_window(gui_utils.display);
+		if(gui_utils.pref_win.can_be_opened)
+		{
+			gui_utils.pref_win.open();
+		}
+		
+		else
+		{ /* close preferences window */
+			close_pref_win();
+		}
+	}
+	
+	
+	private static void close_pref_win()
+	{
+		gui_utils.EXIT_ON_LOGIN = false;
+		gui_utils.pref_win.dispose();
+		
+		MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING);
+		messageBox.setText("Error");
+		messageBox.setMessage("Couldn't find any movies to rate");
+		messageBox.open();
 	}
 
 }

@@ -92,7 +92,7 @@ public class import_window extends Shell
 				if(gui_utils.import_progress_win != null)
 					if(!gui_utils.import_progress_win.isDisposed())
 					{
-						//shachar: show messagebox: "you are already importing data..."
+						//shachar: check spell for the following:
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Already Importing");
 						messageBox.setMessage("Data import is already running");

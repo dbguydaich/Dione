@@ -34,6 +34,7 @@ Added tasks 04/06/2014
 
 	When rating a movie through the movie page you get an error though the movie rate is inserted to the DB
 
+
 	shahar's addition:
 		when main starts, if it is the first run - open import data window
 		 (i did it, just add the function that checks if it is the first run, and uncomment it)
@@ -42,6 +43,8 @@ Added tasks 04/06/2014
 
 		import data button in settings tab - i've already implemented the listener
 
+		rate movie button in settings tab - i've already implemented the listener	
+	
 		look all over the gui for : "//shachar:"
 		
 When finished tell me to re run checks and fix more of my bugs...

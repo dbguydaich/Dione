@@ -227,10 +227,9 @@ public class preferences_window extends Shell
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				
+				gui_utils.EXIT_ON_LOGIN = false;
 				gui_utils.pref_win.dispose();
-					
-				if(gui_utils.display.isDisposed())
-					gui_utils.display = new Display();
+				
 				
 				if(gui_utils.tabs_win == null)
 				{

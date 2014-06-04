@@ -226,7 +226,7 @@ public class log_in_window extends Shell
 									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 									gui_utils.tabs_win.open();
 									
-									MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING); ////shahar check
+									MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING);
 									messageBox.setText("Error");
 									messageBox.setMessage("Couldn't find any movies to rate");
 									messageBox.open();
