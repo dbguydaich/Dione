@@ -17,6 +17,7 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser{
 			HashMap<String,Integer> parser_tag_count_map) {
 		
 		super(movie_map);
+
 		
 		this.parser_tag_count_map = parser_tag_count_map;
 		
@@ -31,7 +32,7 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser{
 			HashMap<String, String> imdb_name_to_director,
 			HashMap<String, String> imdb_to_yago,
 			HashMap<String, Integer> parser_tag_count_map) {
-		 super(parser_movie_map);
+		super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
 		 
 		 this.parser_tag_count_map = parser_tag_count_map;
 			

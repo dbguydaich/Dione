@@ -10,7 +10,7 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 
 	private static final String imdb_tags_list_start = "keywords in use:";
 	private static final String imdb_tags_list_end = "5: Submission Rules";
-	private static final Integer MIN_TAG_COUNT = 10;
+	private static final Integer MIN_TAG_COUNT = 500;
 	private HashSet<String> parser_tag_set;					/* imdb entities - tags*/
 	private HashMap<String,Integer> parser_tag_count_map;	/* handles tag counts, to establish top 10 per movie*/
 	
