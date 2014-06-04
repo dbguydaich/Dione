@@ -32,6 +32,14 @@ Dear Shachar,
 
 		search movie: be ready to support a language and year(from - to)
 
+Added tasks 04/06/2014
+	delete the datsk you have finished from this document
+	
+	limit the password on change password on settings tab
+	
+	Hook "Rate Random Movies" button
+
+	When rating a movie through the movie page you get an error though the movie rate is inserted to the DB
 
 When finished tell me to re run checks and fix more of my bugs...
 regards ;)

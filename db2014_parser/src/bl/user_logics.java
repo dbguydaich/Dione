@@ -182,9 +182,8 @@ public class user_logics
 			throws SQLException
 	{
 		config settings = new config();
-		int limit = settings.get_default_activity_limit();
-		
-		
+		int limit = settings.get_default_small_limit();
+				
 		return (get_friends_recent_activities(current_user_id, limit));
 	}
 	
@@ -236,7 +235,7 @@ public class user_logics
 			throws SQLException
 	{
 		config settings = new config();
-		int limit = settings.get_default_activity_limit();
+		int limit = settings.get_default_small_limit();
 		
 		return (get_user_recent_social_activities(current_user_id, limit));
 	}
@@ -411,7 +410,10 @@ public class user_logics
 			throws SQLException
 	{
 		if (limit == null)
-			limit = 5;
+		{
+			config settings = new config();
+			limit = settings.get_default_small_limit();
+		}
 		
 		return (db_queries_user.get_unrated_movies(user_id, limit));
 	}

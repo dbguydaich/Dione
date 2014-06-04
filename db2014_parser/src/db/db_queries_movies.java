@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import config.config;
 import parser_entities.*;
 
 /**
@@ -312,9 +313,9 @@ public abstract class db_queries_movies extends db_operations
 			Integer max_year, List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 					throws SQLException 
 	{
-		String select = "idMovie, movieName, year, wiki, personName, duration, plot";
-		String from	 = "movie, person";
-		String where = "person.idPerson = movie.idDirector ";
+		String select = "idMovie, movieName, year, wiki, duration, plot";
+		String from	 = "movie";
+		String where = "1 = 1 ";
 		List<Object> values = new ArrayList<Object>();
 		
 		// Title filter
@@ -328,9 +329,16 @@ public abstract class db_queries_movies extends db_operations
 		// Director filter
 		if (director != null && director != "")
 		{
-			where += " AND (person.personName like ?)";
+			select += ", personName";
+			from += ", person ";
+			where += " AND person.idPerson = movie.idDirector  " + 
+						" AND (person.personName like ?) ";
 			director = "%" + director + "%";
 			values.add(director);
+		}
+		else
+		{
+			select += ", '' as personName ";
 		}
 		
 		// Language filter
@@ -369,13 +377,16 @@ public abstract class db_queries_movies extends db_operations
 				// For every actor add a constraint
 				for (String actor : actor_list)
 				{
-					actorsCond += " AND EXISTS (SELECT * FROM actor_movie, person as actors WHERE " + 
-										" actor_movie.idMovie = actorMovie.idMovie AND " +		
-										" actor_movie.idActor = actors.idPerson AND " +
-										" actors.personName like ?)";
-					
-					// Add it in order 
-					values.add( "%" + actor + "%");
+					if (actor != null)
+					{
+						actorsCond += " AND EXISTS (SELECT * FROM actor_movie, person as actors WHERE " + 
+											" actor_movie.idMovie = actorMovie.idMovie AND " +		
+											" actor_movie.idActor = actors.idPerson AND " +
+											" actors.personName like ?)";
+						
+						// Add it in order 
+						values.add( "%" + actor + "%");
+					}
 				}
 				
 				// This closes the IN clause
@@ -388,24 +399,34 @@ public abstract class db_queries_movies extends db_operations
 		// Tag filter
 		if (tags_list != null && tags_list.size() > 0)
 		{
-			String tagsCond = " AND idMovie IN (SELECT tagMovie.idMovie FROM movie as tagMovie WHERE 'a' = 'a' ";
-			
-			// For every actor add a constraint
+			int tagcount = 0;
 			for (String tag : tags_list)
+				tagcount += tag.length();
+			
+			if (tagcount > 0)
 			{
-				tagsCond += "AND EXISTS (SELECT * FROM movie_tag, tag WHERE " + 
-								" movie_tag.idTag = tag.idTag AND " +
-								" movie_tag.idMovie = tagMovie.idMovie AND " +
-								" tag.tagName like ?)";
+				String tagsCond = " AND idMovie IN (SELECT tagMovie.idMovie FROM movie as tagMovie WHERE 'a' = 'a' ";
 				
-				// Add it in order 
-				values.add( "%" + tag + "%");
+				// For every actor add a constraint
+				for (String tag : tags_list)
+				{
+					if (tag != null)
+					{
+						tagsCond += "AND EXISTS (SELECT * FROM movie_tag, tag WHERE " + 
+										" movie_tag.idTag = tag.idTag AND " +
+										" movie_tag.idMovie = tagMovie.idMovie AND " +
+										" tag.tagName like ?)";
+						
+						// Add it in order 
+						values.add( "%" + tag + "%");
+					}
+				}
+				
+				// This closes the IN clause
+				tagsCond += ")";
+				
+				where += tagsCond;
 			}
-			
-			// This closes the IN clause
-			tagsCond += ")";
-			
-			where += tagsCond;
 		}
 		
 		// Genre filter
@@ -460,7 +481,10 @@ public abstract class db_queries_movies extends db_operations
 		}
 		
 		// Make the querey
-		ResultSet result = select(select, from, where + " limit 50;", values);
+		config settings = new config();
+		int limit = settings.get_default_large_limit();
+		
+		ResultSet result = select(select, from, where + " limit " + limit +  ";", values);
 		
 		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
 		
@@ -600,7 +624,12 @@ public abstract class db_queries_movies extends db_operations
 		// is table empty
 		if (result != null && result.next())
 		{		
-			return (int) (Integer.parseInt(result.getString(1)));
+			String temp = result.getString(1);
+			
+			if (temp != null)
+				return (int) (Integer.parseInt(temp));
+			else
+				return (0);
 		}
 		
 		return (-1);

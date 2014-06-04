@@ -19,15 +19,42 @@ public class light_entity_movie
 	private String 						entity_movie_plot;
 
 // constructor
-	public light_entity_movie(int id, String name, int year,String wiki, String director, int duration, String entity_movie_plot)
+	public light_entity_movie(Integer id, String name, Integer year,String wiki, String director, Integer duration, String plot)
 	{
-		this.entity_movie_id = id;
-		this.entity_movie_name = name;  
-		this.entity_movie_year = year; 
-		this.entity_movie_wiki = wiki;
-		this.entity_movie_director = director;
-		this.entity_movie_duration = duration;
-		this.entity_movie_plot = entity_movie_plot; 
+		if (id != null)
+			this.entity_movie_id = id;
+		else
+			this.entity_movie_id = 0;
+		
+		if (year != null)
+			this.entity_movie_year = year;
+		else
+			this.entity_movie_year = 0;
+		
+		if (duration != null)
+			this.entity_movie_duration = duration;
+		else
+			this.entity_movie_duration = 0;
+		
+		if (name != null)
+			this.entity_movie_name = name;
+		else
+			this.entity_movie_name = "";
+		
+		if (wiki != null)
+			this.entity_movie_wiki = wiki;
+		else
+			this.entity_movie_wiki = "";
+		
+		if (director != null)
+			this.entity_movie_director = director;
+		else
+			this.entity_movie_director = "";
+
+		if (plot != null)
+			this.entity_movie_plot = plot;
+		else
+			this.entity_movie_plot = "";
 	}
 
 	@Override

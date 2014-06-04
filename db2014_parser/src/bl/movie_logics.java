@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import config.config;
 import parser_entities.*;
 import db.*;
 
@@ -74,7 +75,10 @@ public abstract class movie_logics
 			throws SQLException 
 	{
 		if (limit == null)
-			limit = 5;
+		{
+			config settings = new config();
+			limit = settings.get_default_small_limit();
+		}
 			
 		return (db_queries_movies.get_top_rated_movies(limit));
 	}

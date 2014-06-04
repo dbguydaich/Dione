@@ -1,9 +1,7 @@
 package config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.io.InputStream;
  
 /* cofiguration handler class*/ 
 public class config {
@@ -157,8 +155,12 @@ public class config {
 		return Integer.parseInt(configFile.getProperty("WINDOW_WIDTH"));
 	}
 
-	public int get_default_activity_limit() {
-		return Integer.parseInt(configFile.getProperty("DEFAULT_ACTIVITY_LIMIT"));
+	public int get_default_small_limit() {
+		return Integer.parseInt(configFile.getProperty("DEFAULT_SMALL_LIMIT"));
+	}
+	
+	public int get_default_large_limit() {
+		return Integer.parseInt(configFile.getProperty("DEFAULT_BIG_LIMIT"));
 	}
 	
 }
