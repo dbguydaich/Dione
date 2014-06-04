@@ -99,9 +99,14 @@ public class all_tabs_window extends Shell
 						gui_utils.EXIT_ON_LOGIN = false;
 						gui_utils.pref_win.dispose();
 					}
+				if(gui_utils.EXIT_ON_LOGIN == true)
+				{
+					display.dispose();
+					//shachar: app is exiting here
+				}
 				
-				display.dispose();
-				//shachar: app is exiting here
+				else
+					gui_utils.EXIT_ON_LOGIN = true;
 			}		
 		});
 	}

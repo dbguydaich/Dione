@@ -26,6 +26,7 @@ public class gui_utils
 	static log_in_window login_win = null;
 	static preferences_window pref_win = null;
 	static import_window import_win = null;
+	static import_progress_window import_progress_win = null;
 	static Display display;
 	static boolean EXIT_ON_LOGIN = true;
 	
@@ -35,15 +36,23 @@ public class gui_utils
 
 		display = new Display();
 	
-		login_win = new log_in_window(display);
-		//movie_details_window movie_win = new movie_details_window(display, 1);
-		//tabs_win = new all_tabs_window(display);
-		//pref_win = new preferences_window(display);
-		//import_win = new import_window(display);
+		//if(it is first run on this device)
+		//{
+		//	import_win = new import_window(display);
+		//	import_win.open();
+		//}
+		
+		//else
+		//{
+			login_win = new log_in_window(display);
+			//movie_details_window movie_win = new movie_details_window(display, 1);
+			//tabs_win = new all_tabs_window(display);
+			//pref_win = new preferences_window(display);
+			//import_win = new import_window(display);
 		
 		
-		login_win.open();
-		
+			login_win.open();
+		//}
 		
 		
 	

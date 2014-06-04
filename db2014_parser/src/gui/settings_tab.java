@@ -92,6 +92,35 @@ public class settings_tab extends Composite
 			}		
 		});
 		
+		update_button.addSelectionListener(new SelectionAdapter() {
+			
+			public void widgetSelected(SelectionEvent arg0)
+			{
+				if(gui_utils.import_progress_win != null)
+					if(!gui_utils.import_progress_win.isDisposed())
+					{
+						//shachar: show messagebox: "you are already importing data..."
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("Already Importing");
+						messageBox.setMessage("Data import is already running");
+						messageBox.open();
+					}
+					else //running progress win
+					{
+						gui_utils.import_progress_win = new import_progress_window(display);
+						gui_utils.import_progress_win.open();
+					}
+						
+				else //running progress win
+				{	
+					gui_utils.import_progress_win = new import_progress_window(display);
+					gui_utils.import_progress_win.open();
+				}
+			}
+			
+			
+		});
+		
 		
 		//update label
 		Label update_label = new Label(this, SWT.NONE);
@@ -126,6 +155,7 @@ public class settings_tab extends Composite
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				log_in_window.user = null;
+				gui_utils.EXIT_ON_LOGIN = false;
 				gui_utils.tabs_win.dispose();
 				
 				//closing all current opened movie windows
@@ -134,10 +164,8 @@ public class settings_tab extends Composite
 					if(!win.isDisposed())
 						win.dispose();
 				}
+				
 				gui_utils.movie_windows = new ArrayList<movie_details_window>();
-					
-				if(gui_utils.display.isDisposed())
-					gui_utils.display = Display.getDefault();
 				gui_utils.login_win = new log_in_window(gui_utils.display);
 				gui_utils.login_win.open();
 				
@@ -175,7 +203,7 @@ public class settings_tab extends Composite
 				else
 				{
 					/*
-					 * open a pref window
+					 * Shachar: open a pref window
 					 */
 				}
 			}

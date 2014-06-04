@@ -12,17 +12,16 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class import_window extends Shell
 {
-	static import_window import_win = null;
 
 	public import_window(final Display display)
 	{
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-		import_win = this;
-		
+	
 		this.setSize(250, 230);
 		this.setText("Import Data");
 				
@@ -30,17 +29,8 @@ public class import_window extends Shell
 		
 		final Color import_window_color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(import_window_color);
-		
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				import_window_color.dispose();
-			}		
-		});
-		
-		
-		
+	
+	
 		//window background
 		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
 		final Image background = new Image(display, imgURL);
@@ -50,7 +40,16 @@ public class import_window extends Shell
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
+				import_window_color.dispose();
 				background.dispose();
+				
+				if(gui_utils.EXIT_ON_LOGIN == true) /* EXIT */
+				{
+					display.dispose();
+					//shachar: app is exiting here
+				}
+				else
+					gui_utils.EXIT_ON_LOGIN = true;
 			}		
 		});
 		
@@ -85,14 +84,31 @@ public class import_window extends Shell
 			}		
 		});
 
+		//import button listener
 		import_button.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent arg0)
 			{
-				import_progress_window import_progress_win = new import_progress_window(display);
-				import_progress_win.open();
-				dispose_import_window();
-				
+				if(gui_utils.import_progress_win != null)
+					if(!gui_utils.import_progress_win.isDisposed())
+					{
+						//shachar: show messagebox: "you are already importing data..."
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("Already Importing");
+						messageBox.setMessage("Data import is already running");
+						messageBox.open();
+					}
+					else //running progress win
+					{
+						gui_utils.import_progress_win = new import_progress_window(display);
+						gui_utils.import_progress_win.open();
+					}
+						
+				else //running progress win
+				{	
+					gui_utils.import_progress_win = new import_progress_window(display);
+					gui_utils.import_progress_win.open();
+				}
 			}
 			
 			
@@ -122,7 +138,7 @@ public class import_window extends Shell
 
 private static void dispose_import_window()
 {
-	import_win.dispose();
+	gui_utils.import_win.dispose();
 }
 	
 

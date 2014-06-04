@@ -201,24 +201,17 @@ public class log_in_window extends Shell
 						if( db_queries_user.authenticate_user(username,pass)){
 							user = new user_logics(); //Initializing user to be worked with all session long
 							user.login_user(username, pass);
-														
+							gui_utils.EXIT_ON_LOGIN = false;
+							gui_utils.login_win.dispose();							
 											
 							if (user.user_rated()) //user already rated movies
 							{
-								gui_utils.EXIT_ON_LOGIN = false;
-								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-								
 								gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 								gui_utils.tabs_win.open();
 							}
 							
 							else
 							{
-								gui_utils.EXIT_ON_LOGIN = false;
-								gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-
-								if(gui_utils.display.isDisposed())
-									gui_utils.display = new Display();
 								gui_utils.pref_win = new preferences_window(gui_utils.display);
 								if(gui_utils.pref_win.can_be_opened)
 								{
@@ -229,8 +222,6 @@ public class log_in_window extends Shell
 								{
 									gui_utils.EXIT_ON_LOGIN = false;
 									gui_utils.pref_win.dispose();
-									if(gui_utils.display.isDisposed())
-										gui_utils.display = new Display();
 									
 									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
 									gui_utils.tabs_win.open();

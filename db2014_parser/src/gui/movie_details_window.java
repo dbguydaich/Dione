@@ -94,16 +94,7 @@ public class movie_details_window extends Shell
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
-				background.dispose();
-			}		
-		});
-		
-		
-		
+	
 		this.setLayout(new FormLayout());
 		
 		final Font font_ariel_11 = new Font(display, "Ariel",10, SWT.NONE);
@@ -111,6 +102,7 @@ public class movie_details_window extends Shell
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
+				background.dispose();
 				font_ariel_11.dispose();
 			}		
 		});

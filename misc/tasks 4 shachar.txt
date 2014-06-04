@@ -7,8 +7,6 @@ Dear Shachar,
 	
 	----On user created message place a space after the user name :)
 	
-	------Activities are running out of the screen (Avital)
-	
 	----When signing up with short password write an informative message 
 	
 	-----Use all search options in the movie search
@@ -21,16 +19,11 @@ Dear Shachar,
 		avital please check why mimimazied: after log in find that there are no movies to show, it does open the 
 		overview window but it s minimized...
 
-
-	shahar please implement year in search. search for your name - i need you to cloese windows and go to log in in 	preferences
-
 	
 	shahar's addition:
 		please make sure you limit the result of every query that returns a "list of something"
 
 		do not create a new display without telling me about it
-
-		search movie: be ready to support a language and year(from - to)
 
 Added tasks 04/06/2014
 	delete the datsk you have finished from this document
@@ -41,5 +34,15 @@ Added tasks 04/06/2014
 
 	When rating a movie through the movie page you get an error though the movie rate is inserted to the DB
 
+	shahar's addition:
+		when main starts, if it is the first run - open import data window
+		 (i did it, just add the function that checks if it is the first run, and uncomment it)
+		
+		close background thread (resources: first close shell, then display) when the app is exiting.
+
+		import data button in settings tab - i've already implemented the listener
+
+		look all over the gui for : "//shachar:"
+		
 When finished tell me to re run checks and fix more of my bugs...
 regards ;)

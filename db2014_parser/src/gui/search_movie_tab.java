@@ -509,86 +509,38 @@ public class search_movie_tab extends Composite
 		results_area.setLayout(grid_layout_results_area);
 		
 		
-		
-		
-		
-	
-		
-		
-		
-//		//results scroller
-//		ScrolledComposite results_scroller = new ScrolledComposite(results_area, SWT.V_SCROLL | SWT.H_SCROLL); 
-//		GridData grid_data_results_scroller = new GridData(165, 240);
-//		grid_data_results_scroller.horizontalSpan = SWT.FILL;
-//		grid_data_results_scroller.horizontalAlignment = SWT.FILL;
-//		results_scroller.setLayoutData(grid_data_results_scroller);
-//		
-//		results_scroller.setExpandHorizontal(true);
-//		results_scroller.setExpandVertical(true);
-//		results_scroller.setAlwaysShowScrollBars(true);
-//		results_scroller.setMinWidth(100);
-//		results_scroller.setMinHeight(260);
-		
-		
-		
-
-		
-		
-		//// TO BE USED WHEN IMPLEMENTED /////	
-//		List<String> movie_names = get_relevant_movies_names(title,director,actor_list,tags_list,	rating_radios_text,genres_numbers) 
-//		
-//		
-//		for(int i = 0; i < 100; i ++)
-//		{
-//			movie_list.add("this is movie numberrrrrrrrrrrrrrrrrrr " + i);
-//		}
-//
-//		
-//		movie_list.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent event) {
-//		        int selectedItem = movie_list.getSelectionIndex();
-//		       
-//		        /* 
-//		         * handle selection of movie number selectedItem
-//		         */
-//		        
-//		      }
-//		});
-		
-		//movie_list.setVisible(false);
-		
-		
 	}
 	
-	
-	
-	
+
+	/*
+	 * listener for the movie_list selection
+	 */
 	Listener list_listener = new Listener(){
-				public void handleEvent(Event event) {
-			     int selectedItem = movie_list.getSelectionIndex();
-			     try 
-			     {
-			    	 System.out.println(selectedItem );
-			    	 System.out.println(movie_names.size());
-			    	 if ( selectedItem!=-1)
-			    	 {
-			    		
-			    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
-			    		movie_details_window movie_details = new movie_details_window( gui_utils.display, movie_id);
-				
-						movie_details.open();
-			    	 }
-			    	 
-					
-			     } catch (SQLException e) {
-			    		gui_utils.raise_sql_error_window(gui_utils.display);
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				        
-				        
-				      }
-			};
+		public void handleEvent(Event event) {
+	     int selectedItem = movie_list.getSelectionIndex();
+	     try 
+	     {
+	    	 System.out.println(selectedItem );
+	    	 System.out.println(movie_names.size());
+	    	 if ( selectedItem!=-1)
+	    	 {
+	    		
+	    	 int movie_id = movie_logics.get_movie_id(movie_names.get(selectedItem));
+	    		movie_details_window movie_details = new movie_details_window( gui_utils.display, movie_id);
+		
+				movie_details.open();
+	    	 }
+	    	 
+			
+	     } catch (SQLException e) {
+	    		gui_utils.raise_sql_error_window(gui_utils.display);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+		        
+		      }
+	};
 
 	
 
