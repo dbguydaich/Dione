@@ -55,10 +55,7 @@ public class cron implements Runnable {
 						
 					}
 	
-	        		
-	        	
-	        	
-				
+	        	   
 	        		System.out.println("cron task has started");
 					Thread.sleep(15*minute); ///15 minutes
 				} catch (InterruptedException e) {

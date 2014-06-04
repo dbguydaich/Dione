@@ -92,22 +92,25 @@ public class import_window extends Shell
 				if(gui_utils.import_progress_win != null)
 					if(!gui_utils.import_progress_win.isDisposed())
 					{
-						//shachar: check spell for the following:
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-						messageBox.setText("Already Importing");
-						messageBox.setMessage("Data import is already running");
+						messageBox.setText("Error");
+						messageBox.setMessage("Import is already in progress.");
 						messageBox.open();
 					}
 					else //running progress win
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
+						Thread thread = new Thread(gui_utils.my_importer);
+				        thread.start();
 					}
 						
 				else //running progress win
 				{	
 					gui_utils.import_progress_win = new import_progress_window(display);
 					gui_utils.import_progress_win.open();
+					Thread thread = new Thread(gui_utils.my_importer);
+			        thread.start();
 				}
 			}
 			
@@ -118,7 +121,7 @@ public class import_window extends Shell
 		
 		//note label
 		Label note_label = new Label(this, SWT.NONE);
-		note_label.setText("Note: This operation my take a while...");
+		note_label.setText("Note: This operation may take a while...");
 		note_label.setLayoutData(gui_utils.form_data_factory(225, 20, 160, 10));
 		final Font font_note_label = new Font(display, "Ariel",10, SWT.NONE);
 		note_label.setFont(font_note_label);

@@ -101,20 +101,25 @@ public class settings_tab extends Composite
 					{
 						//shachar: check spell for the following:
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-						messageBox.setText("Already Importing");
-						messageBox.setMessage("Data import is already running");
+						messageBox.setText("Error");
+						messageBox.setMessage("Data import is already in progress.");
 						messageBox.open();
 					}
 					else //running progress win
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
+						Thread thread = new Thread(gui_utils.my_importer);
+				        thread.start();
+						
 					}
 						
 				else //running progress win
 				{	
 					gui_utils.import_progress_win = new import_progress_window(display);
 					gui_utils.import_progress_win.open();
+					Thread thread = new Thread(gui_utils.my_importer);
+			        thread.start();
 				}
 			}
 			

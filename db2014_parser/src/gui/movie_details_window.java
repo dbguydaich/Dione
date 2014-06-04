@@ -332,6 +332,8 @@ public class movie_details_window extends Shell
 			count++;
 		}
 		
+		if(count == 0)
+			tags_area.setVisible(false);
 		
 		
 		//tags rate button
@@ -365,9 +367,9 @@ public class movie_details_window extends Shell
 					}
 					if(success)
 					{
-						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-						messageBox.setText("Error");
-						messageBox.setMessage("Could not rate. sorry.");
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+						messageBox.setText("SUCCESS");
+						messageBox.setMessage("Movie has been rated succesfully!");
 						messageBox.open();
 					}
 					
@@ -516,9 +518,9 @@ public class movie_details_window extends Shell
 					}
 				if(success)
 				{
-					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-					messageBox.setText("Error");
-					messageBox.setMessage("Could not rate. sorry.");
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+					messageBox.setText("SUCCESS");
+					messageBox.setMessage("Movie has been rated succesfully!");
 					messageBox.open();
 				}
 				

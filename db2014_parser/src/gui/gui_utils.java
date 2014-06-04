@@ -29,7 +29,7 @@ public class gui_utils
 	static import_progress_window import_progress_win = null;
 	static Display display;
 	static boolean EXIT_ON_LOGIN = true;
-	
+	static parser_entities.Importer my_importer = null;
 	
 	public static void main(String args[])
 	{
