@@ -40,6 +40,21 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 			this.imdb_object = "Tags";
 	}
 
+	public imdb_tag_parser(HashMap<String, entity_movie> parser_map_movie,
+			HashMap<String, String> imdb_name_to_director,
+			HashMap<String, String> imdb_to_yago,
+			HashMap<String, Integer> parser_tag_count_map) {
+		super(parser_map_movie,imdb_name_to_director,imdb_to_yago);
+		
+		parser_tag_set = new HashSet<String>();
+		this.parser_tag_count_map = parser_tag_count_map;
+		
+		this.filepath = this.properties.get_imdb_tags_path();
+		this.list_end =imdb_tags_list_end;
+		this.list_start = imdb_tags_list_start;
+		this.imdb_object = "Tags";
+	}
+
 	/**
 	 * @param line - a tag line to parse
 	 * Parse IMDB tags file. 

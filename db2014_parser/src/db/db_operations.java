@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import config.config;
 import parser_entities.light_entity_movie;
 
 
@@ -228,6 +229,11 @@ public abstract class db_operations
 			if (countChar(whereClause, '?') != values.length)
 				throw (new SQLException("wrong number of values entered"));
 		
+		// Make sure theres a limit
+		whereClause = whereClause.toLowerCase();
+		if (whereClause != null && whereClause != "" && !whereClause.contains("limit"))
+			whereClause += " limit " + (new config().get_default_large_limit());
+		
 		// Set the connection
 		Connection conn = null;
 		conn = jdbc_connection_pooling.get_instance().get_connection();
@@ -284,6 +290,11 @@ public abstract class db_operations
 		if (values != null)
 			if (countChar(whereClause, '?') != values.size())
 				throw (new SQLException("wrong number of values entered"));
+		
+		// Make sure theres a limit
+				whereClause = whereClause.toLowerCase();
+				if (whereClause != null && whereClause != "" && !whereClause.contains("limit"))
+					whereClause += " limit " + (new config().get_default_large_limit());
 		
 		// Set the connection
 		Connection conn = null;
@@ -527,37 +538,56 @@ public abstract class db_operations
 		// did select find souch user
 		return (result.next());
 	}
-	
-	public static boolean fill_movie_tag_relation() 
-			throws SQLException
+
+	private static void delete_last_invocation(invocation_code code) 
+			throws SQLException 
 	{
-		Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
+		/*
+		String where = "invokeCode = ? AND invokeDate = (SELECT max(a.invokeDate) from invocations as a)";
 		
-		// Is it ok not to redo this
-		if (ts != null)
-		{		
-			Timestamp now = new Timestamp(new java.util.Date().getTime());
+		if (delete("invocations", where , code.ordinal()) > 0)
+			throw (new SQLException("Deletion error"));
+			*/
+	}
+	
+	public static void fill_movie_tag_relation() 
+	{
+		try {
+			Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
 			
-			// was this performed in the last 15 minutes
-			if (now.before(ts))
-				return (true);
-		}	
-	
-		// Invoke performance
-		if (!perform_invocation(invocation_code.USER_PREFENCE))
-			return (false);
+			// Is it ok not to redo this
+			if (ts != null)
+			{		
+				Timestamp now = new Timestamp(new java.util.Date().getTime() - 1000*60*15);
+				
+				// was this performed in the last 15 minutes
+				if (now.before(ts))
+					return;
+			}	
 		
-		// delete old
-		if (delete("movie_tag_rate", "") < 0)
-			return (false);
-		
-		// perform
-		return (run_querey("INSERT INTO movie_tag_rate (idMovie, idTag, rate) " +
-							" SELECT idMovie, idTag, round(avg(rate)) as rate" +
-							" FROM user_tag_movie " +
-							" GROUP BY idMovie, idTag") >= 0);
-		
-	
+			
+			// Invoke performance
+			if (!perform_invocation(invocation_code.USER_PREFENCE))
+				return;
+			
+			// delete old
+			if (delete("movie_tag_rate", "") < 0)
+			{
+				delete_last_invocation(invocation_code.USER_PREFENCE);
+			}
+			else
+			{
+				// perform new
+				if (run_querey("INSERT INTO movie_tag_rate (idMovie, idTag, rate) " +
+										" SELECT idMovie, idTag, round(avg(rate)) as rate" +
+										" FROM user_tag_movie " +
+										" GROUP BY idMovie, idTag") < 0)
+						delete_last_invocation(invocation_code.USER_PREFENCE);
+			}
+		} 
+		catch (SQLException e) {
+			// Do nothing, somone else will run this again
+		}
 	}
 
 }

@@ -128,7 +128,7 @@ public class Importer implements Runnable,PropertyChangeListener{
 				new imdb_director_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
 				new imdb_genre_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
 				new imdb_language_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
-				new imdb_tag_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
+				new imdb_tag_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map),
 				new imdb_plot_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
 				new imdb_tag_movie_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map),
 		};
@@ -144,6 +144,9 @@ public class Importer implements Runnable,PropertyChangeListener{
 			abstract_imdb_parser p = imdb_parsers[i];
 			this.cur_progress_max = p.get_file_line_count();
 			this.task_weight = 2;
+			if (i==5)
+				this.task_weight = 2;
+			
 			p.addChangeListener(this);
 			p.parse_imdb_file();
 			
@@ -152,8 +155,6 @@ public class Importer implements Runnable,PropertyChangeListener{
 				get_import_set(i).addAll(p.get_enrichment_set());
 			if (i==0)
 				p.map_imdb_yago_names();
-			if (i==3)
-				this.parser_tag_count_map = ((imdb_tag_parser)p).get_parser_tag_counts();				
 
 			this.offset_progress+= this.task_weight;				
 		}
