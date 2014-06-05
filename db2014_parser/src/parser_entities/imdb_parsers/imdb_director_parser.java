@@ -1,66 +1,11 @@
 package parser_entities.imdb_parsers;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 
 import parser_entities.entity_movie;
 
 public class imdb_director_parser extends abstract_imdb_parser{
-	
-	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
-
-	private void notifyListeners(Object object, String property,
-			String oldValue, String newValue) {
-		for (PropertyChangeListener name : listener) {
-			name.propertyChange(new PropertyChangeEvent(this, property,
-					oldValue, newValue));
-		}
-	}
-
-	public void addChangeListener(PropertyChangeListener newListener) {
-		listener.add(newListener);
-	}
-	
-	public void removeChangeListener(PropertyChangeListener newListener) {
-		listener.remove(newListener);
-	}
-
-	public int get_file_line_count() {
-
-		try {
-
-			File file = new File(this.filepath);
-
-			if (file.exists()) {
-				FileReader fr = new FileReader(file);
-				LineNumberReader lnr = new LineNumberReader(fr);
-				int linenumber = 0;
-
-				while (lnr.readLine() != null) {
-					linenumber++;
-				}
-				lnr.close();
-				return linenumber;
-			} else {
-				System.out.println("File does not exists!");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return 0;
-		}
-		return 0;
-	}
-
 
 	private static final String imdb_movie_directors_list_start = "Name			Titles";
 	private HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/
@@ -74,20 +19,6 @@ public class imdb_director_parser extends abstract_imdb_parser{
 		this.imdb_object = "Directors";
 		imdb_name_to_director = new HashMap<String,String>();
 	}
-	
-	public imdb_director_parser(HashMap<String, entity_movie> movie_map, HashMap<String,String> director_map, 
-			HashMap<String,String> imdb_to_yago)
-	{
-		super(movie_map);
-		this.filepath = this.properties.get_imdb_directors_path();
-		this.list_end = null;
-		this.list_start = imdb_movie_directors_list_start;
-		this.imdb_object = "Directors";
-		this.parser_movie_map = movie_map; 
-		this.imdb_to_yago = imdb_to_yago;
-		this.imdb_name_to_director = director_map;
-	}
-
 
 	public HashMap<String, String> get_directors()
 	{
@@ -151,12 +82,6 @@ public class imdb_director_parser extends abstract_imdb_parser{
 			}
 		}
 		return 0;
-	}
-
-	@Override
-	public Set<String> get_enrichment_set() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

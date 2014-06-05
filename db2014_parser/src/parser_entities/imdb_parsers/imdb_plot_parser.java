@@ -3,7 +3,6 @@ package parser_entities.imdb_parsers;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import parser_entities.entity_movie;
 
@@ -117,12 +116,6 @@ public class imdb_plot_parser extends abstract_imdb_parser{
 		//}
 		
 	//return 1;
-	}
-
-	@Override
-	public Set<String> get_enrichment_set() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

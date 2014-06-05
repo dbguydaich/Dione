@@ -94,7 +94,7 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 	return tag_pass;
 	}
 
-	public HashSet<String> get_enrichment_set()
+	public HashSet<String> get_parser_tags()
 	{
 		return this.parser_tag_set;
 	}

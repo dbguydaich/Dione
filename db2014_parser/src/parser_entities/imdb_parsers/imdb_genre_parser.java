@@ -58,7 +58,7 @@ public class imdb_genre_parser extends abstract_imdb_parser{
 		parser_genre_set.add(splitted_line[splitted_line.length -1]);
 		return 1;
 	}
-	public HashSet<String> get_enrichment_set()
+	public HashSet<String> get_parser_genres()
 	{
 		return this.parser_genre_set;
 	}

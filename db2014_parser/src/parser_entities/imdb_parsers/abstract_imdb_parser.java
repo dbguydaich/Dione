@@ -1,20 +1,15 @@
 package parser_entities.imdb_parsers;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.LineNumberReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -53,58 +48,14 @@ public abstract class abstract_imdb_parser {
 	
 	/*entity maps*/
 	protected HashMap<String,entity_movie> parser_movie_map;	/* yago movie catalog to be enriched*/
+	//protected HashSet<String> parser_language_set;				/* imdb entities - languge*/	 
+	//protected HashSet<String> parser_genre_set;					/* imdb entities - genres*/
+	//protected HashSet<String> parser_tag_set;					/* imdb entities - tags*/
 	
 	/*helper maps*/
-	protected HashMap<String,String> imdb_to_yago;			/*holds all possible imdb names, that are relevant to yago films*/
+	private HashMap<String,String> imdb_to_yago;			/*holds all possible imdb names, that are relevant to yago films*/
+	//protected HashMap<String,Integer> parser_tag_count_map;	/* handles tag counts, to establish top 10 per movie*/
 	protected HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/ 
-	
-	
-	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
-
-	private void notifyListeners(Object object, String property,
-			String oldValue, String newValue) {
-		for (PropertyChangeListener name : listener) {
-			name.propertyChange(new PropertyChangeEvent(this, property,
-					oldValue, newValue));
-		}
-	}
-
-	public void addChangeListener(PropertyChangeListener newListener) {
-		listener.add(newListener);
-	}
-	
-	public void removeChangeListener(PropertyChangeListener newListener) {
-		listener.remove(newListener);
-	}
-
-	public int get_file_line_count() {
-
-		try {
-
-			File file = new File(this.filepath);
-
-			if (file.exists()) {
-				FileReader fr = new FileReader(file);
-				LineNumberReader lnr = new LineNumberReader(fr);
-				int linenumber = 0;
-
-				while (lnr.readLine() != null) {
-					linenumber++;
-				}
-				lnr.close();
-				return linenumber;
-			} else {
-				System.out.println("File does not exists!");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return 0;
-		}
-		return 0;
-	}
-
-
 	
 	protected config properties = new config();
 	
@@ -156,8 +107,6 @@ public abstract class abstract_imdb_parser {
 		return this.imdb_to_yago;
 	}
 
-	/*return a set of enrichment items - tags, languages, etc.*/
-	public abstract Set<String> get_enrichment_set();
 	
 	/**
 	 * splits line in some manner, tries to extract relevant data
@@ -169,7 +118,6 @@ public abstract class abstract_imdb_parser {
 
 	public void parse_imdb_file()
 	{
-		int progress = 0;
 		// assert file exists
 		File fl = new File(this.filepath);
 		if (this.filepath == null || ! fl.exists() )
@@ -182,17 +130,11 @@ public abstract class abstract_imdb_parser {
 			try {
 				/*read until start*/
 				while ((line = br.readLine()) != null)
-				{
-					progress++;
 					if (line.contains(this.list_start))
 						break;
-				}
 				/*parse until EOF*/
 				while ((line = br.readLine()) != null)
 				{
-					progress++;
-					if (progress % 10000 == 0)
-						this.notifyListeners(this, "progress", "0", (new Integer(progress)).toString());
 					/*list end reached - terminate*/
 					if (this.list_end != null && line.contains(this.list_end))
 						break;

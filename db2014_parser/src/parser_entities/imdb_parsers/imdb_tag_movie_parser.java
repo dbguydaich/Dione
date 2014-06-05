@@ -112,10 +112,4 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser{
 		return c_tags;
 	}
 
-	@Override
-	public Set<String> get_enrichment_set() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
