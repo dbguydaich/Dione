@@ -156,8 +156,6 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (null);
 }
-	
-// GETTERS
 		
 	public static int user_rated_count(int user_id) 
 			throws SQLException 
@@ -454,9 +452,7 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (0);
 	}
-		
-// REMOVERS	
-	
+			
 // REMOVERS
 	
 	/**
@@ -506,7 +502,7 @@ public abstract class db_queries_user extends db_operations
 	public static boolean update_name(String new_name, int id, String pass) 
 			throws SQLException 
 	{
-		String querey = "UPDATE users SET userName = ? WHERE idUsers = ? AND hashPassword = ?;";
+		String querey = "UPDATE users SET userName = ? WHERE idUsers = ? AND hashPassword = ? ";
 		
 		return (run_querey(querey, new_name, id, Integer.toString(pass.hashCode())) > 0);
 	}
@@ -520,7 +516,7 @@ public abstract class db_queries_user extends db_operations
 	public static boolean update_pass(String new_pass, int id, String olp_pass) 
 			throws SQLException 
 	{
-		String querey = "UPDATE users SET hashPassword = ? WHERE idUsers = ? AND hashPassword = ?;";
+		String querey = "UPDATE users SET hashPassword = ? WHERE idUsers = ? AND hashPassword = ? ";
 		
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
