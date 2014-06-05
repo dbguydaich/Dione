@@ -3,6 +3,8 @@ package gui;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
@@ -30,10 +32,20 @@ public class gui_utils
 	static Display display;
 	static boolean EXIT_ON_LOGIN = true;
 	static parser_entities.Importer my_importer = null;
+	public static ExecutorService executor;
 	
 	public static void main(String args[])
 	{
-
+//// threading handling
+		
+		executor = Executors.newFixedThreadPool(5);
+		
+		final Thread cron = new Thread(new cron());
+		
+		executor.execute(cron);
+		
+		
+		
 		display = new Display();
 	
 		//if(it is first run on this device)
@@ -244,6 +256,10 @@ public class gui_utils
 
 
 
+	public static void exist_threads()
+	{
+		executor.shutdownNow();
+	}
 
 
 

@@ -60,8 +60,8 @@ public class log_in_window extends Shell
 		super(display);
 		
 		
-		final Thread cron = new Thread(new cron());
-		cron.start(); ///cron for matan
+//		final Thread cron = new Thread(new cron());
+//		cron.start(); ///cron for matan
 		
 		this.setSize(300, 300);
 		this.setText("MovieBook");
@@ -75,7 +75,7 @@ public class log_in_window extends Shell
 				{
 					display.dispose();
 					//cron.interrupt();
-					//shachar: app is exiting here
+					gui_utils.exist_threads();
 				}
 				
 				else
@@ -197,7 +197,11 @@ public class log_in_window extends Shell
 					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
 					messageBox.open();
 				} else
+					
 					try {
+						
+						
+						
 						if( db_queries_user.authenticate_user(username,pass)){
 							user = new user_logics(); //Initializing user to be worked with all session long
 							user.login_user(username, pass);

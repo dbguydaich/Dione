@@ -41,25 +41,15 @@ public class cron implements Runnable {
 	        {
 	        	try {
 	        		
-	        		try {
-						db_operations.fill_movie_tag_relation();
-						///////matan please add here the second function you want
-					} catch (SQLException e) {
-						
-			        	
-		        		MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING);
-						messageBox.setText("Error");
-						messageBox.setMessage("There was an error while making the preferances algorithm calculations. Sorry."); 
-						//matan please phraze it as you wish..
-						messageBox.open();
-						
-					}
+	        		db_operations.fill_movie_tag_relation();
+					///////matan please add here the second function you want
 	
 	        	   
 	        		System.out.println("cron task has started");
 					Thread.sleep(15*minute); ///15 minutes
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
+					System.out.println("cron has finished");
 					return;
 				}
 	     
