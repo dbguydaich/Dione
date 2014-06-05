@@ -84,12 +84,13 @@ public class Importer implements Runnable,PropertyChangeListener{
 	 * batches made, etc, and update the progress counter accordingly
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		
+		/*update curren progress*/
 		Float progress = Float.parseFloat(evt.getNewValue().toString());
 		String s_max = String.valueOf(this.cur_progress_max);
 		Float max = Float.parseFloat(s_max);
-		
 		this.progress_percent = this.offset_progress + (progress / max )*this.task_weight;
+		/* Notify Listeners in GUI about the progress*/
+		fireEvent("progress made");
 		System.out.println("progress: "+progress_percent);
 	
 	}
@@ -189,10 +190,11 @@ public class Importer implements Runnable,PropertyChangeListener{
 		for (int i=0;i<loaders.length;i++)		
 		{
 			abstract_loader ldr = loaders[i];
-			this.cur_progress_max = ldr.get_task_size();
+			this.cur_progress_max = get_load_set(i).size();
 			this.task_weight = 6;
 			ldr.addChangeListener(this);
 			ldr.load_batch(get_load_set(i));
+			this.offset_progress+= this.task_weight;
 				
 		}
 		}
@@ -222,27 +224,27 @@ public class Importer implements Runnable,PropertyChangeListener{
 	{			
 		Collection<?> retset;
 		switch (i) {
-			case 1:  retset= this.parser_language_set;
+			case 0:  retset= this.parser_language_set;
 			break;
-			case 2:  retset= this.parser_genre_set;
+			case 1:  retset= this.parser_genre_set;
 			break;
-			case 3:  retset= this.parser_tag_set;
+			case 2:  retset= this.parser_tag_set;
 			break;
-			case 4:  retset= this.parser_map_actor.values();
+			case 3:  retset= this.parser_map_actor.values();
 			break;
-			case 5:  retset= this.parser_map_director.values();
+			case 4:  retset= this.parser_map_director.values();
 			break;
-			case 6:  retset= this.parser_map_actor.values();
+			case 5:  retset= this.parser_map_actor.values();
 			break;
-			case 7:  retset= this.parser_map_director.values();
+			case 6:  retset= this.parser_map_director.values();
+			break;
+			case 7:  retset= this.parser_map_movie.values();
 			break;
 			case 8:  retset= this.parser_map_movie.values();
 			break;
 			case 9:  retset= this.parser_map_movie.values();
 			break;
 			case 10:  retset= this.parser_map_movie.values();
-			break;
-			case 11:  retset= this.parser_map_movie.values();
 			break;
 			default: retset = null;
 	        break;

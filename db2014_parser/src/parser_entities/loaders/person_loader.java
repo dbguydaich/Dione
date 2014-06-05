@@ -54,11 +54,12 @@ public class person_loader extends abstract_loader {
 	}
 
 	@Override
-	protected int execute_batches() {
+	protected int execute_batches(int batch_size) {
 		int fail_count=0;
-		fail_count += execute_batch(insert);
+		fail_count += execute_batch(insert, batch_size);
 		return fail_count;
 	}
+
 
 
 

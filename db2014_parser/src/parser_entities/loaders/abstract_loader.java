@@ -32,7 +32,7 @@ public abstract class abstract_loader extends db_operations{
 		public static final int 		BATCH_SIZE =			  	1000;
 		protected String 				entity_table_name; 	/* the table updated*/
 		public static final boolean 	DEBUG_LOAD = false; 
-		private int 					task_size = 0;			
+		private int 					task_size = 0;		/* total size of load entity*/
 		
 		
 		public abstract_loader()
@@ -67,7 +67,7 @@ public abstract class abstract_loader extends db_operations{
 		abstract protected void sync_update_tables() throws SQLException;
 		abstract protected void set_perpared_statments(Connection db_conn) throws SQLException;
 		abstract protected int create_statments(Object obj) throws SQLException;
-		abstract protected int execute_batches();
+		abstract protected int execute_batches(int cur_batch_size2);
 		
 		/** performs a batch update, with 
 		 * **/
@@ -91,20 +91,30 @@ public abstract class abstract_loader extends db_operations{
 					if (progress % 10000 == 0)
 						this.notifyListeners(this, "progress", "0", (new Integer(progress)).toString());
 					batch_count += create_statments(obj);
-					if (batch_count % BATCH_SIZE == 0)
+					if (batch_count> 0&& batch_count % BATCH_SIZE == 0)
 					{
-						fail_count += execute_batches();
+						fail_count += execute_batches(batch_count);
 						if (DEBUG_LOAD)
 							break;
 					}
 				}
 				/*execute remainder*/ 
-				fail_count += execute_batches();
+				fail_count += execute_batches(batch_count % BATCH_SIZE);
 				}
 				catch (Exception ex){
 					
 				}
-			System.out.println(this.entity_table_name +"Table updates:\n\t failed: " + fail_count + " out of: " + batch_count);	
+			
+			StringBuilder sb = new StringBuilder();
+			sb.append("loading to table: ");
+			sb.append(this.entity_table_name + "\n");
+			sb.append("\tEntites Passed:  ");
+			sb.append(this.task_size + "\n");
+			sb.append("\tRequired statements: ");
+			sb.append(batch_count + "\n");
+			sb.append("\tFailed statements: ");
+			sb.append(fail_count+ "\n");
+			System.out.println(sb.toString());	
 		}
 			
 		/**
@@ -114,7 +124,7 @@ public abstract class abstract_loader extends db_operations{
 		 * executes a bath statement, and handles returns fail count
 		 * in all possible scenarios
 		 */
-		protected int execute_batch(PreparedStatement stmt)
+		protected int execute_batch(PreparedStatement stmt, int stmt_batch_size)
 		{
 			int fail_count=0;
 			try{
@@ -125,8 +135,8 @@ public abstract class abstract_loader extends db_operations{
 				int[] batch_results = batch_ex.getUpdateCounts();
 				int i=0;
 				/* driver stopped execution after faulty statement*/
-				if (batch_results.length != BATCH_SIZE)
-					fail_count += BATCH_SIZE - batch_results.length; 
+				if (batch_results.length != stmt_batch_size)
+					fail_count += stmt_batch_size - batch_results.length; 
 				else { /* driver tried executing all commands - find fails*/
 					for (i=0; i< batch_results.length; i++)
 						if (batch_results[i] == PreparedStatement.EXECUTE_FAILED)
