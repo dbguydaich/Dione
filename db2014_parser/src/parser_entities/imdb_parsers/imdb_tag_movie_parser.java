@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_tag_movie_parser extends abstract_imdb_parser{
@@ -13,26 +14,13 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser{
 	private static final Integer MAX_TAGS = 10; 
 	private HashMap<String,Integer> parser_tag_count_map;	/* handles tag counts, to establish top 10 per movie*/
 	
-	public imdb_tag_movie_parser(HashMap<String, entity_movie> movie_map, 
-			HashMap<String,Integer> parser_tag_count_map) {
-		
-		super(movie_map);
-
-		
-		this.parser_tag_count_map = parser_tag_count_map;
-		
-		this.filepath = this.properties.get_imdb_tags_path();
-		this.list_end = null;
-		this.list_start = imdb_movie_tags_list_start;
-		this.imdb_object = "Tags in Movies";
-	}
 
 	public imdb_tag_movie_parser(
 			HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
 			HashMap<String, String> imdb_to_yago,
-			HashMap<String, Integer> parser_tag_count_map) {
-		super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
+			HashMap<String, Integer> parser_tag_count_map, Importer importer) {
+		super(parser_movie_map,imdb_name_to_director,imdb_to_yago,importer);
 		 
 		 this.parser_tag_count_map = parser_tag_count_map;
 			

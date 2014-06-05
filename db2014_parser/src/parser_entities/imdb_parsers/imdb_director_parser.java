@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_director_parser extends abstract_imdb_parser{
@@ -66,19 +67,11 @@ public class imdb_director_parser extends abstract_imdb_parser{
 	private HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/
 	private static String cur_director = "";				/* keeps director from previous line...*/
 	
-	public imdb_director_parser(HashMap<String, entity_movie> movie_map) {
-		super(movie_map);
-		this.filepath = this.properties.get_imdb_directors_path();
-		this.list_end = null;
-		this.list_start = imdb_movie_directors_list_start;
-		this.imdb_object = "Directors";
-		imdb_name_to_director = new HashMap<String,String>();
-	}
 	
 	public imdb_director_parser(HashMap<String, entity_movie> movie_map, HashMap<String,String> director_map, 
-			HashMap<String,String> imdb_to_yago)
+			HashMap<String,String> imdb_to_yago, Importer importer)
 	{
-		super(movie_map);
+		super(movie_map,importer);
 		this.filepath = this.properties.get_imdb_directors_path();
 		this.list_end = null;
 		this.list_start = imdb_movie_directors_list_start;

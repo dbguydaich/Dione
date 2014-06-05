@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import parser_entities.Importer;
+
 
 import db.db_queries_movies;
 
@@ -14,8 +16,8 @@ public class language_loader extends abstract_loader {
 	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	
-	public language_loader() throws SQLException {
-		super();
+	public language_loader(Importer importer) throws SQLException {
+		super(importer);
 		this.entity_table_name = "Language";
 		this.entity_map = new HashMap<String,Integer>(); 	
 	}

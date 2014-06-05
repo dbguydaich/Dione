@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 import parser_entities.entity_person;
 
@@ -21,6 +23,8 @@ import config.config;
 
 public abstract class abstract_yago_parser implements Iyago_parser {
 
+	Importer Caller = null;	 /*refrence to our caller, to check for termination flag*/ 
+	
 	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 
 	private void notifyListeners(Object object, String property,
@@ -104,6 +108,31 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 		this.properties = new config();
 	}
 
+	public abstract_yago_parser(HashMap<String, entity_movie> movie_map,
+			HashMap<String, entity_person> actor_map,
+			HashMap<String, entity_person> director_map, Importer caller) {
+		/* Init Parser members */
+		if (movie_map != null)
+			parser_map_movie = movie_map;
+		else
+			parser_map_movie = new HashMap<String, entity_movie>();
+
+		if (actor_map != null)
+			parser_map_actor = actor_map;
+		else
+			parser_map_actor = new HashMap<String, entity_person>();
+
+		if (director_map != null)
+			parser_map_director = director_map;
+		else
+			parser_map_director = new HashMap<String, entity_person>();
+
+		/* Init Parser members */
+		this.properties = new config();
+		
+		this.Caller = caller;
+	}
+
 	/* getter for movie table */
 	public HashMap<String, entity_movie> get_yag_movie_map() {
 		return this.parser_map_movie;
@@ -154,7 +183,7 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 				String splitted_line[];
 				/* read line */
 				while ((splitted_line = split_and_clean_line(br,
-						this.yago_file_params)) != null) {
+						this.yago_file_params)) != null && !Caller.is_thread_terminated()) {
 					file_line_progress++;
 					
 					/*notify importer we've made some progress*/

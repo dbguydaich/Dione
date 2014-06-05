@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import parser_entities.Importer;
 import parser_entities.entity_person;
 
 
@@ -17,8 +18,8 @@ public class person_loader extends abstract_loader {
 	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	
-	public person_loader() throws SQLException {
-		super();
+	public person_loader(Importer importer) throws SQLException {
+		super(importer);
 		this.entity_table_name = "person";
 		this.entity_map = new HashMap<String,Integer>(); 	
 	}

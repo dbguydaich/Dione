@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -39,7 +40,10 @@ import parser_entities.parsers.parser_yago_types;
 import parser_entities.parsers.parser_yago_wikipedia;
 
 public class Importer implements Runnable,PropertyChangeListener{
-
+	
+	
+	private volatile boolean done = false;			/* thread termination signal */
+	
 	private HashMap<String, entity_movie> parser_map_movie = new HashMap<String, entity_movie>(); 
 	private HashMap<String, entity_person> parser_map_actor =new  HashMap<String, entity_person>(); 
 	private HashMap<String, entity_person> parser_map_director = new HashMap<String, entity_person>();
@@ -72,9 +76,26 @@ public class Importer implements Runnable,PropertyChangeListener{
 		  }
 		 }
 	
+	/**
+	 * called by client, to get curren import progress
+	 * @return
+	 */
 	public float get_progress_percent()
 	{
 		return this.progress_percent;
+	}
+	
+	/**
+	 * called by client, to terminate thread
+	 */
+	public void terminate_thread()
+	{
+		this.done = true; 
+	}
+	
+	public boolean is_thread_terminated()
+	{
+		return this.done;
 	}
 	
 	/*property change interface*/
@@ -102,11 +123,11 @@ public class Importer implements Runnable,PropertyChangeListener{
 		try {
 		/*parse all yago files*/
 		abstract_yago_parser[] yago_parsers = 
-			{new parser_yago_types(parser_map_movie,parser_map_actor,parser_map_director),
-			 new parser_yago_facts(parser_map_movie,parser_map_actor,parser_map_director),
-			 new parser_yago_literal_facts(parser_map_movie,parser_map_actor,parser_map_director),
-			 new parser_yago_wikipedia(parser_map_movie,parser_map_actor,parser_map_director),
-			 new parser_yago_labels(parser_map_movie,parser_map_actor,parser_map_director),
+			{new parser_yago_types(parser_map_movie,parser_map_actor,parser_map_director,this),
+			 new parser_yago_facts(parser_map_movie,parser_map_actor,parser_map_director,this),
+			 new parser_yago_literal_facts(parser_map_movie,parser_map_actor,parser_map_director,this),
+			 new parser_yago_wikipedia(parser_map_movie,parser_map_actor,parser_map_director,this),
+			 new parser_yago_labels(parser_map_movie,parser_map_actor,parser_map_director,this),
 			};
 		
 		this.offset_progress = 0;
@@ -116,6 +137,11 @@ public class Importer implements Runnable,PropertyChangeListener{
 			this.task_weight = 2;
 			parser.addChangeListener(this);
 			parser.parse_file();
+			if (done)
+			{
+				System.out.print("Termination Signal Caught, Importer Thread Exiting");
+				return;
+			}
 			this.offset_progress+= this.task_weight;
 		}
 		
@@ -125,19 +151,13 @@ public class Importer implements Runnable,PropertyChangeListener{
 		
 		/*parse all IMDB files*/
 		abstract_imdb_parser[] imdb_parsers = {
-				new imdb_director_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
-				new imdb_genre_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
-				new imdb_language_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
-				new imdb_tag_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map),
-				new imdb_plot_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago),
-				new imdb_tag_movie_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map),
+				new imdb_director_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
+				new imdb_genre_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
+				new imdb_language_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
+				new imdb_tag_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map,this),
+				new imdb_plot_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
+				new imdb_tag_movie_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map,this),
 		};
-		
-		//List<Set<String>> set_list = new ArrayList<Set<String>>();
-		//set_list.add(1,parser_genre_set);
-		//set_list.add(2,parser_language_set);
-		//set_list.add(3,parser_tag_set);
-		
 		
 		for (int i=0;i<imdb_parsers.length;i++)		
 		{
@@ -159,33 +179,19 @@ public class Importer implements Runnable,PropertyChangeListener{
 			this.offset_progress+= this.task_weight;				
 		}
 		
-		/*all collections to load*/
-		//ArrayList<Collection<?>> loader_data = new ArrayList<Collection<?>>();
-		//loader_data.add(parser_language_set);
-		//loader_data.add(parser_genre_set);
-		//loader_data.add(parser_tag_set);
-		//loader_data.add(parser_map_actor.values());
-		//loader_data.add(parser_map_director.values());
-		//loader_data.add(parser_map_actor.values());
-		//loader_data.add(parser_map_director.values());
-		//loader_data.add(parser_map_movie.values());
-		//loader_data.add(parser_map_movie.values());
-		//loader_data.add(parser_map_movie.values());
-		//loader_data.add(parser_map_movie.values());
-		
 		/*all loader objects*/
 		abstract_loader[] loaders = {
-				new language_loader(),		/* languages 		*/
-				new genre_loader(), 		/* genres			*/
-				new tag_loader(), 			/* tags				*/
-				new person_loader(),		/*actors: persons	*/
-				new person_loader(),		/*directors: persons*/
-				new actor_loader(),			/*actors			*/
-				new director_loader(),		/*directors			*/
-				new movie_loader(),			/*movies			*/
-				new actor_movie_loader(),	/* actors in movies	*/
-				new genre_movie_loader(),	/* genres of movies	*/
-				new tag_movie_loader()		/* tags of movies	*/
+				new language_loader(this),		/* languages 		*/
+				new genre_loader(this), 		/* genres			*/
+				new tag_loader(this), 			/* tags				*/
+				new person_loader(this),		/*actors: persons	*/
+				new person_loader(this),		/*directors: persons*/
+				new actor_loader(this),			/*actors			*/
+				new director_loader(this),		/*directors			*/
+				new movie_loader(this),			/*movies			*/
+				new actor_movie_loader(this),	/* actors in movies	*/
+				new genre_movie_loader(this),	/* genres of movies	*/
+				new tag_movie_loader(this)		/* tags of movies	*/
 				};	
 		
 		for (int i=0;i<loaders.length;i++)		

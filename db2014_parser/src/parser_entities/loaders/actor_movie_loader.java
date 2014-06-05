@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 import parser_entities.entity_person;
 
@@ -21,8 +22,8 @@ public class actor_movie_loader extends abstract_loader {
 	HashMap<String,Integer> entity_map;
 	HashMap<String,Integer> actors_table;
 	
-	public actor_movie_loader() throws SQLException {
-		super();
+	public actor_movie_loader(Importer importer) throws SQLException {
+		super(importer);
 		this.entity_table_name = "actor-movie";
 		this.entity_map = new HashMap<String,Integer>(); 	
 	}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_plot_parser extends abstract_imdb_parser{
@@ -13,19 +14,11 @@ public class imdb_plot_parser extends abstract_imdb_parser{
 	private static final String imdb_plots_item_text = "PL:";
 	private static String prev_title = "";
 
-	
-	public imdb_plot_parser(HashMap<String, entity_movie> movie_map) {
-		super(movie_map);
-		this.filepath = this.properties.get_imdb_plots_path();
-		this.list_end = null;
-		this.list_start = imdb_plots_list_start;
-		this.imdb_object = "Plots";
-	}
 
 	public imdb_plot_parser(HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago) {
-		super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
+			HashMap<String, String> imdb_to_yago, Importer importer) {
+		super(parser_movie_map,imdb_name_to_director,imdb_to_yago,importer);
 		this.filepath = this.properties.get_imdb_plots_path();
 		this.list_end = null;
 		this.list_start = imdb_plots_list_start;

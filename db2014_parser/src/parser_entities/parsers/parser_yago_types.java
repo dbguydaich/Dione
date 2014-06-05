@@ -1,18 +1,20 @@
 package parser_entities.parsers;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 import parser_entities.entity_person;
 
 
 public class parser_yago_types extends abstract_yago_parser {
-	
+
 	
 	public parser_yago_types(HashMap<String, entity_movie> movie_map,
 			HashMap<String, entity_person> actor_map,
-			HashMap<String, entity_person> director_map) {
-		super(movie_map, actor_map, director_map);
+			HashMap<String, entity_person> director_map, Importer importer) {
+		super(movie_map, actor_map, director_map, importer);
 		this.yago_file_path = properties.get_yago_simple_types_path();
 		this.yago_file_params = yago_types_params;
 	}

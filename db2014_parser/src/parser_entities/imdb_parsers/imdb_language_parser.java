@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_language_parser extends abstract_imdb_parser{
@@ -11,20 +12,10 @@ public class imdb_language_parser extends abstract_imdb_parser{
 	private static final String imdb_languages_list_start = "LANGUAGE LIST";
 	HashSet<String> parser_language_set;				/* imdb entities - languge*/
 	
-	public imdb_language_parser(HashMap<String, entity_movie> movie_map) {
-		super(movie_map);
-		parser_language_set = new HashSet<String>();
-		
-		this.filepath = this.properties.get_imdb_languages_path();
-		this.list_end = null;
-		this.list_start = imdb_languages_list_start;
-		this.imdb_object = "Languages";
-	}
-
 	public imdb_language_parser(HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago) {
-		super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
+			HashMap<String, String> imdb_to_yago, Importer importer) {
+		super(parser_movie_map,imdb_name_to_director,imdb_to_yago,importer);
 		parser_language_set = new HashSet<String>();
 		
 		this.filepath = this.properties.get_imdb_languages_path();

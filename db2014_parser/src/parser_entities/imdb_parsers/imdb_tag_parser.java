@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_tag_parser extends abstract_imdb_parser{
@@ -14,37 +15,12 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 	private HashSet<String> parser_tag_set;					/* imdb entities - tags*/
 	private HashMap<String,Integer> parser_tag_count_map;	/* handles tag counts, to establish top 10 per movie*/
 	
-	public imdb_tag_parser(HashMap<String, entity_movie> movie_map) {
-		super(movie_map);
-		
-		parser_tag_set = new HashSet<String>();
-		parser_tag_count_map = new HashMap<String,Integer>();
-		
-		this.filepath = this.properties.get_imdb_tags_path();
-		this.list_end =imdb_tags_list_end;
-		this.list_start = imdb_tags_list_start;
-		this.imdb_object = "Tags";
-	}
-
-	public imdb_tag_parser(HashMap<String, entity_movie> parser_movie_map,
-			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago) {
-			super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
-		
-			parser_tag_set = new HashSet<String>();
-			parser_tag_count_map = new HashMap<String,Integer>();
-			
-			this.filepath = this.properties.get_imdb_tags_path();
-			this.list_end =imdb_tags_list_end;
-			this.list_start = imdb_tags_list_start;
-			this.imdb_object = "Tags";
-	}
 
 	public imdb_tag_parser(HashMap<String, entity_movie> parser_map_movie,
 			HashMap<String, String> imdb_name_to_director,
 			HashMap<String, String> imdb_to_yago,
-			HashMap<String, Integer> parser_tag_count_map) {
-		super(parser_map_movie,imdb_name_to_director,imdb_to_yago);
+			HashMap<String, Integer> parser_tag_count_map, Importer importer) {
+		super(parser_map_movie,imdb_name_to_director,imdb_to_yago,importer);
 		
 		parser_tag_set = new HashSet<String>();
 		this.parser_tag_count_map = parser_tag_count_map;
@@ -63,11 +39,8 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 	 **/
 	protected int handle_single_line(String line, BufferedReader br)
 	{
-		String x = "";
 		/* clean up*/
 		line = line.trim();
-		if (line.contains("9th-ward (7)"))
-			x = "";
 		String splitted_line[] = line.split("\\t");
 		
 		int i;
@@ -81,11 +54,7 @@ public class imdb_tag_parser extends abstract_imdb_parser{
 				|| !tag_count.contains("(") || !tag_count.contains(")"))
 				continue;
 		
-			/**/
 			String tag = splitted_line[i].substring(0,splitted_line[i].indexOf("("));
-			if (tag.contains("hysteria"))
-				x = "";
-			
 			tag_count = tag_count.substring(tag_count.indexOf("(")+1 , tag_count.indexOf(")"));
 			/*is numeric?*/
 			if (!tag_count.matches("-?\\d+(\\.\\d+)?"))

@@ -26,6 +26,7 @@ import java.sql.BatchUpdateException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 import db.db_operations;
@@ -58,6 +59,7 @@ public abstract class abstract_imdb_parser {
 	protected HashMap<String,String> imdb_to_yago;			/*holds all possible imdb names, that are relevant to yago films*/
 	protected HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/ 
 	
+	protected Importer Caller; 
 	
 	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 
@@ -109,12 +111,13 @@ public abstract class abstract_imdb_parser {
 	protected config properties = new config();
 	
 	/*genreal constructor, for initial build of misc data*/
-	public abstract_imdb_parser(HashMap<String,entity_movie> movie_map)
+	public abstract_imdb_parser(HashMap<String,entity_movie> movie_map, Importer caller)
 	{
 		/*init movie catalog*/
 		this.parser_movie_map = movie_map; 
 		this.imdb_to_yago = new HashMap<String,String>();
 		this.imdb_name_to_director = new HashMap<String,String>();
+		this.Caller = caller;
 	}
 	
 	/**
@@ -124,12 +127,13 @@ public abstract class abstract_imdb_parser {
 	 * @param imdb_to_yago
 	 */
 	public abstract_imdb_parser(HashMap<String,entity_movie> movie_map, HashMap<String,String> director_map, 
-			HashMap<String,String> imdb_to_yago)
+			HashMap<String,String> imdb_to_yago, Importer caller)
 	{
 		/*init movie catalog*/
 		this.parser_movie_map = movie_map; 
 		this.imdb_to_yago = imdb_to_yago;
 		this.imdb_name_to_director = director_map;
+		this.Caller = caller; 
 	}
 	
 	
@@ -181,14 +185,14 @@ public abstract class abstract_imdb_parser {
 			String line; 
 			try {
 				/*read until start*/
-				while ((line = br.readLine()) != null)
+				while ((line = br.readLine()) != null && !Caller.is_thread_terminated())
 				{
 					progress++;
 					if (line.contains(this.list_start))
 						break;
 				}
 				/*parse until EOF*/
-				while ((line = br.readLine()) != null)
+				while ((line = br.readLine()) != null && !Caller.is_thread_terminated())
 				{
 					progress++;
 					if (progress % 10000 == 0)

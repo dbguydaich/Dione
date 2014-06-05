@@ -4,26 +4,18 @@ import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 public class imdb_genre_parser extends abstract_imdb_parser{
 
 	private static final String imdb_genres_list_start = "8: THE GENRES LIST";
 	private HashSet<String> parser_genre_set;					/* imdb entities - tags*/
-	
-	public imdb_genre_parser(HashMap<String, entity_movie> movie_map) {
-		super(movie_map);
-		this.filepath = this.properties.get_imdb_genres_path();
-		this.list_end = null;
-		this.list_start = imdb_genres_list_start;
-		this.imdb_object = "Genres";
-		this.parser_genre_set = new HashSet<String>();
-	}
 
 	public imdb_genre_parser(HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago) {
-		super(parser_movie_map,imdb_name_to_director,imdb_to_yago);
+			HashMap<String, String> imdb_to_yago, Importer importer) {
+		super(parser_movie_map,imdb_name_to_director,imdb_to_yago,importer);
 		this.filepath = this.properties.get_imdb_genres_path();
 		this.list_end = null;
 		this.list_start = imdb_genres_list_start;

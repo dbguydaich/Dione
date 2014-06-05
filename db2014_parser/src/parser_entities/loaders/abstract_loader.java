@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import parser_entities.Importer;
 import parser_entities.entity_person;
 
 import db.db_operations;
@@ -33,11 +34,11 @@ public abstract class abstract_loader extends db_operations{
 		protected String 				entity_table_name; 	/* the table updated*/
 		public static final boolean 	DEBUG_LOAD = false; 
 		private int 					task_size = 0;		/* total size of load entity*/
+		private Importer Caller; 
 		
-		
-		public abstract_loader()
+		public abstract_loader(Importer caller)
 		{
-			
+			this.Caller = caller;
 		}
 		
 		public int get_task_size()
@@ -87,6 +88,8 @@ public abstract class abstract_loader extends db_operations{
 				set_perpared_statments(db_conn);
 				for (Object obj : update_entity) 
 				{
+					if (Caller.is_thread_terminated())
+						break;
 					progress++;
 					if (progress % 10000 == 0)
 						this.notifyListeners(this, "progress", "0", (new Integer(progress)).toString());
@@ -98,8 +101,9 @@ public abstract class abstract_loader extends db_operations{
 							break;
 					}
 				}
-				/*execute remainder*/ 
-				fail_count += execute_batches(batch_count % BATCH_SIZE);
+				/*execute remainder - if not terminated*/ 
+				if (!Caller.is_thread_terminated())
+					fail_count += execute_batches(batch_count % BATCH_SIZE);
 				}
 				catch (Exception ex){
 					
