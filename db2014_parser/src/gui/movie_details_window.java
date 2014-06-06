@@ -143,7 +143,7 @@ public class movie_details_window extends Shell {
 
 		t.start();
 		try {
-			t.join(); 
+			t.join();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -196,9 +196,15 @@ public class movie_details_window extends Shell {
 		this.setLayout(new FormLayout());
 		this.setSize(window_width + 100, window_height);
 
-		// String currnt_user_str = get_current_username();
-		String current_user_str = "some username";
-		this.setText("Movie Details - Logged in As: " + current_user_str);
+
+		String my_name = null;
+		try {
+			 my_name = log_in_window.user.get_my_name();
+		} catch (SQLException e2) {
+			gui_utils.raise_sql_error_window(display);
+		}
+//	
+		this.setText("Movie Details - Logged in As: " + my_name);
 
 		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
 		final Image background = new Image(display, imgURL);
@@ -422,80 +428,84 @@ public class movie_details_window extends Shell {
 		tags_button.setText("Rate");
 		tags_button.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1,
 				-1, -1));
-//////////////////
-tags_button.addMouseListener(new MouseAdapter() {
-	//	@Override
-		public void mouseUp(MouseEvent arg0) {
-			 Thread t = new Thread(new Runnable() {
-					
-			       public void run() { 
-			    	
-						
-						System.out.println("rated");
-						
+		// ////////////////
+		tags_button.addMouseListener(new MouseAdapter() {
+			// @Override
+			public void mouseUp(MouseEvent arg0) {
+				Thread t = new Thread(new Runnable() {
 
+					public void run() {
+
+						System.out.println("rated");
 
 						display.asyncExec(new Runnable() {
-							 int rate_number;
-							   boolean success = true;
+							int rate_number;
+							boolean success = true;
+
 							public void run() {
 
-									
-
-
-								
-								for ( int i =0;i<radios_lists.size();i++)
-								{
-									rate_number =gui_utils.get_index_button(radios_lists.get(i))+1;
+								for (int i = 0; i < radios_lists.size(); i++) {
+									rate_number = gui_utils
+											.get_index_button(radios_lists
+													.get(i)) + 1;
 									try {
-										System.out.println("rating " +tags.get(i) + "   " + rate_number);
-										
-										
-										
-										
-										if(user_logics.rate_tag_movie(movie_id_number, log_in_window.user.get_current_user_id(),tags.get(i),  rate_number)==false)
-											
+										System.out.println("rating "
+												+ tags.get(i) + "   "
+												+ rate_number);
+
+										if (user_logics.rate_tag_movie(
+												movie_id_number,
+												log_in_window.user
+														.get_current_user_id(),
+												tags.get(i), rate_number) == false)
+
 										{
-											success =false;
+											success = false;
 										}
-									
+
+										Thread t3 = new Thread(new Runnable() {
+
+											public void run() {
+												try {
+													log_in_window.user
+															.fill_user_prefence();
+												} catch (SQLException e) {
+
+												}
+											}
+
+										});
+
+										gui_utils.executor.execute(t3);
+
 									} catch (SQLException e) {
 										// TODO Auto-generated catch block
-										gui_utils.raise_sql_error_window(display);
+										gui_utils
+												.raise_sql_error_window(display);
 										e.printStackTrace();
 									}
 								}
-								if(success)
-								{
-									MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+								if (success) {
+									MessageBox messageBox = new MessageBox(
+											display.getActiveShell(),
+											SWT.ICON_WORKING);
 									messageBox.setText("SUCCESS");
-									messageBox.setMessage("Movie has been rated succesfully!");
+									messageBox
+											.setMessage("Movie has been rated succesfully!");
 									messageBox.open();
 								}
 							}
 
-});
+						});
 
-						
-						
-			    	   
-			       }
-		
-});
-			 gui_utils.executor.execute(t);
-			
-			
-			
-			
-		}
+					}
 
-	});
-	
+				});
+				gui_utils.executor.execute(t);
 
+			}
 
-
-
-
+		});
 
 		// //////////
 
@@ -598,72 +608,74 @@ tags_button.addMouseListener(new MouseAdapter() {
 		movie_rate_button.addMouseListener(new MouseAdapter() {
 			// @Override
 			public void mouseUp(MouseEvent arg0) {
-			
-				 Thread t = new Thread(new Runnable() {
-						
-					 
-					
-				       public void run() { 
 
+				Thread t = new Thread(new Runnable() {
 
-							display.asyncExec(new Runnable() {
+					public void run() {
 
-								public void run() {
+						display.asyncExec(new Runnable() {
 
-									   
-							    	   final int rate_number = gui_utils.get_index_button(movie_rate_radios) + 1;
-							    	   
+							public void run() {
 
-										
-										boolean success = true;
-										
-										System.out.println("rated");
-										
-										
-									
-										try {
+								final int rate_number = gui_utils
+										.get_index_button(movie_rate_radios) + 1;
 
-											if (log_in_window.user.rate_movie(movie_id_number,
-													rate_number) == false)
+								boolean success = true;
 
-											{
-												success = false;
+								System.out.println("rated");
+
+								try {
+
+									if (log_in_window.user.rate_movie(
+											movie_id_number, rate_number) == false)
+
+									{
+										success = false;
+									}
+									Thread t2 = new Thread(new Runnable() {
+
+										public void run() {
+											try {
+												log_in_window.user
+														.fill_user_prefence();
+											} catch (SQLException e) {
+
 											}
-
-										} catch (final SQLException e) {
-											
-													
-													gui_utils.raise_sql_error_window(display);
-													// TODO Auto-generated catch block
-													e.printStackTrace();	
-
-
 										}
-										if (success) {
-											
-										
-													MessageBox messageBox = new MessageBox(display
-															.getActiveShell(), SWT.ICON_WORKING);
-													messageBox.setText("SUCCESS");
-													messageBox.setMessage("Movie has been rated succesfully!");
-													messageBox.open();
-															
-										}
+
+									});
+
+									gui_utils.executor.execute(t2);
+
+								} catch (final SQLException e) {
+
+									gui_utils.raise_sql_error_window(display);
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+
+								}
+								if (success) {
+
+									MessageBox messageBox = new MessageBox(
+											display.getActiveShell(),
+											SWT.ICON_WORKING);
+									messageBox.setText("SUCCESS");
+									messageBox
+											.setMessage("Movie has been rated succesfully!");
+									messageBox.open();
 
 								}
 
-});
+							}
 
+						});
 
-				    	
+					}
 
-				    	   
-				       }
-			
-});
+				});
 
-				 gui_utils.executor.execute(t);
-				
+				gui_utils.executor.execute(t);
+
 			}
 
 		});

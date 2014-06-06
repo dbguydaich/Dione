@@ -47,7 +47,7 @@ public class social_tab extends Composite {
 		List<String> user_friends = null;
 		final List<String> friends_activities_strings;
 		final List<Label> friends_activities_labels = new ArrayList<Label>();
-		
+
 		final List<Label> user_social_activities_labels = new ArrayList<Label>();
 
 		FormLayout form_layout_tab = new FormLayout();
@@ -129,10 +129,10 @@ public class social_tab extends Composite {
 					alertBox.setMessage("Friend name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
 				} else {
-					display.asyncExec(new Runnable() {
+
+					Thread t = new Thread(new Runnable() {
 
 						public void run() {
-
 							try {
 
 								if (log_in_window.user.get_my_name() == friend_name) {
@@ -227,6 +227,8 @@ public class social_tab extends Composite {
 						}
 
 					});
+
+					gui_utils.executor.execute(t);
 
 				}
 
@@ -343,7 +345,8 @@ public class social_tab extends Composite {
 		});
 
 		// user recent social activity area
-		final Composite user_social_activity_area = new Composite(this, SWT.NONE);
+		final Composite user_social_activity_area = new Composite(this,
+				SWT.NONE);
 		user_social_activity_area.setLayoutData(gui_utils.form_data_factory(
 				600, 145, 120, 10));
 		GridLayout grid_layout_user_social_activity_area = new GridLayout(1,
@@ -367,97 +370,70 @@ public class social_tab extends Composite {
 			}
 		});
 
-		
-		
-		
-		
-		
 		// user recent social activities labels
 
-		 Thread t = new Thread(new Runnable() {
-				
-		       public void run() { 
+		Thread t = new Thread(new Runnable() {
 
-		   		
-		   		
-		   		try {
-		   			user_social_activities_strings = user_logics
-		   					.get_user_recent_string_activities(
-		   							log_in_window.user.get_current_user_id(), 5);
-		   		} catch (final SQLException e1) {
-		   			user_social_activities_strings = new ArrayList<String>();
+			public void run() {
+
+				try {
+					user_social_activities_strings = user_logics.get_user_recent_string_activities(
+							log_in_window.user.get_current_user_id(), 5);
+				} catch (final SQLException e1) {
+					user_social_activities_strings = new ArrayList<String>();
 					display.asyncExec(new Runnable() {
 
 						public void run() {
 
-				   			gui_utils.raise_sql_error_window(display);
-				   			// TODO Auto-generated catch block
-				   			e1.printStackTrace();
-								
+							gui_utils.raise_sql_error_window(display);
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
 
 						}
 
-});
+					});
 
-
-		   		} // to be used when function exists
+				} // to be used when function exists
 				display.asyncExec(new Runnable() {
 
 					public void run() {
 
-				   		final Font font_user_social_activities_labels = new Font(display,
-				   				"Ariel", 9, SWT.NONE);
-				   		int i = 0;
-				   		for (String str : user_social_activities_strings) {
-				   			user_social_activities_labels.add(new Label(
-				   					user_social_activity_area, SWT.NONE));
-				   			user_social_activities_labels.get(i).setText(str);
-				   			user_social_activities_labels.get(i).setFont(
-				   					font_user_social_activities_labels);
+						final Font font_user_social_activities_labels = new Font(
+								display, "Ariel", 9, SWT.NONE);
+						int i = 0;
+						for (String str : user_social_activities_strings) {
+							user_social_activities_labels.add(new Label(
+									user_social_activity_area, SWT.NONE));
+							user_social_activities_labels.get(i).setText(str);
+							user_social_activities_labels.get(i).setFont(
+									font_user_social_activities_labels);
 
-				   			if (i == 0) {
-				   				user_social_activities_labels.get(i).addDisposeListener(
-				   						new DisposeListener() {
-				   							public void widgetDisposed(DisposeEvent e) {
-				   								font_user_social_activities_labels.dispose();
-				   							}
-				   						});
-				   			}
+							if (i == 0) {
+								user_social_activities_labels.get(i)
+										.addDisposeListener(
+												new DisposeListener() {
+													public void widgetDisposed(
+															DisposeEvent e) {
+														font_user_social_activities_labels
+																.dispose();
+													}
+												});
+							}
 
-				   			i++;
-				   		}
+							i++;
+						}
 
-				   		if (i == 0)
-				   			font_user_social_activities_labels.dispose();
-							
+						if (i == 0)
+							font_user_social_activities_labels.dispose();
 
 					}
 
-});
+				});
 
+			}
 
-		   		
-
-		   		
-		    	   
-		       }
-	
-});
-		 gui_utils.executor.execute(t);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		});
+		gui_utils.executor.execute(t);
 
 		// friends recent activity area
 		final Composite friends_activity_area = new Composite(this, SWT.NONE);
@@ -485,9 +461,9 @@ public class social_tab extends Composite {
 
 			public void run() {
 				// friends recent activities labels
-				
+
 				try {
-				friends_activities_strings_anonymus = log_in_window.user
+					friends_activities_strings_anonymus = log_in_window.user
 							.get_friends_recent_string_activities();
 				} catch (final SQLException e1) {
 
@@ -498,7 +474,6 @@ public class social_tab extends Composite {
 							gui_utils.raise_sql_error_window(display);
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
-					
 
 						}
 
@@ -507,15 +482,15 @@ public class social_tab extends Composite {
 				} // to be used when function exists
 
 				display.asyncExec(new Runnable() {
-					
+
 					public void run() {
 
 						final Font font_friends_activities_labels = new Font(
 								display, "Ariel", 9, SWT.NONE);
 						int i = 0;
-						
-						for (String str : friends_activities_strings_anonymus ) {
-							
+
+						for (String str : friends_activities_strings_anonymus) {
+
 							friends_activities_labels.add(new Label(
 									friends_activity_area, SWT.NONE));
 							friends_activities_labels.get(i).setText(str);

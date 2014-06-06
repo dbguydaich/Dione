@@ -47,6 +47,7 @@ public class import_window extends Shell
 				{
 					display.dispose();
 					//shachar: app is exiting here
+					gui_utils.exist_threads();
 				}
 				else
 					gui_utils.EXIT_ON_LOGIN = true;

@@ -42,9 +42,14 @@ public class all_tabs_window extends Shell {
 
 		System.out.println("tabs win creating...");
 
-		// String currnt_user_str = get_current_username();
-		String current_user_str = "some username";
-		this.setText("MovieBook - Logged in As: " + current_user_str);
+		String my_name = null;
+		try {
+			 my_name = log_in_window.user.get_my_name();
+		} catch (SQLException e2) {
+			gui_utils.raise_sql_error_window(display);
+		}
+//		String current_user_str = "some username";
+		this.setText("MovieBook - Logged in As: " +  my_name);
 
 		this.setLayout(new FillLayout());
 		final TabFolder tab_folder = new TabFolder(this, SWT.NONE);
@@ -171,6 +176,7 @@ public class all_tabs_window extends Shell {
 				if (gui_utils.EXIT_ON_LOGIN == true) {
 					display.dispose();
 					// shachar: app is exiting here
+					gui_utils.exist_threads();
 				}
 
 				else

@@ -29,155 +29,140 @@ import bl.movie_logics;
 import bl.user_logics;
 import bl.verifier;
 
-
-
-
-
 ///////////// ******* Listeners to be implemented: ******** //////////////
 
 // rate button
 // note: when rating is over, first dispose gui_utils.pref_wiw, then create new display, and then use it to create a new all_tabs_win
 
-
-
-
-public class preferences_window extends Shell
-{
+public class preferences_window extends Shell {
 
 	Label movie_label;
-	boolean can_be_opened=true;
+	boolean can_be_opened = true;
 	light_entity_movie current_movie = null;
-	
-	public preferences_window(final Display display)
-	{
+
+	public preferences_window(final Display display) {
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-		
+
 		movie_label = new Label(this, SWT.NONE);
 
-		//window background
+		// window background
 		String imgURL = ".\\src\\gui\\images\\blue_400_300.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		
-		
-		this.addDisposeListener(new DisposeListener()
-		{
+
+		this.addDisposeListener(new DisposeListener() {
 			/*
-			 * Possible Scenarios:
-			 * 1. user has been rated movies for the first time - nothing is open, so we exit
-			 * 2. user has been reted movies on demand (all tabs still open) - go back
+			 * Possible Scenarios: 1. user has been rated movies for the first
+			 * time - nothing is open, so we exit 2. user has been reted movies
+			 * on demand (all tabs still open) - go back
 			 */
-			public void widgetDisposed(DisposeEvent e) 
-			{
+			public void widgetDisposed(DisposeEvent e) {
 				System.out.println("disposing pref...");
 				background.dispose();
-				if(gui_utils.EXIT_ON_LOGIN == true)
-				{
+				if (gui_utils.EXIT_ON_LOGIN == true) {
 					display.dispose();
-					//shachar: app is exiting here
+					// shachar: app is exiting here
+					gui_utils.exist_threads();
 				}
-				
+
 				else
 					gui_utils.EXIT_ON_LOGIN = true;
-			
-			}		
+
+			}
 		});
-		
+
 		update_movie();
-			
-		if(can_be_opened==false)
-		{
+
+		if (can_be_opened == false) {
 			return;
 		}
-		
+
 		this.setSize(400, 300);
+
+
+
+		String my_name = null;
+		try {
+			 my_name = log_in_window.user.get_my_name();
+		} catch (SQLException e2) {
+			gui_utils.raise_sql_error_window(display);
+		}
+
 		
-		//String currnt_user_str = get_current_username();
-		String current_user_str = "some username";
-		this.setText("Movie Preferences - Logged in As: " + current_user_str);			
+		this.setText("Movie Preferences - Logged in As: " +  my_name);
 		this.setLayout(new FormLayout());
-		
-		
-		
-		//headline label
+
+		// headline label
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Please Rate The Following Movies:");
-		headline_label.setLayoutData(gui_utils.form_data_factory(360, 30, 10, 20));
-		final Font font_headline_label = new Font(display, "Ariel",17, SWT.NONE );
+		headline_label.setLayoutData(gui_utils.form_data_factory(360, 30, 10,
+				20));
+		final Font font_headline_label = new Font(display, "Ariel", 17,
+				SWT.NONE);
 		headline_label.setFont(font_headline_label);
-		headline_label.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		headline_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_headline_label.dispose();
-			}		
+			}
 		});
-		
-		
+
 		try {
 			current_movie = log_in_window.user.get_unrated_movie();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		//movie label
+		// movie label
 		movie_label.setAlignment(SWT.CENTER);
 		movie_label.setText(current_movie.get_movie_name());
 
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
-		final Font font_movie_label = new Font(display, "Ariel",14, SWT.NONE );
+		final Font font_movie_label = new Font(display, "Ariel", 14, SWT.NONE);
 		movie_label.setFont(font_movie_label);
-		movie_label.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		movie_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_movie_label.dispose();
-			}		
+			}
 		});
-		
-		
-		
-		//area
+
+		// area
 		Composite radios_area = new Composite(this, SWT.NONE);
-		radios_area.setLayoutData(gui_utils.form_data_factory(100, 143, 100, 90));
+		radios_area.setLayoutData(gui_utils
+				.form_data_factory(100, 143, 100, 90));
 		GridLayout grid_layout_area = new GridLayout(1, false);
 		radios_area.setLayout(grid_layout_area);
-		
-		
-		//radios
+
+		// radios
 		final List<Button> radios = new ArrayList<Button>();
-		
-		for(int i = 0; i < 6; i++)
-		{
+
+		for (int i = 0; i < 6; i++) {
 			radios.add(new Button(radios_area, SWT.RADIO));
 			if (i == 1)
-				radios.get(i).setLayoutData(gui_utils.grid_data_factory(-1, 10, -1, -1, -1, -1));
+				radios.get(i).setLayoutData(
+						gui_utils.grid_data_factory(-1, 10, -1, -1, -1, -1));
 		}
-		
+
 		radios.get(0).setText("Don't Know");
 		radios.get(1).setText("1 - Lowest");
 		radios.get(2).setText("2");
 		radios.get(3).setText("3");
 		radios.get(4).setText("4");
 		radios.get(5).setText("5 - Highest");
-		
-		
-		
-		//rate button
-		Button rate_button = new Button(this, SWT.PUSH);	
+
+		// rate button
+		Button rate_button = new Button(this, SWT.PUSH);
 		rate_button.setText("Rate");
-		rate_button.setLayoutData(gui_utils.form_data_factory(50, 30, 160, 200));
-		final Font font_rate_button = new Font(display, "Ariel",13, SWT.NONE );
+		rate_button
+				.setLayoutData(gui_utils.form_data_factory(50, 30, 160, 200));
+		final Font font_rate_button = new Font(display, "Ariel", 13, SWT.NONE);
 		rate_button.setFont(font_rate_button);
-		rate_button.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		rate_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_rate_button.dispose();
-			}		
+			}
 		});
-		
+
 		rate_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -189,185 +174,161 @@ public class preferences_window extends Shell
 					// TODO Auto-generated catch block
 					gui_utils.raise_sql_error_window(display);
 					e.printStackTrace();
-				//} catch (SQLException e) {
+					// } catch (SQLException e) {
 					// TODO Auto-generated catch block
-				//	gui_utils.raise_sql_error_window(display);
-				//	e.printStackTrace();
+					// gui_utils.raise_sql_error_window(display);
+					// e.printStackTrace();
 				}
-				
-			
-		
-			
-		
+
 			}
 
 		});
-		
-		
 
-		//stop button
+		// stop button
 		Button stop_button = new Button(this, SWT.PUSH);
 		stop_button.setText("Stop Rating");
-		stop_button.setLayoutData(gui_utils.form_data_factory(100, 30, 160, 280));
-		final Font font_stop_button = new Font(display, "Ariel",13, SWT.NONE );
+		stop_button.setLayoutData(gui_utils
+				.form_data_factory(100, 30, 160, 280));
+		final Font font_stop_button = new Font(display, "Ariel", 13, SWT.NONE);
 		stop_button.setFont(font_stop_button);
-		stop_button.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		stop_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_stop_button.dispose();
-		
-			}		
+
+			}
 		});
-		
-		/////////
-		
-		
+
+		// ///////
+
 		stop_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+
 				gui_utils.EXIT_ON_LOGIN = false;
 				gui_utils.pref_win.dispose();
-				
-				
-				if(gui_utils.tabs_win == null)
-				{
-					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-					gui_utils.tabs_win.open();
-				}
-				
-				else if(gui_utils.tabs_win.isDisposed())
-				{
-					gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-					gui_utils.tabs_win.open();
-				}
-				
-		}});
-		
-	
-		
-		
-	}
-	
-	public void handle_rating(final int rate)
-	{
-		
-		
-		 Thread t = new Thread(new Runnable() {
-				
-		       public void run() { 
 
-		   		try {
-		   			log_in_window.user.rate_movie(current_movie.get_movie_id(),rate );
-		   		} catch (final SQLException e) {
-		   			
-		   			gui_utils.display.asyncExec(new Runnable() {
+				if (gui_utils.tabs_win == null) {
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
+					gui_utils.tabs_win.open();
+				}
+
+				else if (gui_utils.tabs_win.isDisposed()) {
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
+					gui_utils.tabs_win.open();
+				}
+
+			}
+		});
+
+	}
+
+	public void handle_rating(final int rate) {
+
+		Thread t = new Thread(new Runnable() {
+
+			public void run() {
+
+				try {
+					log_in_window.user.rate_movie(current_movie.get_movie_id(),
+							rate);
+
+					Thread t = new Thread(new Runnable() {
 
 						public void run() {
-							
-							
-							gui_utils.raise_sql_error_window(gui_utils.display);
-							// TODO Auto-generated catch block
-							e.printStackTrace();	
+							try {
+								log_in_window.user.fill_user_prefence();
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
 
+							}
 						}
 
-});
-		   		}  
-		       }
-	
-});
+					});
 
-gui_utils.executor.execute(t);
+					gui_utils.executor.execute(t);
 
-
-		
-		
-	}
-	
-	public void update_movie()
-	{
-		 Thread t = new Thread(new Runnable() {
-				
-		       public void run() { 
-
-		   		try {
-		   			
-		   			
-		   			current_movie = log_in_window.user.get_unrated_movie();
-		   			if(current_movie == null)
-		   			{		
-		   		//		go_to_overview();
-		   				can_be_opened = false;
-		   				return;
-		   				
-		   		
-		   			}
-		   			
+				} catch (final SQLException e) {
 
 					gui_utils.display.asyncExec(new Runnable() {
 
 						public void run() {
 
-				   			
-				   			
-				   			movie_label.setText(current_movie.get_movie_name());
-				   			
-				   	
-								
-
-						}
-
-});
-
-
-
-
-		   			
-		   		} catch (final SQLException e) {
-		   			
-		   			gui_utils.display.asyncExec(new Runnable() {
-
-						public void run() {
-							
-							
 							gui_utils.raise_sql_error_window(gui_utils.display);
 							// TODO Auto-generated catch block
-							e.printStackTrace();	
+							e.printStackTrace();
 
 						}
 
-});
-		   			
-		   			
-		   		}
-		       }
-	
-});
+					});
+				}
+			}
 
-gui_utils.executor.execute(t);
+		});
 
+		gui_utils.executor.execute(t);
 
-		
 	}
-	
-	
-//	public void go_to_overview()
-//	{
-//		gui_utils.login_win.dispose(); //closing log in window (display is closed along with it)
-//		
-//		//gui_utils.display = new Display();
-//		gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-//		gui_utils.tabs_win.open();
-//	}
-//	
-	
 
+	public void update_movie() {
+		Thread t = new Thread(new Runnable() {
 
+			public void run() {
 
-protected void checkSubclass()
-{
-}
+				try {
+
+					current_movie = log_in_window.user.get_unrated_movie();
+					if (current_movie == null) {
+						// go_to_overview();
+						can_be_opened = false;
+						return;
+
+					}
+
+					gui_utils.display.asyncExec(new Runnable() {
+
+						public void run() {
+
+							movie_label.setText(current_movie.get_movie_name());
+
+						}
+
+					});
+
+				} catch (final SQLException e) {
+
+					gui_utils.display.asyncExec(new Runnable() {
+
+						public void run() {
+
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+
+						}
+
+					});
+
+				}
+			}
+
+		});
+
+		gui_utils.executor.execute(t);
+
+	}
+
+	// public void go_to_overview()
+	// {
+	// gui_utils.login_win.dispose(); //closing log in window (display is closed
+	// along with it)
+	//
+	// //gui_utils.display = new Display();
+	// gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
+	// gui_utils.tabs_win.open();
+	// }
+	//
+
+	protected void checkSubclass() {
+	}
 
 }
