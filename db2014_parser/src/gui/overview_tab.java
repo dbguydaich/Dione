@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
+import bl.user_logics;
 import parser_entities.light_entity_movie;
 import config.config;
 
@@ -42,15 +43,35 @@ import config.config;
 public class overview_tab extends Composite
 {
 	
-	public overview_tab(final Display display, Composite parent, int style)
+	public overview_tab(final Display display, Composite parent, int style,List<light_entity_movie> movies_my_taste_entity,
+			List<String> user_tags_string,List<String> user_activities_strings)
 	{
 		super(parent, style);
 		
-		List<String> user_tags_string;
+		
+		
+//		//based on what we have learned about you LINKS
+//		List<light_entity_movie> movies_my_taste_entity = null;
+//		List<String> movies_my_taste = null;
+//		try {
+//			movies_my_taste_entity = user_logics.get_user_recommended_movies(log_in_window.user.get_current_user_id());
+//			movies_my_taste = gui_utils.convert_movies_entity_to_string(movies_my_taste_entity);
+//		} catch (SQLException e1) {
+//			movies_my_taste = new ArrayList<String>();
+//			// TODO Auto-generated catch block
+//			gui_utils.raise_sql_error_window(display);
+//			
+//			e1.printStackTrace();
+//		}
+		
+		
+		
+		
+		
 		List<Label> user_tags_labels = new ArrayList<Label>();
 		List<String> reco_movies_string;
 		List<Label> reco_movies_labels = new ArrayList<Label>();
-		List<String> user_activities_strings;
+//		List<String> user_activities_strings;
 		List<Label> user_activities_labels = new ArrayList<Label>();
 		List<String> friends_activities_strings;
 		List<Label> friends_activities_labels = new ArrayList<Label>();
@@ -101,23 +122,15 @@ public class overview_tab extends Composite
 		
 		
 		
-		//based on what we have learned about you LINKS
-		List<light_entity_movie> movies_my_taste_entity = null;
-		List<String> movies_my_taste = null;
-		try {
-			movies_my_taste_entity = log_in_window.user.get_user_recommended_movies(log_in_window.user.get_current_user_id());
-			movies_my_taste = gui_utils.convert_movies_entity_to_string(movies_my_taste_entity);
-		} catch (SQLException e1) {
-			movies_my_taste = new ArrayList<String>();
-			// TODO Auto-generated catch block
-			gui_utils.raise_sql_error_window(display);
-			
-			e1.printStackTrace();
-		}
+	
 		
 
 		//
+//		//based on what we have learned about you LINKS
+		List<String> movies_my_taste = null;
+	
 		
+			movies_my_taste = gui_utils.convert_movies_entity_to_string(movies_my_taste_entity);
 		int i = 0;
 		int j=0;
 		final List<light_entity_movie> movies_my_taste_entity_for_annonymus = movies_my_taste_entity;
@@ -200,15 +213,15 @@ public class overview_tab extends Composite
 		
 		
 		//taste_tags
-		
-		try {
-			user_tags_string =log_in_window.user.get_user_popular_tags() ;
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			user_tags_string = new ArrayList<String>();
-			gui_utils.raise_sql_error_window(display);
-			e1.printStackTrace();
-		} //to be used when function exists
+//		
+//		try {
+//			user_tags_string =log_in_window.user.get_user_popular_tags() ;
+//		} catch (SQLException e1) {
+//			// TODO Auto-generated catch block
+//			user_tags_string = new ArrayList<String>();
+//			gui_utils.raise_sql_error_window(display);
+//			e1.printStackTrace();
+//		} //to be used when function exists
 
 		
 		final Font font_user_tags_label = new Font(display, "Ariel", 12, SWT.NONE);
@@ -266,15 +279,15 @@ public class overview_tab extends Composite
 		
 		//user recent activities labels
 		
-		try {
-			user_activities_strings = log_in_window.user.get_user_recent_string_activities(log_in_window.user.get_current_user_id(), 6);
-			
-		} catch (SQLException e1) {
-			user_activities_strings = new ArrayList<String>();
-			gui_utils.raise_sql_error_window(display);
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+//		try {
+//			user_activities_strings = log_in_window.user.get_user_recent_string_activities(log_in_window.user.get_current_user_id(), 6);
+//			
+//		} catch (SQLException e1) {
+//			user_activities_strings = new ArrayList<String>();
+//			gui_utils.raise_sql_error_window(display);
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} 
 
 		
 		final Font font_user_activities_labels = new Font(display, "Ariel", 9, SWT.NONE);
