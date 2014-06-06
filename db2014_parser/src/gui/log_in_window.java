@@ -1,6 +1,5 @@
 package gui;
 
-
 import java.sql.SQLException;
 
 import org.eclipse.swt.SWT;
@@ -35,289 +34,363 @@ import db.db_queries_user;
 
 //import db.IdbOparations;
 
+public class log_in_window extends Shell {
 
-
-
-
-
-
-public class log_in_window extends Shell
-{
-	
-
-	///good idea to put it here?
+	// /good idea to put it here?
 	public static user_logics user;
-	
-	/////
-	//config config = new config();
-	//int window_height = config.get_window_height();
-	//int window_width = config.get_window_width();
 
+	// ///
+	// config config = new config();
+	// int window_height = config.get_window_height();
+	// int window_width = config.get_window_width();
 
-	
-	public log_in_window(final Display display)
-	{
+	public log_in_window(final Display display) {
 		super(display);
-		
-		
-//		final Thread cron = new Thread(new cron());
-//		cron.start(); ///cron for matan
-		
+
+		// final Thread cron = new Thread(new cron());
+		// cron.start(); ///cron for matan
+
 		this.setSize(300, 300);
 		this.setText("MovieBook");
-		
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
 
-				if(gui_utils.EXIT_ON_LOGIN == true)
-				{
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+
+				if (gui_utils.EXIT_ON_LOGIN == true) {
 					display.dispose();
-					//cron.interrupt();
+					// cron.interrupt();
 					gui_utils.exist_threads();
 				}
-				
+
 				else
 					gui_utils.EXIT_ON_LOGIN = true;
-				
-			}		
+
+			}
 		});
-		
+
 		this.setLayout(new FormLayout());
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.setLayout(new GridLayout(2, false));
-		
-		
-		//window background
+
+		// window background
 		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		this.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
-			}		
+			}
 		});
-		
 
-		
-		//headline label
+		// headline label
 		Label log_in_label = new Label(this, SWT.NONE);
 		log_in_label.setText("Log In Or Sign Up");
-		log_in_label.setLayoutData(gui_utils.grid_data_factory(27, 15, 2, -1, SWT.CENTER, SWT.CENTER));
-		final Font font_log_in_label = new Font(display, "Ariel",20, SWT.NONE);
+		log_in_label.setLayoutData(gui_utils.grid_data_factory(27, 15, 2, -1,
+				SWT.CENTER, SWT.CENTER));
+		final Font font_log_in_label = new Font(display, "Ariel", 20, SWT.NONE);
 		log_in_label.setFont(font_log_in_label);
-		log_in_label.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		log_in_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_log_in_label.dispose();
-			}		
+			}
 		});
-		
-		
-		
-		//label username
+
+		// label username
 		Label username_label = new Label(this, SWT.NONE);
 		username_label.setText("Username:");
-		username_label.setLayoutData(gui_utils.grid_data_factory(31, 20, -1, -1, -1, -1));
-		final Font font_username_label = new Font(display, "Ariel", 12, SWT.NONE);
+		username_label.setLayoutData(gui_utils.grid_data_factory(31, 20, -1,
+				-1, -1, -1));
+		final Font font_username_label = new Font(display, "Ariel", 12,
+				SWT.NONE);
 		username_label.setFont(font_username_label);
-		username_label.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		username_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_username_label.dispose();
-			}		
+			}
 		});
-		
-		
-		
-		//text username
+
+		// text username
 		final Text username_text = new Text(this, SWT.BORDER);
-		username_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 20, -1, -1, -1, -1));
+		username_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 20,
+				-1, -1, -1, -1));
 		username_text.setTextLimit(10);
-		
-		
-		
-		//label password
+
+		// label password
 		Label password_label = new Label(this, SWT.NONE);
 		password_label.setText("Password:");
-		password_label.setLayoutData(gui_utils.grid_data_factory(31, 10, -1, -1, -1, -1));
-		final Font font_password_label = new Font(display, "Ariel", 12, SWT.NONE);
+		password_label.setLayoutData(gui_utils.grid_data_factory(31, 10, -1,
+				-1, -1, -1));
+		final Font font_password_label = new Font(display, "Ariel", 12,
+				SWT.NONE);
 		password_label.setFont(font_password_label);
-		password_label.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		password_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_password_label.dispose();
-			}		
+			}
 		});
-		
-		
-		
-		//text password
+
+		// text password
 		final Text password_text = new Text(this, SWT.PASSWORD | SWT.BORDER);
-		password_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 10, -1, -1, -1, -1));
+		password_text.setLayoutData(gui_utils.grid_data_factory(100, 15, 0, 10,
+				-1, -1, -1, -1));
 		password_text.setTextLimit(6);
-		
-		
-		
-		//log in button
+
+		// log in button
 		Button log_in_button = new Button(this, SWT.PUSH);
 		log_in_button.setText("Log In");
 		final Font font_login_button = new Font(display, "Ariel", 12, SWT.NONE);
 		log_in_button.setFont(font_login_button);
-		log_in_button.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		log_in_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_login_button.dispose();
-			}		
+			}
 		});
-		
-		log_in_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 55, 30, -1, -1, -1, -1));
-		////
+
+		log_in_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 55, 30,
+				-1, -1, -1, -1));
+		// //
 		log_in_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				final String username = username_text.getText();
 				final String pass = password_text.getText();
-				if(!verifier.verifyname(username)){ // illegal user name
-					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				if (!verifier.verifyname(username)) { // illegal user name
+					MessageBox alertBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_WARNING);
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
-				}else if(!verifier.verifyPass( pass)){ // invalid password
-					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				} else if (!verifier.verifyPass(pass)) { // invalid password
+					MessageBox messageBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
-					messageBox.setMessage("Password must contain 1-6 alphanumeric chars.");
+					messageBox
+							.setMessage("Password must contain 1-6 alphanumeric chars.");
 					messageBox.open();
-				} else
-					
-					try {
-						
-						
-						
-						if( db_queries_user.authenticate_user(username,pass)){
-							user = new user_logics(); //Initializing user to be worked with all session long
-							user.login_user(username, pass);
-							gui_utils.EXIT_ON_LOGIN = false;
-							gui_utils.login_win.dispose();							
-											
-							if (user.user_rated()) //user already rated movies
-							{
-								gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-								gui_utils.tabs_win.open();
-							}
-							
-							else
-							{
-								gui_utils.pref_win = new preferences_window(gui_utils.display);
-								if(gui_utils.pref_win.can_be_opened)
-								{
-									gui_utils.pref_win.open();
+				} else {
+					Thread t = new Thread(new Runnable() {
+
+						public void run() {
+
+							try {
+
+								if (user_logics.authenticate_user(username,
+										pass)) {
+									user = new user_logics(); // Initializing
+																// user to be
+																// worked with
+																// all session
+																// long
+									user.login_user(username, pass);
+
+									display.asyncExec(new Runnable() {
+
+										public void run() {
+
+											gui_utils.EXIT_ON_LOGIN = false;
+											gui_utils.login_win.dispose();
+
+										}
+
+									});
+
+									if (user.user_rated()) // user already rated
+															// movies
+									{
+										display.asyncExec(new Runnable() {
+
+											public void run() {
+
+												gui_utils.tabs_win = new all_tabs_window(
+														gui_utils.display);
+												gui_utils.tabs_win.open();
+
+											}
+
+										});
+
+									}
+
+									else {
+
+										display.asyncExec(new Runnable() {
+
+											public void run() {
+
+												gui_utils.pref_win = new preferences_window(
+														gui_utils.display);
+												if (gui_utils.pref_win.can_be_opened) {
+													gui_utils.pref_win.open();
+												}
+
+												else {
+													gui_utils.EXIT_ON_LOGIN = false;
+													gui_utils.pref_win
+															.dispose();
+
+													gui_utils.tabs_win = new all_tabs_window(
+															gui_utils.display);
+													gui_utils.tabs_win.open();
+
+													MessageBox messageBox = new MessageBox(
+															gui_utils.tabs_win,
+															SWT.ICON_WARNING);
+													messageBox.setText("Error");
+													messageBox
+															.setMessage("Couldn't find any movies to rate");
+													messageBox.open();
+
+												}
+
+											}
+
+										});
+
+									}
+
+								} else { // no user found
+
+									display.asyncExec(new Runnable() {
+
+										public void run() {
+											MessageBox messageBox = new MessageBox(
+													display.getActiveShell(),
+													SWT.ICON_WARNING);
+											messageBox.setText("Error");
+											messageBox
+													.setMessage("Password and username do not match. Try again.");
+											messageBox.open();
+										}
+
+									});
+
 								}
-								
-								else
-								{
-									gui_utils.EXIT_ON_LOGIN = false;
-									gui_utils.pref_win.dispose();
-									
-									gui_utils.tabs_win = new all_tabs_window(gui_utils.display); 
-									gui_utils.tabs_win.open();
-									
-									MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING);
-									messageBox.setText("Error");
-									messageBox.setMessage("Couldn't find any movies to rate");
-									messageBox.open();
-									
-								}
-						
+							} catch (final SQLException e) {
+
+								display.asyncExec(new Runnable() {
+
+									public void run() {
+										gui_utils
+												.raise_sql_error_window(display);
+										e.printStackTrace();
+
+									}
+
+								});
+
 							}
-							
+							return;
 						}
-						else{ //no user found
-							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-							messageBox.setText("Error");
-							messageBox.setMessage("Password and username do not match. Try again.");
-							messageBox.open();
-						}
-					} catch (SQLException e) {
-						gui_utils.raise_sql_error_window(display);
-						e.printStackTrace();
-					}
-				
-		
-			
-		
+					});
+
+					gui_utils.executor.execute(t);
+
+				}
 			}
 
 		});
-		////
+		// //
 
-		
-		//sign up button
+		// sign up button
 		Button sign_up_button = new Button(this, SWT.PUSH);
 		sign_up_button.setText("Sign Up");
-		sign_up_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 20, 30, -1, -1, -1, -1));
+		sign_up_button.setLayoutData(gui_utils.grid_data_factory(70, 35, 20,
+				30, -1, -1, -1, -1));
 		final Font font_signup_button = new Font(display, "Ariel", 12, SWT.NONE);
 		sign_up_button.setFont(font_login_button);
-		sign_up_button.addDisposeListener(new DisposeListener()
-		{
-			public void widgetDisposed(DisposeEvent e) 
-			{
+		sign_up_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
 				font_signup_button.dispose();
-			}		
+			}
 		});
-		
+
 		sign_up_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				final String username = username_text.getText();
 				final String pass = password_text.getText();
-				if(!verifier.verifyname(username)){ // illegal user name
-					MessageBox alertBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				if (!verifier.verifyname(username)) { // illegal user name
+					MessageBox alertBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_WARNING);
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
-				}else if(!verifier.verifyPassSignUp( pass)){ // invalid password
-					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				} else if (!verifier.verifyPassSignUp(pass)) { // invalid
+																// password
+					MessageBox messageBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
-					messageBox.setMessage("Password must contain 4-10 alphanumeric chars.");
+					messageBox
+							.setMessage("Password must contain 4-10 alphanumeric chars.");
 					messageBox.open();
 				} else
-					try {
-						if ( user_logics.add_user(username, pass))
-						{
-							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-							messageBox.setText("SUCCESS");
-							messageBox.setMessage("User "+ username + " has been succesfully signed up");
-							messageBox.open();
+
+				{
+					Thread t = new Thread(new Runnable() {
+
+						public void run() {
+							try {
+
+								final boolean success = user_logics.add_user(
+										username, pass);
+
+								display.asyncExec(new Runnable() {
+
+									public void run() {
+
+										if (success) {
+											MessageBox messageBox = new MessageBox(
+													display.getActiveShell(),
+													SWT.ICON_WORKING);
+											messageBox.setText("SUCCESS");
+											messageBox
+													.setMessage("User "
+															+ username
+															+ " has been succesfully signed up");
+											messageBox.open();
+										} else {
+											MessageBox messageBox = new MessageBox(
+													display.getActiveShell(),
+													SWT.ICON_WARNING);
+											messageBox.setText("Error");
+											messageBox
+													.setMessage("There was an error during signup. Sorry.");
+											messageBox.open();
+										}
+
+									}
+
+								});
+
+							} catch (final SQLException e) {
+								display.asyncExec(new Runnable() {
+
+									public void run() {
+
+										gui_utils
+												.raise_sql_error_window(display);
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+
+									}
+
+								});
+
+							}
+
 						}
-						else {  //there was error during registration
-							MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-							messageBox.setText("Error");
-							messageBox.setMessage("There was an error during signup. Sorry.");
-							messageBox.open();
-						}
-					} catch (SQLException e) {
-						gui_utils.raise_sql_error_window(display);
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+
+					});
+					gui_utils.executor.execute(t);
+				}
+
 			}
 		});
-		
-		
-}
 
-		
-	protected void checkSubclass()
-	{
 	}
-	
+
+	protected void checkSubclass() {
+	}
+
 }
