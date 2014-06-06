@@ -424,7 +424,7 @@ public class settings_tab extends Composite {
 					public void run() {
 
 						try {
-							final boolean success = log_in_window.user.update_pass(
+							final boolean success = user_logics.update_pass(
 									pass_change_to,
 									log_in_window.user.get_current_user_id(),
 									pass);

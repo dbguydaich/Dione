@@ -250,36 +250,106 @@ public class preferences_window extends Shell
 		
 	}
 	
-	public void handle_rating(int rate)
+	public void handle_rating(final int rate)
 	{
-		try {
-			log_in_window.user.rate_movie(current_movie.get_movie_id(),rate );
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			gui_utils.raise_sql_error_window(getDisplay());
-			e.printStackTrace();
-		}
+		
+		
+		 Thread t = new Thread(new Runnable() {
+				
+		       public void run() { 
+
+		   		try {
+		   			log_in_window.user.rate_movie(current_movie.get_movie_id(),rate );
+		   		} catch (final SQLException e) {
+		   			
+		   			gui_utils.display.asyncExec(new Runnable() {
+
+						public void run() {
+							
+							
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							// TODO Auto-generated catch block
+							e.printStackTrace();	
+
+						}
+
+});
+		   		}  
+		       }
+	
+});
+
+gui_utils.executor.execute(t);
+
+
+		
+		
 	}
 	
 	public void update_movie()
 	{
-		try {
-			current_movie = log_in_window.user.get_unrated_movie();
-			if(current_movie == null)
-			{		
-		//		go_to_overview();
-				can_be_opened = false;
-				return;
+		 Thread t = new Thread(new Runnable() {
 				
-			}
-			movie_label.setText(current_movie.get_movie_name());
-			
+		       public void run() { 
+
+		   		try {
+		   			
+		   			
+		   			current_movie = log_in_window.user.get_unrated_movie();
+		   			if(current_movie == null)
+		   			{		
+		   		//		go_to_overview();
+		   				can_be_opened = false;
+		   				return;
+		   				
+		   		
+		   			}
+		   			
+
+					gui_utils.display.asyncExec(new Runnable() {
+
+						public void run() {
+
+				   			
+				   			
+				   			movie_label.setText(current_movie.get_movie_name());
+				   			
+				   	
+								
+
+						}
+
+});
+
+
+
+
+		   			
+		   		} catch (final SQLException e) {
+		   			
+		   			gui_utils.display.asyncExec(new Runnable() {
+
+						public void run() {
+							
+							
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							// TODO Auto-generated catch block
+							e.printStackTrace();	
+
+						}
+
+});
+		   			
+		   			
+		   		}
+		       }
 	
-			
-		} catch (SQLException e) {
-			gui_utils.raise_sql_error_window(getDisplay());
-			e.printStackTrace();
-		}
+});
+
+gui_utils.executor.execute(t);
+
+
+		
 	}
 	
 	
