@@ -109,8 +109,7 @@ public class settings_tab extends Composite
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
-						Thread thread = new Thread(gui_utils.my_importer);
-				        thread.start();
+						
 						
 					}
 						
@@ -193,9 +192,10 @@ public class settings_tab extends Composite
 				{				
 					if(!gui_utils.pref_win.isDisposed())
 					{
-						/*
-						 * Shachar: show messagebox: "you are already rating movies"
-						 */
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("Failed");
+						messageBox.setMessage("Rating movies window is already open!");
+						messageBox.open();
 					}
 					
 					else /* open preferences window */

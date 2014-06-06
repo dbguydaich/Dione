@@ -101,16 +101,13 @@ public class import_window extends Shell
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
-						Thread thread = new Thread(gui_utils.my_importer);
-				        thread.start();
+
 					}
 						
 				else //running progress win
 				{	
 					gui_utils.import_progress_win = new import_progress_window(display);
 					gui_utils.import_progress_win.open();
-					Thread thread = new Thread(gui_utils.my_importer);
-			        thread.start();
 				}
 			}
 			

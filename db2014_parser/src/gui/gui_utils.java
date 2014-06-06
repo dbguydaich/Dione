@@ -34,6 +34,8 @@ public class gui_utils
 	static parser_entities.Importer my_importer = null;
 	public static ExecutorService executor;
 	
+	
+	
 	public static void main(String args[])
 	{
 //// threading handling
@@ -56,6 +58,7 @@ public class gui_utils
 		
 		//else
 		//{
+		
 			login_win = new log_in_window(display);
 			//movie_details_window movie_win = new movie_details_window(display, 1);
 			//tabs_win = new all_tabs_window(display);
@@ -66,8 +69,6 @@ public class gui_utils
 			login_win.open();
 		//}
 		
-		
-	
 		
 		
 		//movie_win.open();
