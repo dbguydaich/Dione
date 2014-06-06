@@ -34,76 +34,76 @@ public class import_progress_window extends Shell
 		
 		
 		gui_utils.my_importer = new parser_entities.Importer();  
-		
-		gui_utils.my_importer.addActionListener(new ActionListener() {
-		     @Override
-		     public void actionPerformed(final ActionEvent event)
-		     {
-		    	 System.out.println("**** gui: action perforemd ****");
-		    	 int progress_status = (int) gui_utils.my_importer.get_progress_percent();
-		    	 prog_bar.setSelection(progress_status);
-		    	 
-		    	 if(progress_status == 100) /* data importing is done */
-		    	 {
-		    		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-					messageBox.setText("SUCCESS");
-					messageBox.setMessage("Data import has finished successfully");
-					messageBox.open();
-					
-		    		gui_utils.import_progress_win.dispose();
-		    		
-		    	    if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
-		    	    {
-		    	    	gui_utils.EXIT_ON_LOGIN = false;
-		    	    	gui_utils.import_win.dispose();
-		    	     	
-			    		gui_utils.login_win = new log_in_window(gui_utils.display);
-			    		gui_utils.login_win.open();
-		    	    }
-		    	   
-		    	 }
-		     }
-		});
-		
-
+//		
 //		gui_utils.my_importer.addActionListener(new ActionListener() {
 //		     @Override
-//		     public void actionPerformed(final ActionEvent event) {
-//		      Display.getDefault().asyncExec(new Runnable() 
-//		      {
-//		    	  public void run()
-//		          {
-//		    		  System.out.println("***** gui: action performed is running! *****");
-//		    		  int progress_status = (int) gui_utils.my_importer.get_progress_percent();
-//		    		  prog_bar.setSelection(progress_status);	  
-//		              
-//				    	 if(progress_status == 100) /* data importing is done */
-//				    	 {
-//				    		//shachar: spell check the following
-//				    		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-//							messageBox.setText("SUCCESS");
-//							messageBox.setMessage("Data import has finished successfully");
-//							messageBox.open();
-//							
-//				    		gui_utils.import_progress_win.dispose();
-//				    		
-//				    	    if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
-//				    	    {
-//				    	    	gui_utils.EXIT_ON_LOGIN = false;
-//				    	    	gui_utils.import_win.dispose();
-//				    	     	
-//					    		gui_utils.login_win = new log_in_window(gui_utils.display);
-//					    		gui_utils.login_win.open();
-//				    	    }
-//				    	   
-//				    	 }
-//
-//		    		  
-//		          }
-//		 
-//		      });
+//		     public void actionPerformed(final ActionEvent event)
+//		     {
+//		    	 System.out.println("**** gui: action perforemd ****");
+//		    	 int progress_status = (int) gui_utils.my_importer.get_progress_percent();
+//		    	 prog_bar.setSelection(progress_status);
+//		    	 
+//		    	 if(progress_status == 100) /* data importing is done */
+//		    	 {
+//		    		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+//					messageBox.setText("SUCCESS");
+//					messageBox.setMessage("Data import has finished successfully");
+//					messageBox.open();
+//					
+//		    		gui_utils.import_progress_win.dispose();
+//		    		
+//		    	    if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
+//		    	    {
+//		    	    	gui_utils.EXIT_ON_LOGIN = false;
+//		    	    	gui_utils.import_win.dispose();
+//		    	     	
+//			    		gui_utils.login_win = new log_in_window(gui_utils.display);
+//			    		gui_utils.login_win.open();
+//		    	    }
+//		    	   
+//		    	 }
 //		     }
-//		 });
+//		});
+//		
+
+		gui_utils.my_importer.addActionListener(new ActionListener() {
+		     @Override
+		     public void actionPerformed(final ActionEvent event) {
+		      Display.getDefault().asyncExec(new Runnable() 
+		      {
+		    	  public void run()
+		          {
+		    		  System.out.println("***** gui: action performed is running! *****");
+		    		  int progress_status = (int) gui_utils.my_importer.get_progress_percent();
+		    		  prog_bar.setSelection(progress_status);	  
+		              
+				    	 if(progress_status == 100) /* data importing is done */
+				    	 {
+				    		//shachar: spell check the following
+				    		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+							messageBox.setText("SUCCESS");
+							messageBox.setMessage("Data import has finished successfully");
+							messageBox.open();
+							
+				    		gui_utils.import_progress_win.dispose();
+				    		
+				    	    if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
+				    	    {
+				    	    	gui_utils.EXIT_ON_LOGIN = false;
+				    	    	gui_utils.import_win.dispose();
+				    	     	
+					    		gui_utils.login_win = new log_in_window(gui_utils.display);
+					    		gui_utils.login_win.open();
+				    	    }
+				    	   
+				    	 }
+
+		    		  
+		          }
+		 
+		      });
+		     }
+		 });
 		
 		
 		
