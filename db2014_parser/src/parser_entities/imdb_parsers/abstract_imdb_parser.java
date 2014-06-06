@@ -61,9 +61,9 @@ public abstract class abstract_imdb_parser {
 	
 	protected Importer Caller; 
 	
-	private List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
+	protected List<PropertyChangeListener> listener = new ArrayList<PropertyChangeListener>();
 
-	private void notifyListeners(Object object, String property,
+	protected void notifyListeners(Object object, String property,
 			String oldValue, String newValue) {
 		for (PropertyChangeListener name : listener) {
 			name.propertyChange(new PropertyChangeEvent(this, property,

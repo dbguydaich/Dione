@@ -3,16 +3,18 @@ package parser_entities;
 import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import db.db_operations;
 
 import parser_entities.imdb_parsers.abstract_imdb_parser;
 import parser_entities.imdb_parsers.imdb_director_parser;
@@ -39,226 +41,375 @@ import parser_entities.parsers.parser_yago_literal_facts;
 import parser_entities.parsers.parser_yago_types;
 import parser_entities.parsers.parser_yago_wikipedia;
 
-public class Importer implements Runnable,PropertyChangeListener{
+public class Importer extends db_operations implements Runnable,
+		PropertyChangeListener {
+
+	private volatile boolean done = false; /* thread termination signal */
 	
-	
-	private volatile boolean done = false;			/* thread termination signal */
-	
-	private HashMap<String, entity_movie> parser_map_movie = new HashMap<String, entity_movie>(); 
-	private HashMap<String, entity_person> parser_map_actor =new  HashMap<String, entity_person>(); 
+	/* yago maps, that we enrich and use */
+	private HashMap<String, entity_movie> parser_map_movie = new HashMap<String, entity_movie>();
+	private HashMap<String, entity_person> parser_map_actor = new HashMap<String, entity_person>();
 	private HashMap<String, entity_person> parser_map_director = new HashMap<String, entity_person>();
 
-	private HashSet<String> parser_language_set = new HashSet<String>();			/* imdb entities - languge*/	 
-	private HashSet<String> parser_genre_set = new HashSet<String>();				/* imdb entities - genres*/
-	private HashSet<String> parser_tag_set = new HashSet<String>();					/* imdb entities - tags*/
+	/* imdb entities - langauge */
+	private HashSet<String> parser_language_set = new HashSet<String>();
+	/* imdb entities - genre */
+	private HashSet<String> parser_genre_set = new HashSet<String>();
+	/* imdb entities - tag */
+	private HashSet<String> parser_tag_set = new HashSet<String>();
 	
-	/*helper maps*/
-	private HashMap<String,String> 	imdb_to_yago = new HashMap<String,String>();			/*holds all possible imdb names, that are relevant to yago films*/
-	private HashMap<String,Integer> parser_tag_count_map = new HashMap<String,Integer>();	/* handles tag counts, to establish top 10 per movie*/
-	private HashMap<String,String> 	imdb_name_to_director = new HashMap<String,String>();	/* maps imdb movie name to imdb director*/ 
+	/* helper maps */
+	/*
+	 * holds all possible movie names, crossing multilangual movie titles, and
+	 * director names
+	 */
+	private HashMap<String, String> imdb_to_yago = new HashMap<String, String>();
+	
+	/* holds MOKA tag count, to establish top-10 popular per movie */
+	private HashMap<String, Integer> parser_tag_count_map = new HashMap<String, Integer>();
+	/*
+	 * imdb names, mapped to imdb directors, to help establish qualifed name to
+	 * imdb titles
+	 */
+	private HashMap<String, String> imdb_name_to_director = new HashMap<String, String>();
 
-	private float progress_percent; 	/* final percentage of progress */
-	private int cur_progress_max; 	/* the total amount of work for current task*/
-	private int cur_task; 			/* the current parse,load made*/
-	private int task_weight;		/* the amount of 100% assigned to this task*/
-	private int offset_progress;	/* the amount already completed, before this task*/
-	
-	/*progress bar interface*/
+	private float progress_percent; /* final percentage of progress */
+	private int cur_progress_max; /* the total amount of work for current task */
+	private int cur_task; /* the current parse,load made */
+	private int task_weight; /* the amount of 100% assigned to this task */
+	private int offset_progress; /* the amount already completed, before this task */
+
+	/* progress bar interface */
 	private List<ActionListener> listeners = new ArrayList<ActionListener>();
-	public void addActionListener(ActionListener listener) {
-		  listeners.add(listener);
-		 }
 
+	public void addActionListener(ActionListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * notify listeners about an event
+	 * 
+	 * @param message
+	 */
 	public void fireEvent(String message) {
-		  ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, message);
-		  for(ActionListener listener: listeners){
-		   listener.actionPerformed(event);
-		  }
-		 }
-	
+		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+				message);
+		for (ActionListener listener : listeners) {
+			listener.actionPerformed(event);
+		}
+	}
+
+	/**
+	 * notify listeners on the end of the thread if message sent, an error
+	 * occurred
+	 * 
+	 * @param message
+	 *            - error message, signifying bad end
+	 */
+	public void fireFinish(String message) {
+		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_LAST,
+				message);
+		for (ActionListener listener : listeners) {
+			listener.actionPerformed(event);
+		}
+	}
+
 	/**
 	 * called by client, to get curren import progress
+	 * 
 	 * @return
 	 */
-	public float get_progress_percent()
-	{
+	public float get_progress_percent() {
 		return this.progress_percent;
 	}
-	
+
 	/**
 	 * called by client, to terminate thread
 	 */
-	public void terminate_thread()
-	{
-		this.done = true; 
+	public void terminate_thread() {
+		this.done = true;
 	}
-	
-	public boolean is_thread_terminated()
-	{
+
+	public boolean is_thread_terminated() {
 		return this.done;
 	}
-	
-	/*property change interface*/
+
+	/* property change interface */
 	@Override
 	/**
 	 * we get a change event, concerning the amount of lines read, 
 	 * batches made, etc, and update the progress counter accordingly
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		/*update curren progress*/
+		/* update curren progress */
 		Float progress = Float.parseFloat(evt.getNewValue().toString());
 		String s_max = String.valueOf(this.cur_progress_max);
 		Float max = Float.parseFloat(s_max);
-		this.progress_percent = this.offset_progress + (progress / max )*this.task_weight;
-		/* Notify Listeners in GUI about the progress*/
+		this.progress_percent = this.offset_progress + (progress / max)
+				* this.task_weight;
+		/* Notify Listeners in GUI about the progress */
 		fireEvent("progress made");
-		System.out.println("progress: "+progress_percent);
-	
+		System.out.println("progress: " + progress_percent);
+
 	}
-	
+
 	@Override
+	/**
+	 * The Importer thread's main logic - we run all parsers and loaders
+	 */
 	public void run() {
-	// TODO Auto-generated method stub
-		
 		try {
-		/*parse all yago files*/
-		abstract_yago_parser[] yago_parsers = 
-			{new parser_yago_types(parser_map_movie,parser_map_actor,parser_map_director,this),
-			 new parser_yago_facts(parser_map_movie,parser_map_actor,parser_map_director,this),
-			 new parser_yago_literal_facts(parser_map_movie,parser_map_actor,parser_map_director,this),
-			 new parser_yago_wikipedia(parser_map_movie,parser_map_actor,parser_map_director,this),
-			 new parser_yago_labels(parser_map_movie,parser_map_actor,parser_map_director,this),
-			};
-		
-		this.offset_progress = 0;
-		for (abstract_yago_parser parser: yago_parsers)
-		{
-			this.cur_progress_max = parser.get_file_line_count();
-			this.task_weight = 2;
-			parser.addChangeListener(this);
-			parser.parse_file();
-			if (done)
-			{
-				System.out.print("Termination Signal Caught, Importer Thread Exiting");
-				return;
-			}
-			this.offset_progress+= this.task_weight;
-		}
-		
-		yago_parsers[yago_parsers.length-1].update_fq_name();
-		parser_map_movie = yago_parsers[yago_parsers.length-1].get_parser_movies();
-		
-		
-		/*parse all IMDB files*/
-		abstract_imdb_parser[] imdb_parsers = {
-				new imdb_director_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
-				new imdb_genre_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
-				new imdb_language_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
-				new imdb_tag_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map,this),
-				new imdb_plot_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,this),
-				new imdb_tag_movie_parser(parser_map_movie,imdb_name_to_director,imdb_to_yago,parser_tag_count_map,this),
-		};
-		
-		for (int i=0;i<imdb_parsers.length;i++)		
-		{
-			abstract_imdb_parser p = imdb_parsers[i];
-			this.cur_progress_max = p.get_file_line_count();
-			this.task_weight = 2;
-			if (i==5)
+			/* mark process start in db */
+			set_invocation();
+			this.offset_progress = 0;			
+			
+			/* parse all yago files  */
+			abstract_yago_parser[] yago_parsers = {
+					new parser_yago_types(parser_map_movie, parser_map_actor,
+							parser_map_director, this), /* types */
+					new parser_yago_facts(parser_map_movie, parser_map_actor,
+							parser_map_director, this), /* facts */
+					new parser_yago_literal_facts(parser_map_movie,
+							parser_map_actor, parser_map_director, this), /* literal facts */
+					new parser_yago_wikipedia(parser_map_movie,
+							parser_map_actor, parser_map_director, this), /* wiki links */
+					new parser_yago_labels(parser_map_movie, parser_map_actor, /* labels */
+							parser_map_director, this) };
+			
+			/* go over parsers, parse and update progress */
+			for (abstract_yago_parser parser : yago_parsers) {
+				this.cur_progress_max = parser.get_file_line_count();
 				this.task_weight = 2;
+				parser.addChangeListener(this);
+				parser.parse_file();
+				if (done) {
+					System.out
+							.print("Termination Signal Caught, Importer Thread Exiting");
+					return;
+				}
+				this.offset_progress += this.task_weight;
+			}
 			
-			p.addChangeListener(this);
-			p.parse_imdb_file();
-			
-			/*if there is a set to enrich - do it*/
-			if (get_import_set(i) != null)
-				get_import_set(i).addAll(p.get_enrichment_set());
-			if (i==0)
-				p.map_imdb_yago_names();
+			/* we need to pass movies to IMDB parser, and create fq names*/
+			yago_parsers[yago_parsers.length - 1].update_fq_name();
+			parser_map_movie = yago_parsers[yago_parsers.length - 1]
+					.get_parser_movies();
 
-			this.offset_progress+= this.task_weight;				
-		}
-		
-		/*all loader objects*/
-		abstract_loader[] loaders = {
-				new language_loader(this),		/* languages 		*/
-				new genre_loader(this), 		/* genres			*/
-				new tag_loader(this), 			/* tags				*/
-				new person_loader(this),		/*actors: persons	*/
-				new person_loader(this),		/*directors: persons*/
-				new actor_loader(this),			/*actors			*/
-				new director_loader(this),		/*directors			*/
-				new movie_loader(this),			/*movies			*/
-				new actor_movie_loader(this),	/* actors in movies	*/
-				new genre_movie_loader(this),	/* genres of movies	*/
-				new tag_movie_loader(this)		/* tags of movies	*/
-				};	
-		
-		for (int i=0;i<loaders.length;i++)		
-		{
-			abstract_loader ldr = loaders[i];
-			this.cur_progress_max = get_load_set(i).size();
-			this.task_weight = 6;
-			ldr.addChangeListener(this);
-			ldr.load_batch(get_load_set(i));
-			this.offset_progress+= this.task_weight;
+			/* parse all IMDB files */
+			abstract_imdb_parser[] imdb_parsers = {
+					new imdb_director_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago, this),
+					new imdb_genre_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago, this),
+					new imdb_language_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago, this),
+					new imdb_tag_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago,
+							parser_tag_count_map, this),
+					new imdb_plot_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago, this),
+					new imdb_tag_movie_parser(parser_map_movie,
+							imdb_name_to_director, imdb_to_yago,
+							parser_tag_count_map, this), };
+
+			for (int i = 0; i < imdb_parsers.length; i++) {
+				abstract_imdb_parser p = imdb_parsers[i];
+				this.cur_progress_max = p.get_file_line_count();
+				this.task_weight = 2;
 				
-		}
-		}
-		catch (Exception ex)
-		{
+				p.addChangeListener(this);
+				p.parse_imdb_file();
+				
+				/* create the yago to imdb map, after getting imdb directors*/
+				if (i==0)
+					p.map_imdb_yago_names();
+				
+				if (done) {
+					System.out
+							.print("Termination Signal Caught, Importer Thread Exiting");
+					return;
+				}
+				/* if there is a set to enrich - do it */
+				if (get_import_set(i) != null)
+					get_import_set(i).addAll(p.get_enrichment_set());
+				this.offset_progress += this.task_weight;
+			}
+
+			/* all loader objects */
+			abstract_loader[] loaders = { new language_loader(this), /* languages */
+			new genre_loader(this), 	/* genres */
+			new tag_loader(this), 		/* tags */
+			new person_loader(this), 	/* actors: persons */
+			new person_loader(this), 	/* directors: persons */
+			new actor_loader(this), 	/* actors */
+			new director_loader(this), 	/* directors */
+			new movie_loader(this), 	/* movies */
+			new actor_movie_loader(this), /* actors in movies */
+			new genre_movie_loader(this), /* genres of movies */
+			new tag_movie_loader(this) /* tags of movies */
+			};
+
+			for (int i = 0; i < loaders.length; i++) {
+				abstract_loader ldr = loaders[i];
+				this.cur_progress_max = get_load_set(i).size();
+				this.task_weight = 7;
+				ldr.addChangeListener(this);
+				ldr.load_batch(get_load_set(i));
+				if (done) {
+					System.out
+							.print("Termination Signal Caught, Importer Thread Exiting");
+					return;
+				}
+				this.offset_progress += this.task_weight;
+			}
+
+			/* check if terminated forcefully */
+			if (!done) {
+				this.progress_percent = 100;
+				System.out.println("Parser Finished Successfully");
+				fireFinish("");
+			} else {
+				System.out.println("Parser Terminated forcefully");
+				fireFinish("Parser Terminated forcefully");
+			}
+		} catch (SQLException ex) {
+			System.out.println("SQL exception Caught, trying next load");
+		} catch (Exception ex) {
+			System.out.println("Error in major Importer Component");
+			ex.printStackTrace();
+			/* process run was unssucessfull, don't remember it */
+			remove_last_invocation();
+			/* notify GUI of error */
+			fireFinish("error: " + ex.getMessage());
 		}
 	}
 
-	
-	private Set<String> get_import_set(int i)
-	{			
+	/**
+	 * returns the set we want to import into imdb entites
+	 * 
+	 * @param i
+	 * @return
+	 */
+	private Set<String> get_import_set(int i) {
 		Set<String> retset = new HashSet<String>();
 		switch (i) {
-			case 1:  retset= this.parser_genre_set;
+		case 1:
+			retset = this.parser_genre_set;
 			break;
-			case 2:  retset= this.parser_language_set;
+		case 2:
+			retset = this.parser_language_set;
 			break;
-			case 3:  retset= this.parser_tag_set;
+		case 3:
+			retset = this.parser_tag_set;
 			break;
-	        default: retset = null;
-	        break;
+		default:
+			retset = null;
+			break;
 		}
-        return retset; 
+		return retset;
 	}
-	
-	private Collection<?> get_load_set(int i)
-	{			
+
+	/**
+	 * returns the collection of entites, that we need to load to the database
+	 * 
+	 * @param i
+	 * @return
+	 */
+	private Collection<?> get_load_set(int i) {
 		Collection<?> retset;
 		switch (i) {
-			case 0:  retset= this.parser_language_set;
+		case 0:
+			retset = this.parser_language_set;
 			break;
-			case 1:  retset= this.parser_genre_set;
+		case 1:
+			retset = this.parser_genre_set;
 			break;
-			case 2:  retset= this.parser_tag_set;
+		case 2:
+			retset = this.parser_tag_set;
 			break;
-			case 3:  retset= this.parser_map_actor.values();
+		case 3:
+			retset = this.parser_map_actor.values();
 			break;
-			case 4:  retset= this.parser_map_director.values();
+		case 4:
+			retset = this.parser_map_director.values();
 			break;
-			case 5:  retset= this.parser_map_actor.values();
+		case 5:
+			retset = this.parser_map_actor.values();
 			break;
-			case 6:  retset= this.parser_map_director.values();
+		case 6:
+			retset = this.parser_map_director.values();
 			break;
-			case 7:  retset= this.parser_map_movie.values();
+		case 7:
+			retset = this.parser_map_movie.values();
 			break;
-			case 8:  retset= this.parser_map_movie.values();
+		case 8:
+			retset = this.parser_map_movie.values();
 			break;
-			case 9:  retset= this.parser_map_movie.values();
+		case 9:
+			retset = this.parser_map_movie.values();
 			break;
-			case 10:  retset= this.parser_map_movie.values();
+		case 10:
+			retset = this.parser_map_movie.values();
 			break;
-			default: retset = null;
-	        break;
+		default:
+			retset = null;
+			break;
 		}
-        return retset; 
+		return retset;
 	}
 
+	/**
+	 * checks if the yago update has benn run recently
+	 * 
+	 * @return
+	 */
+	private boolean can_run() {
+		try {
+			Timestamp ts = get_last_invocation(invocation_code.YAGO_UPDATE);
 
+			// Is it ok not to redo this
+			if (ts != null) {
+				Timestamp now = new Timestamp(
+						new java.util.Date().getTime() - 1000 * 60 * 7);
+
+				// was this performed in the last 15 minutes
+				if (now.before(ts))
+					return false;
+				return true;
+			}
+		} catch (Exception ex) {
+			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * makes and invocation for the process
+	 * 
+	 * @return
+	 */
+	private int set_invocation() {
+		try {
+			if (!perform_invocation(invocation_code.YAGO_UPDATE))
+				return 0;
+			return 1;
+		} catch (Exception ex) {
+			return 0;
+		}
+	}
+
+	/**
+	 * removes last YAGO invocation
+	 * 
+	 * @return
+	 */
+	private int remove_last_invocation() {
+		try {
+			delete_last_invocation(invocation_code.YAGO_UPDATE);
+		} catch (Exception ex) {
+			return 0;
+		}
+		return 1;
+	}
 
 }

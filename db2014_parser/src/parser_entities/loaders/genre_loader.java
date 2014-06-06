@@ -13,7 +13,6 @@ import parser_entities.Importer;
 import db.db_queries_movies;
 
 public class genre_loader extends abstract_loader {
-	private PreparedStatement insert;
 	HashMap<String,Integer> entity_map;
 	
 	public genre_loader(Importer importer) throws SQLException {
@@ -48,11 +47,6 @@ public class genre_loader extends abstract_loader {
 		return 0;
 	}
 
-	@Override
-	protected int execute_batches(int batch_size) {
-		int fail_count=0;
-		fail_count += execute_batch(insert, batch_size);
-		return fail_count;
-	}
+
 
 }

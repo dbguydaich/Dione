@@ -15,7 +15,7 @@ import db.db_queries_movies;
 import db.db_queries_persons;
 
 public class person_loader extends abstract_loader {
-	private PreparedStatement insert;
+
 	HashMap<String,Integer> entity_map;
 	
 	public person_loader(Importer importer) throws SQLException {
@@ -53,15 +53,4 @@ public class person_loader extends abstract_loader {
 		}
 		
 	}
-
-	@Override
-	protected int execute_batches(int batch_size) {
-		int fail_count=0;
-		fail_count += execute_batch(insert, batch_size);
-		return fail_count;
-	}
-
-
-
-
 }

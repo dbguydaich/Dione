@@ -16,7 +16,7 @@ import db.db_queries_movies;
 import db.db_queries_persons;
 
 public class movie_loader extends abstract_loader {
-	private PreparedStatement insert;
+
 	private PreparedStatement update;
 	HashMap<String,Integer> entity_map;
 	
@@ -161,13 +161,10 @@ public class movie_loader extends abstract_loader {
 	}
 	
 	@Override
-	protected int execute_batches(int batch_size) {
+	protected int execute_batches(int batch_size) throws SQLException {
 		int fail_count=0;
 		fail_count += execute_batch(insert, batch_size);
 		fail_count += execute_batch(update, batch_size);
 		return fail_count;
-	}
-
-
-
+	}	
 }
