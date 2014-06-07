@@ -9,30 +9,16 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-
-import db.db_queries_user;
-import parser_entities.entity_movie;
 import parser_entities.light_entity_movie;
-import bl.movie_logics;
-import bl.user_logics;
-import bl.verifier;
-
-///////////// ******* Listeners to be implemented: ******** //////////////
-
-// rate button
-// note: when rating is over, first dispose gui_utils.pref_wiw, then create new display, and then use it to create a new all_tabs_win
 
 public class preferences_window extends Shell {
 
@@ -41,7 +27,7 @@ public class preferences_window extends Shell {
 	light_entity_movie current_movie = null;
 
 	public preferences_window(final Display display) {
-		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
+		super(display, SWT.MIN);
 
 		movie_label = new Label(this, SWT.NONE);
 
@@ -58,16 +44,18 @@ public class preferences_window extends Shell {
 			 * on demand (all tabs still open) - go back
 			 */
 			public void widgetDisposed(DisposeEvent e) {
-				System.out.println("disposing pref...");
-				background.dispose();
-				if (gui_utils.EXIT_ON_LOGIN == true) {
-					display.dispose();
-					// shachar: app is exiting here
-					gui_utils.exist_threads();
+				gui_utils.EXIT_ON_LOGIN = false;
+				gui_utils.pref_win.dispose();
+
+				if (gui_utils.tabs_win == null) {
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
+					gui_utils.tabs_win.open();
 				}
 
-				else
-					gui_utils.EXIT_ON_LOGIN = true;
+				else if (gui_utils.tabs_win.isDisposed()) {
+					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
+					gui_utils.tabs_win.open();
+				}
 
 			}
 		});
@@ -198,8 +186,13 @@ public class preferences_window extends Shell {
 			}
 		});
 
-		// ///////
 
+		/*
+		 * Stop Listener:
+		 * Possible Scenarios: 1. user has been rated movies for the first
+		 * time - nothing is open, so we exit 2. user has been reted movies
+		 * on demand (all tabs still open) - go back
+		 */
 		stop_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -216,10 +209,8 @@ public class preferences_window extends Shell {
 					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
 					gui_utils.tabs_win.open();
 				}
-
 			}
 		});
-
 	}
 
 	public void handle_rating(final int rate) {
@@ -238,8 +229,6 @@ public class preferences_window extends Shell {
 							try {
 								log_in_window.user.fill_user_prefence();
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-
 							}
 						}
 
@@ -322,16 +311,6 @@ public class preferences_window extends Shell {
 
 	}
 
-	// public void go_to_overview()
-	// {
-	// gui_utils.login_win.dispose(); //closing log in window (display is closed
-	// along with it)
-	//
-	// //gui_utils.display = new Display();
-	// gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
-	// gui_utils.tabs_win.open();
-	// }
-	//
 
 	protected void checkSubclass() {
 	}

@@ -28,7 +28,7 @@ import bl.verifier;
 import config.config;
 import db.db_queries_user;
 
-/*
+/**
  * log in window
  */
 public class log_in_window extends Shell {
@@ -36,7 +36,7 @@ public class log_in_window extends Shell {
 	public static user_logics user; /* will represent current user */
 
 	public log_in_window(final Display display) {
-		super(display);
+		super(display, SWT.MIN);
 
 		this.setSize(300, 300);
 		this.setText("MovieBook");

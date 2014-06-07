@@ -19,7 +19,12 @@ import parser_entities.Importer;
 
 public class import_progress_window extends Shell
 {
-
+	
+	int USER_TERMINATE = -2;
+	int FAILED_TERMINATE = -1;
+	int FINE_TERMINATE = 0;
+	int PROCESSING = 1;
+	
 	ProgressBar prog_bar = null;
 	boolean exit_import = false;
 	
@@ -52,38 +57,6 @@ public class import_progress_window extends Shell
 			}
 		});
 		
-		
-	
-//		gui_utils.my_importer.addActionListener(new ActionListener() {
-//		     @Override
-//		     public void actionPerformed(final ActionEvent event)
-//		     {
-//		    	 System.out.println("**** gui: action perforemd ****");
-//		    	 int progress_status = (int) gui_utils.my_importer.get_progress_percent();
-//		    	 prog_bar.setSelection(progress_status);
-//		    	 
-//		    	 if(progress_status == 100) /* data importing is done */
-//		    	 {
-//		    		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-//					messageBox.setText("SUCCESS");
-//					messageBox.setMessage("Data import has finished successfully");
-//					messageBox.open();
-//					
-//		    		gui_utils.import_progress_win.dispose();
-//		    		
-//		    	    if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
-//		    	    {
-//		    	    	gui_utils.EXIT_ON_LOGIN = false;
-//		    	    	gui_utils.import_win.dispose();
-//		    	     	
-//			    		gui_utils.login_win = new log_in_window(gui_utils.display);
-//			    		gui_utils.login_win.open();
-//		    	    }
-//		    	   
-//		    	 }
-//		     }
-//		});
-//		
 
 		
 		gui_utils.my_importer = new parser_entities.Importer();  
@@ -95,42 +68,41 @@ public class import_progress_window extends Shell
 		    	  public void run()
 		          {
 		    		  int event_id = event.getID();
+		    		  int progress_status = (int) gui_utils.my_importer.get_progress_percent();
+		    		  prog_bar.setSelection(progress_status);
 		    		  
 		    		  System.out.println("***** gui: action performed is running! *****");
-		    		  System.out.println("      event_id == PERFORMED ? = " + (event_id == ActionEvent.ACTION_PERFORMED));
-		    		  System.out.println("      event_id == LAST ? = " + (event_id == ActionEvent.ACTION_LAST));
+		    		  System.out.println("      event_id == " + (event_id));
 		    		  System.out.println("      event mssg == " + event.getActionCommand());
+		    		  System.out.println("      progress == " + progress_status);
+
 		    		  System.out.println();
 		    		  
-		    		  
-		    		  int progress_status = (int) gui_utils.my_importer.get_progress_percent();
-		    		  prog_bar.setSelection(progress_status);	  
-		         
-				    	 if(event_id == ActionEvent.ACTION_LAST && event.getActionCommand().equals("") && !exit_import) /* data importing is finished...  */
+		    		  	/* data update has finished successfully */
+				    	 if(event_id == FINE_TERMINATE) 
 				    	 {
-				    		 if(event.paramString().equals("")) /* successfully */
-				    		 {
-				    			 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-				    			 messageBox.setText("SUCCESS");
-				    			 messageBox.setMessage("Data import has finished successfully");
-				    			 messageBox.open();
-				    			 
-				    			 handle_finish_import_bar();
-				    		 }
-				    		 
-				    		 else /* unsuccessfully */
-				    		 {
-				    			 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-				    			 messageBox.setText("Failure");
-				    			 messageBox.setMessage("Data import has failed");
-				    			 messageBox.open();
-				    			 
-				    			 handle_finish_import_bar();
-				    		 }
+			    			 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+			    			 messageBox.setText("SUCCESS");
+			    			 messageBox.setMessage("Data import has finished successfully");
+			    			 messageBox.open();
+			    			 
+			    			 handle_finish_import_bar();
 				    	 }
 				    	 
+				    	 /* update terminated unsuccessfully */	 
+				    	 if(event_id == FAILED_TERMINATE)
+				    	 {
+				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				    		 messageBox.setText("Failure");
+				    		 messageBox.setMessage("Data import has failed");
+				   			 messageBox.open();
+				    			 
+				   			 handle_finish_import_bar();
+				   		 }
+				    	
+				    	 
 				    	 /* update terminated by user and thread already terminated */
-				    	 if(exit_import && event_id == ActionEvent.ACTION_LAST)
+				    	 if(exit_import && event_id == USER_TERMINATE)
 				    	 {
 				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("Import Aborted");
@@ -155,11 +127,11 @@ public class import_progress_window extends Shell
 				gui_utils.my_importer.terminate_thread();
 				
 				//should be removed, wait for LAST update from thread to close
-				MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
-				messageBox.setText("Import Aborted");
-				messageBox.setMessage("Data import Aborted");
-				messageBox.open();
-				handle_finish_import_bar(); 
+				//MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+				//messageBox.setText("Import Aborted");
+				//messageBox.setMessage("Data import Aborted");
+				//messageBox.open();
+				//handle_finish_import_bar(); 
 			}
 		});
 		
@@ -174,6 +146,8 @@ public class import_progress_window extends Shell
 	
 	static void handle_finish_import_bar()
 	{
+		
+		System.out.println("***** gui: closing progress bar *****");
 		gui_utils.import_progress_win.dispose();
 		 
 		if(gui_utils.import_win != null) 

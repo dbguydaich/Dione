@@ -38,7 +38,6 @@ public class gui_utils
 	
 	public static void main(String args[])
 	{
-//// threading handling
 		
 		executor = Executors.newFixedThreadPool(5);
 		
