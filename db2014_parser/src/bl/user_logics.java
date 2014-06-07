@@ -269,6 +269,18 @@ public class user_logics
 		return (returnedList);
 	}
 	
+	public List<String> get_user_recent_friendship_activities(Integer limit) 
+			throws SQLException
+	{
+		if (limit == null)
+		{
+			config settings = new config();
+			limit = settings.get_default_small_limit();
+		}
+		
+		return(list_activity_to_list_string(db_queries_user.get_user_recent_friendship_activities(current_user_id, limit)));
+	}
+	
 // MISC
 	
 	public static List<light_entity_movie> get_user_recommended_movies_entities_by_friends(int user_id, int limit) 

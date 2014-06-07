@@ -337,7 +337,7 @@ public abstract class db_queries_user extends db_operations
 			throws SQLException 
 	{
 		String whereClause = "user_rank.idMovie = movie.idMovie AND " + 
-								" user_rank.idUser = ? ORDER BY rankDate LIMIT "+ limit;
+								" user_rank.idUser = ? ORDER BY rankDate DESC LIMIT "+ limit;
 		
 		ResultSet results = select("movieName, rank, rankDate" , "user_rank, movie" , whereClause, user_id);
 	
@@ -373,7 +373,7 @@ public abstract class db_queries_user extends db_operations
 	{
 		String whereClause = 	"((idUsers <> ?) AND" + 
 								"(friend1 = idUsers OR friend2 = idUsers) AND  " +
-								"(friend1 = ? OR friend2 = ?)) ORDER BY friendshipDate LIMIT "+ limit;
+								"(friend1 = ? OR friend2 = ?)) ORDER BY friendshipDate DESC LIMIT "+ limit;
 		
 		ResultSet results = select("userName, friendshipDate" , "users, friend_relation" , whereClause, user_id, user_id, user_id);
 	
@@ -407,7 +407,7 @@ public abstract class db_queries_user extends db_operations
 	{
 		String whereClause = 	"((tag.idTag = user_tag_movie.idTag) AND " + 
 								"(movie.idMovie = user_tag_movie.idMovie) AND "+
-								"(idUser = ?)) ORDER BY reteDate LIMIT "+ limit;
+								"(idUser = ?)) ORDER BY reteDate DESC LIMIT "+ limit;
 		
 		ResultSet results = select("rate, movieName, tagName, reteDate" , "user_tag_movie, tag, movie" , whereClause, user_id);
 	

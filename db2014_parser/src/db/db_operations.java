@@ -139,22 +139,6 @@ public abstract class db_operations
 		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
-	
-	/**
-	 *  Count the number of times c appears in str
-	 */
-	private static int charCount(String str, char c) 
-	{
-		int count = 0;
-		
-		for (int i=0;i<str.length();i++)
-		{
-			if (c == str.charAt(i))
-				++count;
-		}
-		
-		return (count);
-	}
 
 	/** delete tuple/s
 	 * @param tableName	- the name of the table we want to delete from
@@ -420,17 +404,7 @@ public abstract class db_operations
 			return (-1);
 		}
 	}
-	
-	/** get a connection 
-	 * @throws SQLException */
-	protected Connection getConnection() 
-			throws SQLException 
-	{
-		jdbc_connection_pooling jdbc_conn = jdbc_connection_pooling.get_instance();
-
-		return (jdbc_conn.get_connection());
-	}
-	
+		
 	/** get statement from the conn 
 	 * @throws SQLException */
 	protected Statement getStatement() 
@@ -490,6 +464,11 @@ public abstract class db_operations
 	}
 	
 // Internal usage
+	
+	/**
+	 * how much times is c found in str
+	 * @return
+	 */
 	private static int countChar(String str, char c)
 	{
 		int count = 0;
@@ -502,20 +481,62 @@ public abstract class db_operations
 		
 		return (count);
 	}
+
+	/**
+	 *  Count the number of times c appears in str
+	 */
+	private static int charCount(String str, char c) 
+	{
+		int count = 0;
+		
+		for (int i=0;i<str.length();i++)
+		{
+			if (c == str.charAt(i))
+				++count;
+		}
+		
+		return (count);
+	}
+
 	
 // Publics
 
+	/** get a connection 
+	 * @throws SQLException */
+	public static Connection getConnection() 
+			throws SQLException 
+	{
+		jdbc_connection_pooling jdbc_conn = jdbc_connection_pooling.get_instance();
+
+		return (jdbc_conn.get_connection());
+	}
+	
+	/**
+	 * Get the current time in a string of YYYY-MM-DD hh:mm:ss
+	 * @return
+	 */
 	public static String get_curr_time()
 	{
 		return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 	}
 	
+	/**
+	 * insert a row to invocations table with the current Timestamp
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @return true iff did succeed
+	 * @throws SQLException
+	 */
 	public static boolean perform_invocation(invocation_code code) 
 			throws SQLException
 	{
 		return (insert("invocations", "`invokeCode`, `invokeDate`", code.ordinal(), get_curr_time()) > 0);
 	}
 
+	/**
+	 * @return the Timestamp of the last invocation of this code
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @throws SQLException
+	 */
 	public static Timestamp get_last_invocation(invocation_code code) 
 			throws SQLException
 	{
@@ -529,6 +550,11 @@ public abstract class db_operations
 			return (null);
 	}
 	
+	/**
+	 * @return true iff there was at least one invocation of this code
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @throws SQLException
+	 */
 	public static boolean was_there_an_invocation(invocation_code code) 
 			throws SQLException
 	{
@@ -539,17 +565,23 @@ public abstract class db_operations
 		return (result.next());
 	}
 
-	private static void delete_last_invocation(invocation_code code) 
+	/**
+	 * delete the last invocation from invocations table with the max date
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @throws SQLException
+	 */
+	public static void delete_last_invocation(invocation_code code) 
 			throws SQLException 
 	{
-		/*
-		String where = "invokeCode = ? AND invokeDate = (SELECT max(a.invokeDate) from invocations as a)";
+		String where = " invokeDate = (SELECT max(invokeDate) FROM invocations where invokeCode = ?) ";
 		
 		if (delete("invocations", where , code.ordinal()) > 0)
 			throw (new SQLException("Deletion error"));
-			*/
 	}
 	
+	/**
+	 * using the table 
+	 */
 	public static void fill_movie_tag_relation() 
 	{
 		try {

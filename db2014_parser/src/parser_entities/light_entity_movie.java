@@ -69,8 +69,12 @@ public class light_entity_movie
 		return entity_movie_id;
 	}
 	
-	public String get_movie_name() {
-		return entity_movie_name;
+	public String get_movie_name() 
+	{
+		if (this.entity_movie_name.length() > 35)
+			return (entity_movie_name.substring(0, 35));
+		else
+			return (entity_movie_name);
 	}
 
 	public void set_movie_name(String movie_name) {

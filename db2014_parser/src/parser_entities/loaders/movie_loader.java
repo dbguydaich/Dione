@@ -98,7 +98,7 @@ public class movie_loader extends abstract_loader {
 			if (movie.get_movie_director() != null && directors_table.get(movie.get_movie_director().get_person_name()) != null)
 				movie_insert_stmt.setInt(2, directors_table.get(movie.get_movie_director().get_person_name()));
 			else
-				movie_insert_stmt.setNull(2, 2);
+				movie_insert_stmt.setInt(2, 1);
 			
 			if (movie.get_movie_name() != null)
 				movie_insert_stmt.setString(3, movie.get_movie_name());
