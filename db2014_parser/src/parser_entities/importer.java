@@ -87,33 +87,21 @@ public class Importer extends db_operations implements Runnable,
 	}
 
 	/**
-	 * notify listeners about an event
-	 * 
-	 * @param message
+	 * notify listeners (GUI), about import events: 
+	 * @param message - information about event, error message, if exists
+	 * @param return_code - 
+	 *				 	-2: terminated by user
+	 * 					-1: failed and terminated
+	 *					 0: terminated normally
+	 *				 	 1: still processing
 	 */
-	public void fireEvent(String message) {
-		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+	public void fireEvent(String message, int return_code) {
+		ActionEvent event = new ActionEvent(this, return_code,
 				message);
 		for (ActionListener listener : listeners) {
 			listener.actionPerformed(event);
 		}
 	}
-
-	/**
-	 * notify listeners on the end of the thread if message sent, an error
-	 * occurred
-	 * 
-	 * @param message
-	 *            - error message, signifying bad end
-	 */
-	public void fireFinish(String message) {
-		ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_LAST,
-				message);
-		for (ActionListener listener : listeners) {
-			listener.actionPerformed(event);
-		}
-	}
-
 	/**
 	 * called by client, to get curren import progress
 	 * 
@@ -148,7 +136,7 @@ public class Importer extends db_operations implements Runnable,
 		this.progress_percent = this.offset_progress + (progress / max)
 				* this.task_weight;
 		/* Notify Listeners in GUI about the progress */
-		fireEvent("progress made");
+		fireEvent("progress made",1);
 		System.out.println("progress: " + progress_percent);
 
 	}
@@ -185,6 +173,7 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
+					fireEvent("Parser Terminated forcefully",-2);
 					return;
 				}
 				this.offset_progress += this.task_weight;
@@ -227,6 +216,7 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
+					fireEvent("Parser Terminated forcefully",-2);
 					return;
 				}
 				/* if there is a set to enrich - do it */
@@ -258,6 +248,7 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
+					fireEvent("Parser Terminated forcefully",-2);
 					return;
 				}
 				this.offset_progress += this.task_weight;
@@ -267,10 +258,10 @@ public class Importer extends db_operations implements Runnable,
 			if (!done) {
 				this.progress_percent = 100;
 				System.out.println("Parser Finished Successfully");
-				fireFinish("");
+				fireEvent("Parser Finished Successfully",0);
 			} else {
 				System.out.println("Parser Terminated forcefully");
-				fireFinish("Parser Terminated forcefully");
+				fireEvent("Parser Terminated forcefully",-2);
 			}
 		} catch (SQLException ex) {
 			System.out.println("SQL exception Caught, trying next load");
@@ -280,7 +271,7 @@ public class Importer extends db_operations implements Runnable,
 			/* process run was unssucessfull, don't remember it */
 			remove_last_invocation();
 			/* notify GUI of error */
-			fireFinish("error: " + ex.getMessage());
+			fireEvent(ex.getMessage(),-1);
 		}
 	}
 
