@@ -48,7 +48,7 @@ public class all_tabs_window extends Shell {
 		} catch (SQLException e2) {
 			gui_utils.raise_sql_error_window(display);
 		}
-//		String current_user_str = "some username";
+
 		this.setText("MovieBook - Logged in As: " +  my_name);
 
 		this.setLayout(new FillLayout());

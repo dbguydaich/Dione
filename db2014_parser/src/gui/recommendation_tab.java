@@ -86,7 +86,7 @@ public class recommendation_tab extends Composite {
 		final Font font_area1_headline = new Font(display, "Ariel", 10,
 				SWT.BOLD);
 		final Font font_based_on_learned_about_you = new Font(display, "Ariel",
-				11, SWT.NONE);
+				10, SWT.NONE);
 		area1_headline.setFont(font_area1_headline);
 		area1_headline.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {

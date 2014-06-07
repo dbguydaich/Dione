@@ -227,6 +227,7 @@ public class settings_tab extends Composite {
 		final Text username_text = new Text(username_area, SWT.BORDER);
 		username_text.setLayoutData(gui_utils.grid_data_factory(10, 15, -1, -1,
 				-1, -1));
+		username_text.setTextLimit(10);
 
 		// username password label
 		Label username_password_label = new Label(username_area, SWT.NONE);
