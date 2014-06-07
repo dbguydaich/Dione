@@ -1,5 +1,9 @@
 package gui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +16,14 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.Platform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -196,14 +203,13 @@ public class movie_details_window extends Shell {
 		this.setLayout(new FormLayout());
 		this.setSize(window_width + 100, window_height);
 
-
 		String my_name = null;
 		try {
-			 my_name = log_in_window.user.get_my_name();
+			my_name = log_in_window.user.get_my_name();
 		} catch (SQLException e2) {
 			gui_utils.raise_sql_error_window(display);
 		}
-//	
+		//
 		this.setText("Movie Details - Logged in As: " + my_name);
 
 		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
@@ -349,6 +355,42 @@ public class movie_details_window extends Shell {
 				-1));
 		wiki_label.setFont(font_ariel_11);
 
+		//
+		// Link link = new Link(left_area, SWT.NONE);
+		// String message = wiki_str;
+		// link.setText("wtf");
+		// link.setSize(1000, 100);
+		// link.addSelectionListener(new SelectionAdapter(){
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// System.out.println("You have selected: "+e.text);
+		//
+		// // Open default external browser
+		// //
+		// PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(new
+		// URL(e.text));
+		// URI uri;
+		// try {
+		// uri = new URI( wiki_str);
+		// } catch (URISyntaxException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// return;
+		// }
+		// try {
+		// Desktop.getDesktop().browse( uri);
+		// } catch (IOException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
+		//
+		//
+		// }
+		// });
+
+		//
+		//
+		//
 		// wiki url
 		Label wiki_url = new Label(left_area, SWT.NONE);
 		// ////////// String wiki_str;
@@ -361,9 +403,33 @@ public class movie_details_window extends Shell {
 		wiki_url.addMouseListener(new MouseAdapter() {
 			// @Override
 			public void mouseUp(MouseEvent arg0) {
-				/*
-				 * Shcahar: implement - go to wiki page
-				 */
+
+			
+				try {
+					//Desktop.getDesktop().browse(new URI("www.walla.co.il"));/// shachar this is working
+					Desktop.getDesktop().browse(new URI(wiki_str));
+					
+				} catch (IOException e) {
+					MessageBox messageBox = new MessageBox(
+							display.getActiveShell(),
+							SWT.ICON_ERROR);
+					messageBox.setText("Failure");
+					messageBox
+							.setMessage("Couldn't open the desired link.");
+					messageBox.open();
+					
+				} catch (URISyntaxException e) {
+					MessageBox messageBox = new MessageBox(
+							display.getActiveShell(),
+							SWT.ICON_ERROR);
+					messageBox.setText("Failure");
+					messageBox
+							.setMessage("Couldn't open the desired link.");
+					messageBox.open();
+					
+				}
+
+
 			}
 
 		});
