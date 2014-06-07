@@ -133,13 +133,13 @@ public class social_tab extends Composite {
 					Thread t = new Thread(new Runnable() {
 
 						public void run() {
-							try {
 
-								if (log_in_window.user.get_my_name() == friend_name) {
+							display.asyncExec(new Runnable() {
 
-									display.asyncExec(new Runnable() {
+								public void run() {
 
-										public void run() {
+									try {
+										if (log_in_window.user.get_my_name() == friend_name) {
 
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
@@ -150,28 +150,26 @@ public class social_tab extends Composite {
 											messageBox.open();
 
 										}
+									} catch (SQLException e1) {
+										gui_utils
+												.raise_sql_error_window(display);
+										e1.printStackTrace();
+									}
 
-									});
-
-								}
-
-								if (user_logics
-										.does_user_exists((add_friend_text
-												.getText()))) { // to be
-									// implemented
-									// next on
-
-									Integer friend_id = user_logics
-											.get_user_id(add_friend_text
-													.getText());
-									Integer current_user_id = log_in_window.user
-											.get_current_user_id();
-									user_logics.add_friendship(friend_id,
-											current_user_id);
-
-									display.asyncExec(new Runnable() {
-
-										public void run() {
+									try {
+										if (user_logics
+												.does_user_exists((add_friend_text
+														.getText()))) { // to be
+											// implemented
+											// next on
+											System.out.println("Here");
+											Integer friend_id = user_logics
+													.get_user_id(add_friend_text
+															.getText());
+											Integer current_user_id = log_in_window.user
+													.get_current_user_id();
+											user_logics.add_friendship(
+													friend_id, current_user_id);
 
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
@@ -184,16 +182,8 @@ public class social_tab extends Composite {
 
 										}
 
-									});
-
-								}
-
-								else// no user found
-								{
-
-									display.asyncExec(new Runnable() {
-
-										public void run() {
+										else// no user found
+										{
 
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
@@ -204,25 +194,16 @@ public class social_tab extends Composite {
 											messageBox.open();
 
 										}
-
-									});
-
-								}
-							} catch (final SQLException e) {
-
-								display.asyncExec(new Runnable() {
-
-									public void run() {
+									} catch (SQLException e) {
+										// TODO Auto-generated catch block
 										gui_utils
 												.raise_sql_error_window(display);
-										// TODO Auto-generated catch block
 										e.printStackTrace();
-
 									}
 
-								});
+								}
 
-							}
+							});
 
 						}
 
@@ -296,48 +277,67 @@ public class social_tab extends Composite {
 				}
 
 				else {
+					Thread t = new Thread(new Runnable() {
 
-					Integer friend_id;
-					try {
-						friend_id = user_logics.get_user_id(remove_friend_combo
-								.getText());
-						Integer current_user_id = log_in_window.user
-								.get_current_user_id();
-						try {
-							if (user_logics.remove_friendship(current_user_id,
-									friend_id)) // to be
-												// implemented
-												// next on
-							{
+						public void run() {
+							display.syncExec(new Runnable() {
 
-								MessageBox alertBox = new MessageBox(display
-										.getActiveShell(), SWT.ICON_WARNING);
-								alertBox.setText("Success");
-								alertBox.setMessage("Friend has been removed!");
-								alertBox.open();
-								update_friends_ddl(display);
+								public void run() {
 
-							}
+									Integer friend_id;
+									try {
+										friend_id = user_logics
+												.get_user_id(remove_friend_combo
+														.getText());
+										Integer current_user_id = log_in_window.user
+												.get_current_user_id();
+										try {
+											if (user_logics.remove_friendship(
+													current_user_id, friend_id))
+											{
 
-							else // error during removing
-							{
-								MessageBox messageBox = new MessageBox(display
-										.getActiveShell(), SWT.ICON_WARNING);
-								messageBox.setText("Error");
-								messageBox
-										.setMessage("Couldn't remove friend!");
-								messageBox.open();
-							}
-						} catch (SQLException e) {
-							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+												MessageBox alertBox = new MessageBox(
+														display.getActiveShell(),
+														SWT.ICON_WARNING);
+												alertBox.setText("Success");
+												alertBox.setMessage("Friend has been removed!");
+												alertBox.open();
+												update_friends_ddl(display);
+
+											}
+
+											else // error during removing
+											{
+												MessageBox messageBox = new MessageBox(
+														display.getActiveShell(),
+														SWT.ICON_WARNING);
+												messageBox.setText("Error");
+												messageBox
+														.setMessage("Couldn't remove friend!");
+												messageBox.open();
+											}
+										} catch (SQLException e) {
+											gui_utils
+													.raise_sql_error_window(display);
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									} catch (SQLException e1) {
+										gui_utils
+												.raise_sql_error_window(display);
+										// TODO Auto-generated catch block
+										e1.printStackTrace();
+									}
+
+								}
+
+							});
+
 						}
-					} catch (SQLException e1) {
-						gui_utils.raise_sql_error_window(display);
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+
+					});
+
+					gui_utils.executor.execute(t);
 
 				}
 
