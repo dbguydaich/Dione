@@ -62,6 +62,7 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 	 
+	
 	public static boolean rate_movie(int movie_id, int user_id, int rate) 
 			throws SQLException 
 	{
@@ -89,6 +90,16 @@ public abstract class db_queries_user extends db_operations
 	}
 	
 // BOOLEANS
+	
+	public static boolean are_friends(Integer user1_id, Integer user2_id) 
+			throws SQLException 
+	{
+		String whereClause = " (friend1 = ? AND friend2 = ?) OR (friend1 = ? AND friend2 = ?) ";
+		
+		ResultSet results = select("friend1" , "friend_relation" , whereClause, user1_id, user2_id, user2_id, user1_id);
+	
+		return (results.next());
+	}
 	
 	public static boolean authenticate_user(String user, String pass) 
 			throws SQLException
@@ -492,7 +503,7 @@ public abstract class db_queries_user extends db_operations
 	}
 
 // UPDATES	
-	
+		
 	/**
 	 * update a name of user that has that id, only if the pass is correct
 	 * @param pass	- non hashed pass (will hash it here)
@@ -565,5 +576,7 @@ public abstract class db_queries_user extends db_operations
 					" WHERE idUser = ? " +
 					" GROUP BY idTag)", user_id) >= 0);
 	}
+
+	
 }
 

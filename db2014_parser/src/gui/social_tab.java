@@ -139,7 +139,11 @@ public class social_tab extends Composite {
 								public void run() {
 
 									try {
-										if (log_in_window.user.get_my_name() == friend_name) {
+										System.out.println("1"+friend_name);
+										System.out.println("2" +log_in_window.user.get_my_name());
+										String friend_name = add_friend_text.getText();
+
+										if (log_in_window.user.get_my_name().equals( friend_name)) {
 
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
@@ -148,6 +152,7 @@ public class social_tab extends Composite {
 											messageBox
 													.setMessage("You can not be a friend of your self. Sorry.");
 											messageBox.open();
+											return;
 
 										}
 									} catch (SQLException e1) {
@@ -170,7 +175,9 @@ public class social_tab extends Composite {
 													.get_current_user_id();
 											int success =user_logics.add_friendship(
 													friend_id, current_user_id);
-											if(success ==-1)
+											
+											
+											if(success ==1)
 											{
 												MessageBox messageBox = new MessageBox(
 														display.getActiveShell(),
@@ -181,6 +188,18 @@ public class social_tab extends Composite {
 												messageBox.open();
 												return;
 											}
+											if(success ==-1)
+											{
+												MessageBox messageBox = new MessageBox(
+														display.getActiveShell(),
+														SWT.ICON_WARNING);
+												messageBox.setText("Error");
+												messageBox
+														.setMessage("Friendship couldn't be established!");
+												messageBox.open();
+												return;
+											}
+										
 								
 											
 											

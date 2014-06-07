@@ -75,10 +75,16 @@ public class user_logics
 		return (db_queries_user.user_exists(user_name));
 	}
 
-	public static boolean add_friendship(Integer user1_id, Integer user2_id) 
+	public static int add_friendship(Integer user1_id, Integer user2_id) 
 			throws SQLException
 	{
-		return (db_queries_user.add_friendship(user1_id, user2_id));
+		if (db_queries_user.are_friends(user1_id, user2_id))
+			return (1);
+		else
+			if (db_queries_user.add_friendship(user1_id, user2_id))
+				return(0);
+			else
+				return(-1);
 	}
 
 	public static boolean remove_friendship(Integer user1_id, Integer user2_id) 
