@@ -90,6 +90,7 @@ public class import_window extends Shell
 			public void widgetSelected(SelectionEvent arg0)
 			{
 				if(gui_utils.import_progress_win != null)
+				{
 					if(!gui_utils.import_progress_win.isDisposed())
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
@@ -101,9 +102,9 @@ public class import_window extends Shell
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
-
 					}
-						
+				}
+				
 				else //running progress win
 				{	
 					gui_utils.import_progress_win = new import_progress_window(display);

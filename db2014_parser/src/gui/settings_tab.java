@@ -83,29 +83,30 @@ public class settings_tab extends Composite {
 
 			public void widgetSelected(SelectionEvent arg0) {
 				if (gui_utils.import_progress_win != null)
-					if (!gui_utils.import_progress_win.isDisposed()) {
-						// shachar: check spell for the following:
+				{
+					if (!gui_utils.import_progress_win.isDisposed())
+					{
+
 						MessageBox messageBox = new MessageBox(display
 								.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Error");
 						messageBox
 								.setMessage("Data import is already in progress.");
 						messageBox.open();
-					} else // running progress win
+					}
+					else // running progress win
 					{
 						gui_utils.import_progress_win = new import_progress_window(
 								display);
 						gui_utils.import_progress_win.open();
 
 					}
-
+				}
 				else // running progress win
 				{
 					gui_utils.import_progress_win = new import_progress_window(
 							display);
 					gui_utils.import_progress_win.open();
-					Thread thread = new Thread(gui_utils.my_importer);
-					thread.start();
 				}
 			}
 
