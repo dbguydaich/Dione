@@ -53,8 +53,16 @@ public class gui_utils
 		{
 			import_win = new import_window(display);
 			import_win.open();
-		}
 			
+			while (!display.isDisposed()) 
+			{
+				if (!display.readAndDispatch())
+				{
+					display.sleep();
+				}
+			}
+		}
+		
 		else
 		{
 			login_win = new log_in_window(display);
