@@ -23,6 +23,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.TextLayout;
+import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.internal.Platform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
@@ -71,7 +73,8 @@ import config.config;
 /// List<List<Button>> radios_lists - list number 3 (inner lists size - always 5) is for tags.get(3), etc
 /// talk to me for more expl.
 
-public class movie_details_window extends Shell {
+public class movie_details_window extends abstract_window 
+{
 	config config = new config();
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
@@ -96,7 +99,7 @@ public class movie_details_window extends Shell {
 			throws SQLException {
 
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-
+		
 		Thread t = new Thread(new Runnable() {
 
 			public void run() {
@@ -108,7 +111,6 @@ public class movie_details_window extends Shell {
 
 					director_name = movie.get_movie_director();
 					movie_name = movie.get_movie_name();
-					System.out.println("got it!");
 
 					movie_plot = (movie.get_movie_plot());
 
@@ -248,7 +250,7 @@ public class movie_details_window extends Shell {
 
 		// left area
 		Composite left_area = new Composite(this, SWT.NONE);
-		left_area.setLayoutData(gui_utils.form_data_factory(390, 190, 60, 10));
+		left_area.setLayoutData(gui_utils.form_data_factory(390, 195, 60, 10));
 		GridLayout grid_layout_area = new GridLayout(2, false);
 		left_area.setLayout(grid_layout_area);
 
@@ -350,11 +352,12 @@ public class movie_details_window extends Shell {
 
 		// wiki label
 		Label wiki_label = new Label(left_area, SWT.H_SCROLL);
-		wiki_label.setText("Wiki Link:");
+		wiki_label.setText("Wiki Link:\n(clickable)");
 		wiki_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1,
 				-1));
 		wiki_label.setFont(font_ariel_11);
 
+		
 		//
 		// Link link = new Link(left_area, SWT.NONE);
 		// String message = wiki_str;
@@ -388,18 +391,23 @@ public class movie_details_window extends Shell {
 		// }
 		// });
 
-		//
-		//
-		//
+	
 		// wiki url
 		Label wiki_url = new Label(left_area, SWT.NONE);
-		// ////////// String wiki_str;
-		// /////////// wiki_str = movie.get_movie_wikipedia_url();
 		wiki_url.setText(wiki_str);
+		final Color blue_color = new Color(display, 0, 0, 255);
 		wiki_url.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1,
 				-1));
-		wiki_url.setFont(font_ariel_11);
-
+		final Font font_wiki_url = new Font(display, "Ariel", 10, SWT.UNDERLINE_DOUBLE);
+		wiki_url.setFont(font_wiki_url);
+		wiki_url.setForeground(blue_color);
+		wiki_url.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				font_wiki_url.dispose();
+				blue_color.dispose();
+			}
+		});
+		
 		wiki_url.addMouseListener(new MouseAdapter() {
 			// @Override
 			public void mouseUp(MouseEvent arg0) {
@@ -748,14 +756,6 @@ public class movie_details_window extends Shell {
 
 		// rate_movie(int movie_id,int rate)
 
-	}
-
-	private void get_movie_details(int movie_id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	protected void checkSubclass() {
 	}
 
 }

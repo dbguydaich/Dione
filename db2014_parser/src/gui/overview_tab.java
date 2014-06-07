@@ -52,6 +52,7 @@ public class overview_tab extends Composite
 			}		
 		});
 		
+		
 		//recommendation area
 		Composite reco_area = new Composite(this, SWT.NONE);
 		reco_area.setLayoutData(gui_utils.form_data_factory(295, 200, 5, 10));

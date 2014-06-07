@@ -7,16 +7,10 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
@@ -25,13 +19,11 @@ import org.eclipse.swt.widgets.Text;
 
 import bl.user_logics;
 import bl.verifier;
-import config.config;
-import db.db_queries_user;
 
 /**
  * log in window
  */
-public class log_in_window extends Shell {
+public class log_in_window extends abstract_window {
 
 	public static user_logics user; /* will represent current user */
 
@@ -53,6 +45,7 @@ public class log_in_window extends Shell {
 					gui_utils.EXIT_ON_LOGIN = true;
 			}
 		});
+		
 
 		// window layout
 		this.setLayout(new GridLayout(2, false));
@@ -69,6 +62,7 @@ public class log_in_window extends Shell {
 				background.dispose();
 			}
 		});
+		
 
 		// headline label
 		Label log_in_label = new Label(this, SWT.NONE);
@@ -353,7 +347,5 @@ public class log_in_window extends Shell {
 
 	}
 
-	protected void checkSubclass() {
-	}
 
 }

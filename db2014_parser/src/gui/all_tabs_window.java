@@ -7,11 +7,13 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+
 import parser_entities.light_entity_movie;
 import bl.user_logics;
 import config.config;
@@ -21,7 +23,7 @@ import config.config;
  * All Tabs Window
  * This is the main window
  */
-public class all_tabs_window extends Shell {
+public class all_tabs_window extends abstract_window {
 
 	config config = new config();
 	int window_height = config.get_window_height();
@@ -41,7 +43,7 @@ public class all_tabs_window extends Shell {
 		} catch (SQLException e2) {
 			gui_utils.raise_sql_error_window(display);
 		}
-
+	
 		this.setText("MovieBook - Logged in As: " +  my_name); /* window title */
 		this.setLayout(new FillLayout()); /* window layout */
 		final TabFolder tab_folder = new TabFolder(this, SWT.NONE); /* the window consists of tabs */
@@ -65,10 +67,7 @@ public class all_tabs_window extends Shell {
 		// tab5
 		TabItem tab5 = new TabItem(tab_folder, SWT.NONE);
 		tab5.setText("Settings");
-		
-		
-		
-		
+			
 		
 		/* getting data from the db to the first tab */
 		Thread t = new Thread(new Runnable() {
@@ -162,8 +161,5 @@ public class all_tabs_window extends Shell {
 		});
 	}
 
-	
-	protected void checkSubclass() {
-	}
 
 }

@@ -18,9 +18,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
 import parser_entities.light_entity_movie;
 
-public class preferences_window extends Shell {
+public class preferences_window extends abstract_window {
 
 	Label movie_label;
 	boolean can_be_opened = true;
@@ -36,7 +37,7 @@ public class preferences_window extends Shell {
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-
+		
 		this.addDisposeListener(new DisposeListener() {
 			/*
 			 * Possible Scenarios: 1. user has been rated movies for the first
@@ -294,8 +295,5 @@ public class preferences_window extends Shell {
 
 	}
 
-
-	protected void checkSubclass() {
-	}
 
 }

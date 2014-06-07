@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class import_window extends Shell
+public class import_window extends abstract_window
 {
 
 	public import_window(final Display display)
@@ -28,9 +28,8 @@ public class import_window extends Shell
 		this.setLayout(new FormLayout());
 		
 		final Color import_window_color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(import_window_color);
-	
-	
+		this.setBackground(import_window_color);	
+		
 		//window background
 		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
 		final Image background = new Image(display, imgURL);
@@ -131,20 +130,7 @@ public class import_window extends Shell
 			}		
 		});
 		
-		
-		
 	}
 	
-	
-
-private static void dispose_import_window()
-{
-	gui_utils.import_win.dispose();
-}
-	
-
-protected void checkSubclass()
-{
-}
 	
 }

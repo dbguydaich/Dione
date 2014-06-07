@@ -49,33 +49,29 @@ public class gui_utils
 	
 		Importer imp = new Importer();
 		
+		/* First Import is Required */
 		if(!imp.was_imported())
 		{
 			import_win = new import_window(display);
 			import_win.open();
-			
-			while (!display.isDisposed()) 
-			{
-				if (!display.readAndDispatch())
-				{
-					display.sleep();
-				}
-			}
 		}
 		
 		else
 		{
 			login_win = new log_in_window(display);
 			login_win.open();
+		}
 	
-			while (!display.isDisposed()) 
+		
+		/* SWT Event Loop */
+		while (!display.isDisposed()) 
+		{
+			if (!display.readAndDispatch())
 			{
-				if (!display.readAndDispatch())
-				{
-					display.sleep();
-				}
+				display.sleep();
 			}
 		}
+		
 	}
 	
 

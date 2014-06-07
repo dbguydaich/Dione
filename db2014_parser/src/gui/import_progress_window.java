@@ -9,6 +9,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -17,7 +18,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import parser_entities.Importer;
 
-public class import_progress_window extends Shell
+public class import_progress_window extends abstract_window
 {
 	
 	int USER_TERMINATE = -2;
@@ -35,14 +36,12 @@ public class import_progress_window extends Shell
 		
 		this.setSize(230, 100);
 		this.setText("Loading data...");
-		
+				
 		prog_bar = new ProgressBar(this, SWT.NONE);
 		prog_bar.setBounds(0, 0, 230, 30);
 		prog_bar.setMaximum(100);
 		prog_bar.setMinimum(0);
-		
 		prog_bar.setSelection(0);
-		
 		
 		Button abort_button = new Button(this, SWT.PUSH);
 		abort_button.setText("Abort");
@@ -87,7 +86,7 @@ public class import_progress_window extends Shell
 			    			 messageBox.setMessage("Data import has finished successfully");
 			    			 messageBox.open();
 			    			 
-			    			 handle_finish_import_bar();
+			    			 handle_finish_import_bar(true);
 				    	 }
 				    	 
 				    	 /* update terminated unsuccessfully */	 
@@ -99,7 +98,7 @@ public class import_progress_window extends Shell
 				    		 messageBox.setMessage("Data import has failed");
 				   			 messageBox.open();
 				    			 
-				   			 handle_finish_import_bar();
+				   			 handle_finish_import_bar(false);
 				   		 }
 				    	
 				    	 /* update terminated by user and thread already terminated */
@@ -112,7 +111,7 @@ public class import_progress_window extends Shell
 			    			 messageBox.setMessage("Data import Aborted");
 			    			 messageBox.open();
 			    			 
-			    			 handle_finish_import_bar();
+			    			 handle_finish_import_bar(false);
 				    	 }
 		          }
 		 
@@ -145,28 +144,30 @@ public class import_progress_window extends Shell
 	}
 
 	
-	
-	static void handle_finish_import_bar()
+	/**
+	 * if done == true: return to gui utils (or open log in window)
+	 * if done == false: return to gui utils (or return to import window)
+	 * @param done(boolean) - true if import succeeded, false otherwise
+	 */
+	static void handle_finish_import_bar(boolean done)
 	{
 		System.out.println("***** gui: closing progress bar *****");
 		gui_utils.import_progress_win.dispose();
-		 
-		if(gui_utils.import_win != null) 
-			if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
-			{
-				gui_utils.EXIT_ON_LOGIN = false; 
-				gui_utils.import_win.dispose(); /* disposing import window, display remains undisposed */
-				
-				gui_utils.login_win = new log_in_window(gui_utils.display);
-				gui_utils.login_win.open(); /* opening log in window */
-			}
-	}
-	
-	
-	protected void checkSubclass()
-	{
-	}
 		
+		if(done) /* import succeeded */
+		{
+			if(gui_utils.import_win != null) 
+				if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
+				{
+					gui_utils.EXIT_ON_LOGIN = false; 
+					gui_utils.import_win.dispose(); /* disposing import window, display remains undisposed */
+				
+					gui_utils.login_win = new log_in_window(gui_utils.display);
+					gui_utils.login_win.open(); /* opening log in window */
+				}
+		}
+		
+	}
 	
 
 
