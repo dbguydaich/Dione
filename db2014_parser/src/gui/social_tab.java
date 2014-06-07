@@ -377,8 +377,7 @@ public class social_tab extends Composite {
 			public void run() {
 
 				try {
-					user_social_activities_strings = user_logics.get_user_recent_string_activities(
-							log_in_window.user.get_current_user_id(), 5);
+					user_social_activities_strings = log_in_window.user.get_friends_recent_string_activities();
 				} catch (final SQLException e1) {
 					user_social_activities_strings = new ArrayList<String>();
 					display.asyncExec(new Runnable() {
