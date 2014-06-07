@@ -313,7 +313,12 @@ public class preferences_window extends Shell {
 
 		});
 
-		gui_utils.executor.execute(t);
+		t.start();
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+		
+		}
 
 	}
 
