@@ -81,6 +81,7 @@ public class import_progress_window extends Shell
 		    		  	/* data update has finished successfully */
 				    	 if(event_id == FINE_TERMINATE) 
 				    	 {
+				    		 System.out.println("im in 1");
 			    			 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("SUCCESS");
 			    			 messageBox.setMessage("Data import has finished successfully");
@@ -92,6 +93,7 @@ public class import_progress_window extends Shell
 				    	 /* update terminated unsuccessfully */	 
 				    	 if(event_id == FAILED_TERMINATE)
 				    	 {
+				    		 System.out.println("im in 2");
 				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 				    		 messageBox.setText("Failure");
 				    		 messageBox.setMessage("Data import has failed");
@@ -100,15 +102,18 @@ public class import_progress_window extends Shell
 				   			 handle_finish_import_bar();
 				   		 }
 				    	
-				    	 
 				    	 /* update terminated by user and thread already terminated */
 				    	 if(exit_import && event_id == USER_TERMINATE)
 				    	 {
+				    		 exit_import = false;
+				    		 
+				    		 System.out.println("im in 3");
 				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("Import Aborted");
 			    			 messageBox.setMessage("Data import Aborted");
 			    			 messageBox.open();
-						
+
+			    			 
 			    			 handle_finish_import_bar();
 				    	 }
 		          }
@@ -139,14 +144,12 @@ public class import_progress_window extends Shell
 		Thread thread = new Thread(gui_utils.my_importer);
         thread.start();
 		
-		
 	}
 
 	
 	
 	static void handle_finish_import_bar()
 	{
-		
 		System.out.println("***** gui: closing progress bar *****");
 		gui_utils.import_progress_win.dispose();
 		 
