@@ -51,8 +51,8 @@ public class imdb_plot_parser extends abstract_imdb_parser {
 		
 		try {
 			
-			java.sql.Connection db_conn = db_operations.getConnection();
-			PreparedStatement stmt = db_conn.prepareStatement("INSERT INTO actor_movie(moviename) VALUES(?)"); 
+			//java.sql.Connection db_conn = db_operations.getConnection();
+			//PreparedStatement stmt = db_conn.prepareStatement("INSERT INTO actor_movie(moviename) VALUES(?)"); 
 			
 			String temp_name = "";
 			String imdb_movie_name = "";
