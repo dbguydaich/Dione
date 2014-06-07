@@ -173,8 +173,9 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
-					fireEvent("Parser Terminated forcefully",-2);
-					return;
+					//fireEvent("Parser Terminated forcefully",-2);
+					//return;
+					break;
 				}
 				this.offset_progress += this.task_weight;
 			}
@@ -216,8 +217,9 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
-					fireEvent("Parser Terminated forcefully",-2);
-					return;
+					//fireEvent("Parser Terminated forcefully",-2);
+					//return;
+					break;
 				}
 				/* if there is a set to enrich - do it */
 				if (get_import_set(i) != null)
@@ -248,8 +250,9 @@ public class Importer extends db_operations implements Runnable,
 				if (done) {
 					System.out
 							.print("Termination Signal Caught, Importer Thread Exiting");
-					fireEvent("Parser Terminated forcefully",-2);
-					return;
+					//fireEvent("Parser Terminated forcefully",-2);
+					//return;
+					break;
 				}
 				this.offset_progress += this.task_weight;
 			}
@@ -347,6 +350,24 @@ public class Importer extends db_operations implements Runnable,
 			break;
 		}
 		return retset;
+	}
+	/**
+	 * determines whether there was some import in the history
+	 * @return
+	 */
+	public boolean was_imported()
+	{
+		Timestamp ts;
+		try {
+			ts = get_last_invocation(invocation_code.YAGO_UPDATE);
+			if (ts == null)
+				return false; 
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 
 	/**
