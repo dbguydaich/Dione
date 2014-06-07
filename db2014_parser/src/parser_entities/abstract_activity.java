@@ -36,6 +36,6 @@ public abstract class abstract_activity implements Iactivity, Comparable<abstrac
 	public int compareTo(abstract_activity other)
 	{
 		// activities are ordered by date only
-		return (this.get_activity_time().compareTo(other.get_activity_time())); 
+		return (other.get_activity_time().compareTo(this.get_activity_time())); 
 	}
 }
