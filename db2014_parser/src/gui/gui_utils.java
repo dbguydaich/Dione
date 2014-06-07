@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
 import bl.movie_logics;
+import parser_entities.Importer;
 import parser_entities.entity_person;
 import parser_entities.light_entity_movie;
 
@@ -36,56 +37,40 @@ public class gui_utils
 	
 	
 	
-	public static void main(String args[])
+	public static void launch()
 	{
 		
 		executor = Executors.newFixedThreadPool(5);
 		
 		final Thread cron = new Thread(new cron());
-		
 		executor.execute(cron);
-		
-		
 		
 		display = new Display();
 	
-		//if(it is first run on this device)
-		//{
-		//	import_win = new import_window(display);
-		//	import_win.open();
-		//}
+		Importer imp = new Importer();
 		
-		//else
-		//{
-		
-			login_win = new log_in_window(display);
-			//movie_details_window movie_win = new movie_details_window(display, 1);
-			//tabs_win = new all_tabs_window(display);
-			//pref_win = new preferences_window(display);
-			//import_win = new import_window(display);
-		
-		
-			login_win.open();
-		//}
-		
-		
-		
-		//movie_win.open();
-		//tabs_win.open();
-		//pref_win.open();
-		//import_win.open();
-		
-		while (!display.isDisposed()) 
+		if(!imp.was_imported())
 		{
-			 if (!display.readAndDispatch())
-			 {
-				 display.sleep();
-			 }
+			import_win = new import_window(display);
+			import_win.open();
+		}
+			
+		else
+		{
+			login_win = new log_in_window(display);
+			login_win.open();
+	
+			while (!display.isDisposed()) 
+			{
+				if (!display.readAndDispatch())
+				{
+					display.sleep();
+				}
+			}
 		}
 	}
 	
-	
-	
+
 	
 	
 	

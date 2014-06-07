@@ -104,15 +104,13 @@ public class import_progress_window extends Shell
 				    	
 				    	 /* update terminated by user and thread already terminated */
 				    	 if(exit_import && event_id == USER_TERMINATE)
-				    	 {
+				    	 {				  
 				    		 exit_import = false;
-				    		 
 				    		 System.out.println("im in 3");
 				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("Import Aborted");
 			    			 messageBox.setMessage("Data import Aborted");
 			    			 messageBox.open();
-
 			    			 
 			    			 handle_finish_import_bar();
 				    	 }
@@ -156,10 +154,11 @@ public class import_progress_window extends Shell
 		if(gui_utils.import_win != null) 
 			if(!gui_utils.import_win.isDisposed()) /* it was the first data import */
 			{
-				gui_utils.EXIT_ON_LOGIN = false;
-				gui_utils.import_win.dispose();
+				gui_utils.EXIT_ON_LOGIN = false; 
+				gui_utils.import_win.dispose(); /* disposing import window, display remains undisposed */
+				
 				gui_utils.login_win = new log_in_window(gui_utils.display);
-				gui_utils.login_win.open();
+				gui_utils.login_win.open(); /* opening log in window */
 			}
 	}
 	

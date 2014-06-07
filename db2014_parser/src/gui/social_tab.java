@@ -139,8 +139,7 @@ public class social_tab extends Composite {
 								public void run() {
 
 									try {
-										System.out.println("1"+friend_name);
-										System.out.println("2" +log_in_window.user.get_my_name());
+				
 										String friend_name = add_friend_text.getText();
 
 										if (log_in_window.user.get_my_name().equals( friend_name)) {
