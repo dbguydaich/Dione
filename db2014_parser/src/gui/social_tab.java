@@ -157,10 +157,9 @@ public class social_tab extends Composite {
 									}
 
 									try {
-										int success = user_logics
-												.does_user_exists(add_friend_text
-														.getText());
-										if (success ==0) { // to be
+										if (user_logics
+												.does_user_exists((add_friend_text
+														.getText()))) { // to be
 											// implemented
 											// next on
 											System.out.println("Here");
@@ -169,8 +168,22 @@ public class social_tab extends Composite {
 															.getText());
 											Integer current_user_id = log_in_window.user
 													.get_current_user_id();
-											user_logics.add_friendship(
+											int success =user_logics.add_friendship(
 													friend_id, current_user_id);
+											if(success ==-1)
+											{
+												MessageBox messageBox = new MessageBox(
+														display.getActiveShell(),
+														SWT.ICON_WARNING);
+												messageBox.setText("Friend is already exists");
+												messageBox
+														.setMessage("Friend is already exists");
+												messageBox.open();
+												return;
+											}
+								
+											
+											
 
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
@@ -182,18 +195,6 @@ public class social_tab extends Composite {
 											update_friends_ddl(display);
 
 										}
-										else if(success ==-1)
-										{
-											MessageBox messageBox = new MessageBox(
-													display.getActiveShell(),
-													SWT.ICON_WARNING);
-											messageBox.setText("Friend is already exists");
-											messageBox
-													.setMessage("Friend is already exists");
-											messageBox.open();
-										}
-							
-							
 
 										else// no user found
 										{
