@@ -412,12 +412,12 @@ public class settings_tab extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				final String pass_change_to = password_text.getText();
 				final String pass = old_password_text.getText();
-				if (!verifier.verifyPass(pass_change_to)) { // illegal user name
+				if (!verifier.verifyPassSignUp(pass_change_to)) { // illegal user name
 					MessageBox messageBox = new MessageBox(display
 							.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
 					messageBox
-							.setMessage("Password must contain 1-6 alphanumeric chars.");
+							.setMessage("Password must contain 4-10 alphanumeric chars.");
 					messageBox.open();
 				}
 				Thread t = new Thread(new Runnable() {
