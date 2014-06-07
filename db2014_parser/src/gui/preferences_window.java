@@ -44,9 +44,7 @@ public class preferences_window extends Shell {
 			 * on demand (all tabs still open) - go back
 			 */
 			public void widgetDisposed(DisposeEvent e) {
-				gui_utils.EXIT_ON_LOGIN = false;
-				gui_utils.pref_win.dispose();
-
+				
 				if (gui_utils.tabs_win == null) {
 					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
 					gui_utils.tabs_win.open();
@@ -56,7 +54,6 @@ public class preferences_window extends Shell {
 					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
 					gui_utils.tabs_win.open();
 				}
-
 			}
 		});
 
@@ -156,16 +153,15 @@ public class preferences_window extends Shell {
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
 					int rate_desired = gui_utils.get_index_button(radios);
-					handle_rating(rate_desired);
+					handle_rating(rate_desired); /* threads are initialized within this function */
 					update_movie();
+					if (current_movie==null)
+					{
+						gui_utils.pref_win.dispose();
+					}
 				} catch (NumberFormatException e) {
-					// TODO Auto-generated catch block
 					gui_utils.raise_sql_error_window(display);
 					e.printStackTrace();
-					// } catch (SQLException e) {
-					// TODO Auto-generated catch block
-					// gui_utils.raise_sql_error_window(display);
-					// e.printStackTrace();
 				}
 
 			}
@@ -189,26 +185,13 @@ public class preferences_window extends Shell {
 
 		/*
 		 * Stop Listener:
-		 * Possible Scenarios: 1. user has been rated movies for the first
-		 * time - nothing is open, so we exit 2. user has been reted movies
-		 * on demand (all tabs still open) - go back
+		 * simply disposing the win
 		 */
 		stop_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-
-				gui_utils.EXIT_ON_LOGIN = false;
 				gui_utils.pref_win.dispose();
 
-				if (gui_utils.tabs_win == null) {
-					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
-					gui_utils.tabs_win.open();
-				}
-
-				else if (gui_utils.tabs_win.isDisposed()) {
-					gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
-					gui_utils.tabs_win.open();
-				}
 			}
 		});
 	}
