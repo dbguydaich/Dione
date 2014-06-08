@@ -562,7 +562,6 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 
-	
 	public static boolean fill_user_prefence(int user_id) 
 			throws SQLException 
 	{
@@ -574,7 +573,7 @@ public abstract class db_queries_user extends db_operations
 		// MTR is movie_tag_rate as rated by all users using the application
 		return (run_querey("INSERT INTO user_prefence (idUser, idTag, tag_user_rate) " +
 					" (SELECT idUser, idTag, round(avg(UR.rank * MTR.rate)) " +
-					" FROM user_rank as UR, movie_tag_relation as MTR " +
+					" FROM user_rank as UR, movie_tag_rate as MTR " +
 					" WHERE idUser = ? AND rank > 0 " +
 					" GROUP BY idTag)", user_id) >= 0);
 	}
