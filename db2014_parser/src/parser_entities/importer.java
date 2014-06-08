@@ -157,11 +157,11 @@ public class Importer extends db_operations implements Runnable,
 		try {
 			/* mark process start in db */
 			ts = set_invocation();
-			if (ts == null)
+			/*if (ts == null)
 			{
 				fireEvent("Cannot create an invocation",-1);
 				return;
-			}
+			}*/
 				
 			this.offset_progress = 0;			
 			
