@@ -72,14 +72,6 @@ public class import_progress_window extends abstract_window
 		    			 progress_status = 100;
 		    		  prog_bar.setSelection(progress_status);
 		    		  
-		    		  //
-		    		  System.out.println("***** gui: action performed is running! *****");
-		    		  System.out.println("      event_id == " + (event_id));
-		    		  System.out.println("      event mssg == " + event.getActionCommand());
-		    		  System.out.println("      progress == " + progress_status);
-		    		  System.out.println();
-		    		  //
-		    		  
 		    		  	/* data update has finished successfully */
 				    	 if(event_id == FINE_TERMINATE) 
 				    	 {
