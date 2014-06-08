@@ -60,6 +60,7 @@ public abstract class db_operations
 		PreparedStatement stmt = null; 
 		stmt = conn.prepareStatement(insert_string);
 
+		// Insert values where the '?' were
 		for (int i = 0; i < values.length; i++) 
 		{
 			if (values[i] instanceof Integer)
@@ -405,17 +406,6 @@ public abstract class db_operations
 		}
 	}
 		
-	/** get statement from the conn 
-	 * @throws SQLException */
-	protected Statement getStatement() 
-			throws SQLException 
-	{
-		jdbc_connection_pooling jdbc_con = jdbc_connection_pooling.get_instance();
-		Connection conn = jdbc_con.get_connection();
-		
-		return (conn.createStatement());
-	}
-	
 	/**
 	 * make sure to select all needed fields
 	 * @return result may be an empry entity
@@ -440,6 +430,11 @@ public abstract class db_operations
 		return(new light_entity_movie(0, "", 0, "", "", 0, ""));
 	}
 	
+	/**
+	 * select all field values from table and list them
+	 * assumes such list truly exists and integers
+	 * @throws SQLException
+	 */
 	protected static List<Integer> get_all_ids(String field, String table) 
 			throws SQLException
 	{
@@ -511,6 +506,69 @@ public abstract class db_operations
 		return (jdbc_conn.get_connection());
 	}
 	
+	/** get statement from the conn 
+	 * @throws SQLException */
+	public Statement getStatement() 
+			throws SQLException 
+	{
+		jdbc_connection_pooling jdbc_con = jdbc_connection_pooling.get_instance();
+		Connection conn = jdbc_con.get_connection();
+		
+		return (conn.createStatement());
+	}
+	
+	/**
+	 * using the table 
+	 */
+	public static void fill_movie_tag_relation() 
+	{
+		try 
+		{
+			// Was there a initial data insertion
+			if (!was_there_an_invocation(invocation_code.YAGO_UPDATE))
+				return;
+			
+			Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
+			
+			// Is it ok not to redo this
+			if (ts != null)
+			{		
+				Timestamp now = new Timestamp(new java.util.Date().getTime() - 1000*60*15);
+				
+				// was this performed in the last 15 minutes
+				if (now.before(ts))
+					return;
+			}	
+		
+			
+			// Invoke performance
+			String timePerformed = perform_invocation(invocation_code.USER_PREFENCE); 
+			if (timePerformed == null)
+				return;
+			
+			// delete old
+			if (delete("movie_tag_rate", "") < 0)
+			{
+				delete_last_invocation(invocation_code.USER_PREFENCE, timePerformed);
+			}
+			else
+			{
+				// perform new
+				if (run_querey("INSERT INTO movie_tag_rate (idMovie, idTag, rate) " +
+										" SELECT idMovie, idTag, round(avg(rate)) as rate" +
+										" FROM user_tag_movie " +
+										" GROUP BY idMovie, idTag") < 0)
+						delete_last_invocation(invocation_code.USER_PREFENCE, timePerformed);
+			}
+			
+			// Confirm success to DB
+			confirm_invocation_performed(invocation_code.USER_PREFENCE, timePerformed);
+		} 
+		catch (SQLException e) {
+			// Do nothing, somone else will run this again
+		}
+	}
+	
 	/**
 	 * Get the current time in a string of YYYY-MM-DD hh:mm:ss
 	 * @return
@@ -519,19 +577,42 @@ public abstract class db_operations
 	{
 		return (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
 	}
+
+// Invocations
 	
 	/**
 	 * insert a row to invocations table with the current Timestamp
 	 * @param code - the invocation code as found in the enum invocation_code
-	 * @return true iff did succeed
+	 * @return if not succeeded null
+	 * 			else string representing the currTime as it is inserted to the DB
 	 * @throws SQLException
 	 */
-	public static boolean perform_invocation(invocation_code code) 
+	public static String perform_invocation(invocation_code code) 
 			throws SQLException
 	{
-		return (insert("invocations", "`invokeCode`, `invokeDate`", code.ordinal(), get_curr_time()) > 0);
+		String currTime = get_curr_time();
+		
+		if (insert("invocations", "`invokeCode`, `invokeDate`, `didFinish`", code.ordinal(), currTime, 0) > 0)
+			return (currTime);
+		else
+			return (null);
 	}
 
+	/**
+	 * when finished performing action, use this to signal it was performed
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @param time - the String representing time, as was recieved from perform_invocation()
+	 * @return did succeed
+	 * @throws SQLException
+	 */
+	public static boolean confirm_invocation_performed(invocation_code code, String time) 
+			throws SQLException
+	{
+		String update_querey = "UPDATE invocations SET didFinish = 1 WHERE invokeDate = ? ";
+		
+		return (run_querey(update_querey, time) > 0);
+	}
+			
 	/**
 	 * @return the Timestamp of the last invocation of this code
 	 * @param code - the invocation code as found in the enum invocation_code
@@ -540,7 +621,7 @@ public abstract class db_operations
 	public static Timestamp get_last_invocation(invocation_code code) 
 			throws SQLException
 	{
-		String whereClause = "invokeCode = ? ORDER BY invokeDate desc";
+		String whereClause = "invokeCode = ? and didFinish = 1 ORDER BY invokeDate desc";
 		
 		ResultSet results = select("invokeDate" , "invocations" , whereClause, code.ordinal());
 	
@@ -558,8 +639,8 @@ public abstract class db_operations
 	public static boolean was_there_an_invocation(invocation_code code) 
 			throws SQLException
 	{
-		String whereSegment = "invocationCode = " + code;
-		ResultSet result = select("invocationCode", "invocations", whereSegment);
+		String whereSegment = "invokeCode = ? AND didFinish = 1 ";
+		ResultSet result = select("invokeCode", "invocations", whereSegment, code.ordinal());
 		
 		// did select find souch user
 		return (result.next());
@@ -568,58 +649,16 @@ public abstract class db_operations
 	/**
 	 * delete the last invocation from invocations table with the max date
 	 * @param code - the invocation code as found in the enum invocation_code
+	 * @param time - the String representing time, as was recieved from perform_invocation()
 	 * @throws SQLException
 	 */
-	public static void delete_last_invocation(invocation_code code) 
+	public static void delete_last_invocation(invocation_code code, String time) 
 			throws SQLException 
 	{
-		String where = " invokeDate = (SELECT max(invokeDate) FROM invocations where invokeCode = ?) ";
+		String where = " invokeDate = ? and invokeCode = ? ";
 		
-		if (delete("invocations", where , code.ordinal()) > 0)
+		if (delete("invocations", where , time, code.ordinal()) > 0)
 			throw (new SQLException("Deletion error"));
-	}
-	
-	/**
-	 * using the table 
-	 */
-	public static void fill_movie_tag_relation() 
-	{
-		try {
-			Timestamp ts = get_last_invocation(invocation_code.USER_PREFENCE);
-			
-			// Is it ok not to redo this
-			if (ts != null)
-			{		
-				Timestamp now = new Timestamp(new java.util.Date().getTime() - 1000*60*15);
-				
-				// was this performed in the last 15 minutes
-				if (now.before(ts))
-					return;
-			}	
-		
-			
-			// Invoke performance
-			if (!perform_invocation(invocation_code.USER_PREFENCE))
-				return;
-			
-			// delete old
-			if (delete("movie_tag_rate", "") < 0)
-			{
-				delete_last_invocation(invocation_code.USER_PREFENCE);
-			}
-			else
-			{
-				// perform new
-				if (run_querey("INSERT INTO movie_tag_rate (idMovie, idTag, rate) " +
-										" SELECT idMovie, idTag, round(avg(rate)) as rate" +
-										" FROM user_tag_movie " +
-										" GROUP BY idMovie, idTag") < 0)
-						delete_last_invocation(invocation_code.USER_PREFENCE);
-			}
-		} 
-		catch (SQLException e) {
-			// Do nothing, somone else will run this again
-		}
 	}
 
 }

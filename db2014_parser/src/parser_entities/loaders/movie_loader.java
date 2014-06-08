@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import config.config;
 import parser_entities.Importer;
 import parser_entities.entity_movie;
 
@@ -23,6 +24,7 @@ public class movie_loader extends abstract_loader {
 	HashMap<String,Integer> languages_table;
 	HashMap<String,Integer> directors_table;
 	
+	private int noDirectorId = (new config().get_default_director_id());
 	
 	public movie_loader(Importer importer) throws SQLException {
 		super(importer);
@@ -52,8 +54,8 @@ public class movie_loader extends abstract_loader {
 
 	@Override
 	protected void set_perpared_statments(Connection db_conn) throws SQLException {
-		update = db_conn.prepareStatement("UPDATE Movie SET idLanguage=?,idDirector=?,movieName=?,year=?,wiki=?,duration=?,movie_qualified_name=?,plot=? WHERE idMovie=?");
-		insert = db_conn.prepareStatement("INSERT INTO Movie(idLanguage,idDirector,movieName,year,wiki,duration,movie_qualified_name,plot) VALUES(?,?,?,?,?,?,?,?)");
+		update = db_conn.prepareStatement("UPDATE movie SET idLanguage=?,idDirector=?,movieName=?,year=?,wiki=?,duration=?,movie_qualified_name=?,plot=? WHERE idMovie=?");
+		insert = db_conn.prepareStatement("INSERT INTO movie(idLanguage,idDirector,movieName,year,wiki,duration,movie_qualified_name,plot) VALUES(?,?,?,?,?,?,?,?)");
 	}
 
 	@Override
@@ -98,7 +100,7 @@ public class movie_loader extends abstract_loader {
 			if (movie.get_movie_director() != null && directors_table.get(movie.get_movie_director().get_person_name()) != null)
 				movie_insert_stmt.setInt(2, directors_table.get(movie.get_movie_director().get_person_name()));
 			else
-				movie_insert_stmt.setInt(2, 1);
+				movie_insert_stmt.setInt(2, noDirectorId);
 			
 			if (movie.get_movie_name() != null)
 				movie_insert_stmt.setString(3, movie.get_movie_name());

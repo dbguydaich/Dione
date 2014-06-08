@@ -535,7 +535,7 @@ public abstract class db_queries_user extends db_operations
 	public static boolean update_rate_movie(int movie_id, int user_id, int rate) 
 			throws SQLException 
 	{
-		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		String date = db_operations.get_curr_time();
 	
 		String querey = "UPDATE user_rank SET rank = ?, rankDate = ? WHERE idUser= ? and idMovie=?";
 		int rows_effected = run_querey(querey, rate, date, user_id , movie_id);
@@ -550,7 +550,7 @@ public abstract class db_queries_user extends db_operations
 	public static boolean update_rate_tag(int movie_id, int user_id, int tag_id, int rate) 
 			throws SQLException 
 	{
-		String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+		String date = db_operations.get_curr_time();
 		
 		String querey = "UPDATE user_tag_movie SET rate = ?, reteDate = ? WHERE idUser= ? and idMovie=? and idTag=?";
 		int rows_effected = run_querey(querey, rate, date, user_id , movie_id, tag_id);
@@ -570,10 +570,12 @@ public abstract class db_queries_user extends db_operations
 		if (delete("user_prefence", "idUser = ?", user_id) < 0)
 			return (false);
 		
+		// UR is user_rank for the movie
+		// MTR is movie_tag_rate as rated by all users using the application
 		return (run_querey("INSERT INTO user_prefence (idUser, idTag, tag_user_rate) " +
 					" (SELECT idUser, idTag, round(avg(UR.rank * MTR.rate)) " +
 					" FROM user_rank as UR, movie_tag_relation as MTR " +
-					" WHERE idUser = ? " +
+					" WHERE idUser = ? AND rank > 0 " +
 					" GROUP BY idTag)", user_id) >= 0);
 	}
 

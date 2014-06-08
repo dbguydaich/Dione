@@ -18,7 +18,8 @@ public abstract class db_queries_movies extends db_operations
 	
 // INSERTERS	
 	
-	/** insert language
+	/** 
+	 * insert language
 	 * return 	-1	- insert SQL error
 	 * 			0	- insert success, id retrieve error
 	 * 			id	- else
@@ -78,7 +79,8 @@ public abstract class db_queries_movies extends db_operations
 			return (false);
 	}
 	 
-	/** create new genre
+	/** 
+	 * create new genre
 	 * @return 	-1 for insert faliure, 
 	 * 			0 for insert success and user id return failure
 				idGenre if successfull
@@ -112,6 +114,10 @@ public abstract class db_queries_movies extends db_operations
 	
 // BOOLEANS
 	
+	/**
+	 * @return true iff theres a tag with the name tag_name 
+	 * @throws SQLException
+	 */
 	public static boolean tag_exists(String tag_name)
 		throws SQLException
 	{
@@ -164,6 +170,10 @@ public abstract class db_queries_movies extends db_operations
 			return (false);		
 			}
 	
+	/**
+	 * @return true iff theres a language with the name language_name
+	 * @throws SQLException
+	 */
 	public static boolean language_exists(String language_name) 
 			throws SQLException
 	{
@@ -180,6 +190,10 @@ public abstract class db_queries_movies extends db_operations
 			return (false);
 	}
 	
+	/**
+	 * @return true iff theres a genre with the name genre_name
+	 * @throws SQLException
+	 */
 	public static boolean genre_exists(String genre_name) 
 			throws SQLException
 			{
@@ -248,6 +262,10 @@ public abstract class db_queries_movies extends db_operations
 		return (returnedSet);
 	}
 
+	/**
+	 * @return a list of all genre names
+	 * @throws SQLException
+	 */
 	public static List<String> get_geners() 
 			throws SQLException 
 	{
@@ -270,7 +288,9 @@ public abstract class db_queries_movies extends db_operations
 		return (returnedList);
 	}
 
-	/** get movie IDs and tag count for each movie **/
+	/** 
+	 * get movie IDs and tag count for each movie 
+	 * **/
 	public static HashMap <Integer,Integer> get_movie_id_tag_count() 
 			throws SQLException
 	{
@@ -295,7 +315,9 @@ public abstract class db_queries_movies extends db_operations
 		return (retMap);
 	}
 	
-	/** get movie names and IDs **/
+	/** 
+	 * get movie names and IDs 
+	**/
 	public static HashMap <String,Integer> get_movie_names_and_ids() 
 			throws SQLException
 	{
@@ -500,6 +522,10 @@ public abstract class db_queries_movies extends db_operations
 		return (returnedList);
 	}
 
+	/**
+	 * @return a list of all the genres of the movie movie_id
+	 * @throws SQLException
+	 */
 	public static List<String> get_movie_geners(int movie_id) 
 			throws SQLException 
 	{
@@ -523,6 +549,10 @@ public abstract class db_queries_movies extends db_operations
 		return (returnedList);
 	}
 	
+	/**
+	 * @return a list of all of the tags of the movie movie_id
+	 * @throws SQLException
+	 */
 	public static List<String> get_movie_tags(int movie_id) throws SQLException 
 	{
 		String where = "movie_tag.idMovie = ? AND tag.idTag = movie_tag.idTag";
@@ -599,6 +629,10 @@ public abstract class db_queries_movies extends db_operations
 		return (new light_entity_movie(0, "", 0, "", "", 0, ""));
 	}
 	
+	/**
+	 * @return the language of the movie movie_id or "None" if it is not listed
+	 * @throws SQLException
+	 */
 	public static String get_movie_language(int movie_id) 
 			throws SQLException 
 	{
@@ -614,6 +648,10 @@ public abstract class db_queries_movies extends db_operations
 		return ("None");
 	}
 	
+	/**
+	 * @return the avarage of rates of the movie movie_id
+	 * @throws SQLException
+	 */
 	public static int get_movie_rating(int movie_id) 
 			throws SQLException 
 	{
@@ -635,26 +673,9 @@ public abstract class db_queries_movies extends db_operations
 		return (-1);
 	}
 		
-	public static HashMap <String,Integer> get_genre_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idGenre, genreName", "genre", ""));
-	}
-	
-	public static HashMap <String,Integer> get_language_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idLanguage, languageName", "language", ""));
-	}
-	
-	public static HashMap <String,Integer> get_tag_names_and_ids() 
-			throws SQLException
-	{
-		return (generic_get_two_values("idTag, tagName", "tag", ""));
-	}
 
-	/** ordered by user rates
-	 * @return
+	/** 
+	 * @return list of movies ordered by user rates with a limit
 	 * @throws SQLException
 	 */
 	public static List<light_entity_movie> get_top_rated_movies(int limit) 
@@ -684,6 +705,23 @@ public abstract class db_queries_movies extends db_operations
 	
 	
 // ID GETTERS
+	public static HashMap <String,Integer> get_genre_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idGenre, genreName", "genre", ""));
+	}
+	
+	public static HashMap <String,Integer> get_language_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idLanguage, languageName", "language", ""));
+	}
+	
+	public static HashMap <String,Integer> get_tag_names_and_ids() 
+			throws SQLException
+	{
+		return (generic_get_two_values("idTag, tagName", "tag", ""));
+	}
 	
 	public static int get_tag_id(String tag_name) 
 			throws SQLException
@@ -692,7 +730,7 @@ public abstract class db_queries_movies extends db_operations
 	}
 		
 	public static int get_movie_id(String movie_name, String director) 
-			throws NumberFormatException, SQLException 
+			throws SQLException 
 	{
 		if (movie_name == null || director == null)
 			return (0);
@@ -702,7 +740,7 @@ public abstract class db_queries_movies extends db_operations
 		
 		// did select find souch user
 		if (results.next())
-			return (Integer.parseInt(results.getString("idMovie")));
+			return (results.getInt("idMovie"));
 		else
 			return (0);
 	}

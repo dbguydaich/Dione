@@ -49,6 +49,7 @@ public class jdbc_connection_pooling
 		} catch (ClassNotFoundException e) 
 		{
 			System.out.println(e.toString());
+			throw (new SQLException("JDBC driver not found or not sutiable..."));
 		}
 	}
 

@@ -8,6 +8,7 @@ import java.util.List;
 import config.config;
 import parser_entities.*;
 import db.*;
+import db.db_operations.invocation_code;
 
 /**
  * this is the module to get user related data
@@ -44,6 +45,9 @@ public class user_logics
 		}
 	}
 					
+	/**
+	 * make the current user id 0 - there can not be such a user
+	 */
 	public void logout()
 	{
 		current_user_id = 0;
@@ -63,18 +67,34 @@ public class user_logics
 			return (false);
 	}
 	
+	/**
+	 * @return true iff there is a user with those user name and password
+	 * @throws SQLException
+	 */
 	public static boolean authenticate_user(String user, String pass) 
 			throws SQLException
 	{
 		return (db_queries_user.authenticate_user(user, pass));
 	}
 	
+	/**
+	 * @return true iff there's a user with such the name user_name (regardless of password)
+	 * @throws SQLException
+	 */
 	public static boolean does_user_exists(String user_name) 
 			throws SQLException
 	{
 		return (db_queries_user.user_exists(user_name));
 	}
 
+	/**
+	 * make a friendship between user2_id and user1_id
+	 * @return
+	 * 		1  - if this friendship was already found
+	 * 		-1 - if friendship was unable to be created
+	 * 		0  - on success
+	 * @throws SQLException
+	 */
 	public static int add_friendship(Integer user1_id, Integer user2_id) 
 			throws SQLException
 	{
@@ -87,12 +107,22 @@ public class user_logics
 				return(-1);
 	}
 
+	/**
+	 * cancle the friendship between user2_id and user1_id
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean remove_friendship(Integer user1_id, Integer user2_id) 
 			throws SQLException
 	{
 		return (db_queries_user.remove_friendship(user1_id, user2_id));
 	}
 
+	/**
+	 * cancle the friendship between user2_id and user1_id
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean remove_friendship(Integer current_user, String name_of_friend) 
 			throws SQLException
 	{
@@ -111,31 +141,57 @@ public class user_logics
 	{
 		return (current_user_id);
 	}
-	
+
+	/**
+	 * @return - the name of current_user
+	 * @throws SQLException
+	 */
 	public String get_my_name() 
 			throws SQLException
 	{
 		return (get_user_name(current_user_id));
 	}
 	
+	/**
+	 * @return - the userName of user_id
+	 * @throws SQLException
+	 */
 	private String get_user_name(int user_id) 
 			throws SQLException 
 	{
 		return (db_queries_user.get_name_of_user(user_id));
 	}
 
+	/**
+	 * @return get the id of the user valled - user
+	 * @throws SQLException
+	 */
 	public static Integer get_user_id(String user) 
 			throws SQLException
 	{
 		return (db_queries_user.get_user_id(user));
 	}
-	
+
+	/**
+	 * change the userName of a user
+	 * @param new_name the new name of the user with the userId - id
+	 * @param pass - to make sure this is actualy the user
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean update_name(String new_name, int id, String pass) 
 			throws SQLException
 	{
 		return (db_queries_user.update_name(new_name, id, pass));
 	}
 
+	/**
+	 * change the password of a user
+	 * @param new_pass - the new password of the user with the userId - id
+	 * @param old_pass - to make sure this is actualy the user
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean update_pass(String new_pass, int id, String old_pass) 
 			throws SQLException
 	{
@@ -248,8 +304,8 @@ public class user_logics
 		
 	/**
 	 * get the recent activities
-	 * @param limit	- maximum number of social activities
-	 * @return		- list of at mos 'limit' activities
+	 * @param limit	- NULL will get the default limit
+	 * @return		- list of the activities that happend the latest
 	 * @throws SQLException 
 	 */
 	public static List<abstract_activity> get_user_recent_social_activities(int user, int limit) 
@@ -275,6 +331,11 @@ public class user_logics
 		return (returnedList);
 	}
 	
+	/**
+	 * get the recent activities
+	 * @param limit NULL will get the default limit
+	 * @throws SQLException
+	 */
 	public List<String> get_user_recent_friendship_activities(Integer limit) 
 			throws SQLException
 	{
@@ -289,6 +350,11 @@ public class user_logics
 	
 // MISC
 	
+	/**
+	 * @return the unit of get_user_recommended_movies() lists of the user_id's friends
+	 * @param limit - NULL will get the default limit
+	 * @throws SQLException
+	 */
 	public static List<light_entity_movie> get_user_recommended_movies_entities_by_friends(int user_id, int limit) 
 			throws SQLException 
 	{
@@ -374,15 +440,25 @@ public class user_logics
 	public List<String> get_user_popular_tags() 
 			throws SQLException
 	{
-		return (db_queries_user.get_prefered_tags(current_user_id, 5));
+		int limit = new config().get_default_small_limit();
+		
+		return (db_queries_user.get_prefered_tags(current_user_id, limit));
 	}
 		
+	/**
+	 * @return a list of users that have friendship with current_user
+	 * @throws SQLException
+	 */
 	public List<entity_user> get_current_user_friends() 
 			throws SQLException
 	{
 		return (db_queries_user.get_user_friends(current_user_id));
 	}
 	
+	/**
+	 * @return a list of names of users that have friendship with current_user
+	 * @throws SQLException
+	 */
 	public List<String> get_current_user_friends_names() 
 			throws SQLException
 	{
@@ -417,25 +493,37 @@ public class user_logics
 		
 		return ids;
 	}
-	
+		
+	/**
+	 * @param limit - can be NULL
+	 * @return a list of at most limit random movies taht was not rated by user_id
+	 * @throws SQLException
+	 */
+	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
+			throws SQLException
+	{
+		// load default limit if needed
+		if (limit == null)
+			limit = new config().get_default_small_limit();
+		
+		return (db_queries_user.get_unrated_movies(user_id, limit));
+	}
+
+	/**
+	 * @return a list of random movies that current_user has not rated ye
+	 * @param limit - null will get the default limit
+	 * @throws SQLException
+	 */
 	public List<light_entity_movie> get_unrated_movies(Integer limit) 
 			throws SQLException
 	{
 		return (get_unrated_movies(current_user_id, limit));
 	}
 	
-	public static List<light_entity_movie> get_unrated_movies(int user_id, Integer limit) 
-			throws SQLException
-	{
-		if (limit == null)
-		{
-			config settings = new config();
-			limit = settings.get_default_small_limit();
-		}
-		
-		return (db_queries_user.get_unrated_movies(user_id, limit));
-	}
-
+	/**
+	 * @return - a random movie that current user has not rated yet 
+	 * @throws SQLException
+	 */
 	public light_entity_movie get_unrated_movie()
 			throws SQLException
 	{
@@ -455,7 +543,10 @@ public class user_logics
 	public boolean fill_user_prefence() 
 			throws SQLException
 	{
-		return (db_queries_user.fill_user_prefence(current_user_id));
+		if (db_operations.was_there_an_invocation(invocation_code.YAGO_UPDATE))
+			return (db_queries_user.fill_user_prefence(current_user_id));
+		else
+			return (true);
 	}
 	
 // INTERNALS
@@ -517,10 +608,11 @@ public class user_logics
 	}
 	
 	/**
-	 * Rate a movie tag
-	 * @param rating_radios
-	 * @return did succeed?
-	 * @throws SQLException 
+	 * add a row to user_tag_movie
+	 * in which user_id will rate tag_id for movie_id with rate at current time
+	 * @param rate - expected 0-5, 0 is "Dont know"
+	 * @return did succeed
+	 * @throws SQLException
 	 */
 	public static boolean rate_tag_movie(int movie_id, int user_id, int tag_id, int rate) 
 			throws SQLException
@@ -528,6 +620,13 @@ public class user_logics
 		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 	
+	/**
+	 * add a row to user_tag_movie
+	 * in which user_id will rate the tag called tag_name for movie_id with rate at current time
+	 * @param rate - expected 0-5, 0 is "Dont know"
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean rate_tag_movie(int movie_id, int user_id, String tag_name, int rate) 
 			throws SQLException
 	{
@@ -539,6 +638,12 @@ public class user_logics
 			return (db_queries_user.update_rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 
+// INTERNALES	
+	
+	/**
+	 * Iterate over all activities in activity_list and toString() them to a String list
+	 * @param activity_list
+	 */
 	@SuppressWarnings("rawtypes")
 	private static List<String> list_activity_to_list_string(List activity_list)
 	{
