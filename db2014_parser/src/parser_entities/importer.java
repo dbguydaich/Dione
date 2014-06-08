@@ -136,7 +136,7 @@ public class Importer extends db_operations implements Runnable,
 	 * batches made, etc, and update the progress counter accordingly
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		/* update curren progress */
+		/* update current progress */
 		Float progress = Float.parseFloat(evt.getNewValue().toString());
 		String s_max = String.valueOf(this.cur_progress_max);
 		Float max = Float.parseFloat(s_max);

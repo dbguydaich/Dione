@@ -251,12 +251,7 @@ public abstract class abstract_imdb_parser {
 		ArrayList<String> keys = new ArrayList<String>();
 		
 		/*go over all names*/
-		Set<String> movie_names = this.imdb_names.get(imdb_movie_name);
-		
-		if (movie_names == null)
-			movie_names = new HashSet<String>();
-		
-		movie_names.add(imdb_movie_name);
+		this.imdb_names.get(imdb_movie_name).add(imdb_movie_name);
 		
 		for (String imdb_other_name : this.imdb_names.get(imdb_movie_name))
 		{

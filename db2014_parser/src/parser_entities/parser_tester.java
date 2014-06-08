@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import parser_entities.TBDs.imdb_parser_all;
-import parser_entities.TBDs.loader;
-import parser_entities.TBDs.parser_yago_all;
 import parser_entities.parsers.abstract_yago_parser;
 import db.db_queries_persons;
 
