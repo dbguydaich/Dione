@@ -258,7 +258,7 @@ public abstract class abstract_imdb_parser {
 		
 		movie_names.add(imdb_movie_name);
 		
-		for (String imdb_other_name : this.imdb_names.get(imdb_movie_name))
+		for (String imdb_other_name : movie_names)
 		{
 			String imdb_year = null;
 			if (imdb_other_name == null || imdb_other_name.equals(""))
