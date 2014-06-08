@@ -14,8 +14,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 
-import bl.movie_logics;
-import parser_entities.Importer;
 import parser_entities.entity_person;
 import parser_entities.light_entity_movie;
 
@@ -36,7 +34,9 @@ public class gui_utils
 	public static ExecutorService executor;
 	
 	
-	
+	/**
+	 * Launcher of the Dione application
+	 */
 	public static void launch()
 	{
 		
@@ -46,18 +46,25 @@ public class gui_utils
 		executor.execute(cron);
 		
 		display = new Display();
-	
-		Importer imp = new Importer();
 		
-		/* First Import is Required */
-		if(!imp.was_imported())
-		{
-			import_win = new import_window(display);
-			import_win.open();
-		}
 		
-		else
-		{
+		try {
+			/* If First Import is Required */
+			if(!db.db_operations.was_there_an_invocation(db.db_operations.invocation_code.YAGO_UPDATE))
+			{
+				/* open import window */
+				import_win = new import_window(display);
+				import_win.open();
+			}
+			
+			else
+			{
+				/* open log in window */
+				login_win = new log_in_window(display);
+				login_win.open();
+			}
+		} catch (SQLException e) {
+			//shachar: handle catch, show mssg
 			login_win = new log_in_window(display);
 			login_win.open();
 		}
@@ -78,8 +85,17 @@ public class gui_utils
 	
 	
 	
-	/*
-	 * -1 for disabling any parameter
+	/**
+	 * default value: -1 (for all params) 
+	 * @param width
+	 * @param height
+	 * @param horizontalIndent
+	 * @param verticalIndent
+	 * @param horizontalSpan
+	 * @param verticalSpan
+	 * @param horizontalAlignment
+	 * @param verticalAlignment
+	 * @return GridData instance
 	 */
 
 	public static GridData grid_data_factory(int width, int height, int horizontalIndent, int verticalIndent, int horizontalSpan, int verticalSpan, 
@@ -111,7 +127,16 @@ public class gui_utils
 	}
 	
 	
-	
+	/**
+	 * default value: -1 (for all params) 
+	 * @param horizontalIndent
+	 * @param verticalIndent
+	 * @param horizontalSpan
+	 * @param verticalSpan
+	 * @param horizontalAlignment
+	 * @param verticalAlignment
+	 * @return GridData instance
+	 */
 	public static GridData grid_data_factory(int horizontalIndent, int verticalIndent, int horizontalSpan, int verticalSpan, 
 			int horizontalAlignment, int verticalAlignment)
 	{
@@ -136,9 +161,14 @@ public class gui_utils
 	}
 	
 	
-	/*
+	/**
 	 * expects a valid width and height parameters.
-	 * -1 for disabling other parameters
+	 * default value: -1 (for top and left only)  
+	 * @param width
+	 * @param height
+	 * @param top
+	 * @param left
+	 * @return FormData instance
 	 */
 	public static FormData form_data_factory(int width, int height, int top, int left)
 	{
@@ -164,7 +194,10 @@ public class gui_utils
 	}
 	
 	
-	
+	/**
+	 * Open a message box displaying "SQL ERROR" message
+	 * @param display
+	 */
 	public static void raise_sql_error_window(Display display)
 	{
 		MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
@@ -174,9 +207,14 @@ public class gui_utils
 	}
 	
 	
+	/**
+	 * Creates a list of String out of a list of entity_person
+	 * @param persons
+	 * @return
+	 */
 	public static List<String> convert_person_string(List<entity_person> persons)
 	{
-		List<String> result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		for (entity_person a: persons)
 		{
 			result.add(a.get_person_name());
@@ -184,6 +222,12 @@ public class gui_utils
 		return result;
 	}
 	
+	
+	/**
+	 * Creates a list of String out of a list of light_entity_movie
+	 * @param persons
+	 * @return
+	 */
 	public static List<String> convert_movies_entity_to_string(List<light_entity_movie> movies)
 	{
 		List<String> result = new ArrayList<String>();
@@ -196,6 +240,12 @@ public class gui_utils
 		return result;
 	}
 	
+	
+	/**
+	 * Creates a list of booleans out of a list of buttons (radios or checkboxes)
+	 * @param from
+	 * @param to
+	 */
 	public static void get_text_button(List<Button> from,List<Boolean> to)
 	{
 		for (Button a: from)
@@ -204,19 +254,26 @@ public class gui_utils
 		}
 	}
 	
+	/**
+	 * @param from
+	 * @return first index of button chosen, -1 if no button selected
+	 */
 	public static int get_index_button(List<Button> from)
 	{
 		for (int i =0;i<from.size();i++)
 		{
 			if (from.get(i).getSelection()==true)
 				return i;
-		
 		}
 		return -1;//no button has been pressed
 	}
 
 	
-	
+	/**
+	 * Converts a list of booleans into an array
+	 * @param from
+	 * @return
+	 */
 	public static boolean[] convert_list_array(List<Boolean> from)
 	{
 		boolean[] result = new boolean[from.size()];
@@ -230,6 +287,11 @@ public class gui_utils
 	}
 	
 
+	/** 
+	 * @param pressed_genres
+	 * @param genres
+	 * @return a list of String represents the genres that have been selected 
+	 */
 	public static List<String> get_genres_string( List<Boolean> pressed_genres, List<String> genres)
 	{
 		List<String> result = new ArrayList<String>();
@@ -244,7 +306,9 @@ public class gui_utils
 	}
 
 
-
+	/**
+	 * exiting all the threads handled by executer
+	 */
 	public static void exist_threads()
 	{
 		executor.shutdownNow();
