@@ -75,7 +75,7 @@ public class import_progress_window extends abstract_window
 		    		  	/* data update has finished successfully */
 				    	 if(event_id == FINE_TERMINATE) 
 				    	 {
-			    			 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+			    			 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("SUCCESS");
 			    			 messageBox.setMessage("Data import has finished successfully");
 			    			 messageBox.open();
@@ -86,7 +86,7 @@ public class import_progress_window extends abstract_window
 				    	 /* update terminated unsuccessfully */	 
 				    	 if(event_id == FAILED_TERMINATE)
 				    	 {
-				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+				    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
 				    		 messageBox.setText("Failure");
 				    		 messageBox.setMessage("Data import has failed");
 				   			 messageBox.open();
@@ -98,7 +98,7 @@ public class import_progress_window extends abstract_window
 				    	 if(exit_import && event_id == USER_TERMINATE)
 				    	 {				  
 				    		 exit_import = false;
-				    		 MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WORKING);
+				    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WORKING);
 			    			 messageBox.setText("Import Aborted");
 			    			 messageBox.setMessage("Data import Aborted");
 			    			 messageBox.open();
