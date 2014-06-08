@@ -56,7 +56,7 @@ public class import_window extends abstract_window
 		
 		//headline label
 		Label headline_label = new Label(this, SWT.NONE);
-		headline_label.setText("Before you run MovieBook on\na new device, a massive data\nimport is needed");
+		headline_label.setText("Before you run Dione on\na new device, a massive data\nimport is needed");
 		headline_label.setLayoutData(gui_utils.form_data_factory(225, 65, 10, 10));
 		final Font font_headline_label = new Font(display, "Ariel",13, SWT.NONE );
 		headline_label.setFont(font_headline_label);

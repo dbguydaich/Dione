@@ -44,7 +44,7 @@ public class all_tabs_window extends abstract_window {
 			gui_utils.raise_sql_error_window(display);
 		}
 	
-		this.setText("MovieBook - Logged in As: " +  my_name); /* window title */
+		this.setText("Dione - Logged in As: " +  my_name); /* window title */
 		this.setLayout(new FillLayout()); /* window layout */
 		final TabFolder tab_folder = new TabFolder(this, SWT.NONE); /* the window consists of tabs */
 

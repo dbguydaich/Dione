@@ -31,7 +31,7 @@ public class log_in_window extends abstract_window {
 		super(display, SWT.MIN);
 
 		this.setSize(300, 300);
-		this.setText("MovieBook");
+		this.setText("Dione");
 
 		/* Disposal Listener */
 		this.addDisposeListener(new DisposeListener() {
