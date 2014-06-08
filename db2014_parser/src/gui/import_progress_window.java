@@ -75,11 +75,6 @@ public class import_progress_window extends abstract_window
 		    		  	/* data update has finished successfully */
 				    	 if(event_id == FINE_TERMINATE) 
 				    	 {
-			    			 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WORKING);
-			    			 messageBox.setText("SUCCESS");
-			    			 messageBox.setMessage("Data import has finished successfully");
-			    			 messageBox.open();
-			    			 
 			    			 handle_finish_import_bar(true);
 				    	 }
 				    	 
