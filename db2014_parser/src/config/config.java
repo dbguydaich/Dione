@@ -162,5 +162,9 @@ public class config {
 	public int get_default_large_limit() {
 		return Integer.parseInt(configFile.getProperty("DEFAULT_BIG_LIMIT"));
 	}
+
+	public int get_default_director_id() {
+		return Integer.parseInt(configFile.getProperty("DEFAULT_DIRECTOR_ID"));
+	}
 	
 }
