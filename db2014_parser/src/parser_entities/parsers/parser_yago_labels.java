@@ -46,21 +46,34 @@ public class parser_yago_labels extends abstract_yago_parser{
 	 **/
 	@Override
 	public void handle_line_parsing(String[] splitted_line) {
-		String movie_name, fact_value;
+		String object_name, fact_value;
 		
 		fact_value = splitted_line[yago_label_value_offset];
 		if (fact_value == null)
 			return;
 		
-		movie_name = clean_format(splitted_line[yago_label_movie_offset]);
-		if (movie_name == null)
+		if (fact_value.contains("Émilie Deleuze"))
+			object_name = clean_format(splitted_line[yago_label_movie_offset]);
+		
+		object_name = clean_format(splitted_line[yago_label_movie_offset]);
+		if (object_name == null)
 			return;
 		
-		entity_movie movie = this.parser_map_movie.get(movie_name);
-		if (movie == null)
-			return; 
+		if (object_name.contains("Émilie Deleuze"))
+			object_name = clean_format(splitted_line[yago_label_movie_offset]);
 		
-		movie.add_to_labels(parse_movie_label(fact_value));
+		/* is this the name of a movie or a director? */
+		entity_movie movie = this.parser_map_movie.get(object_name);
+		entity_person director = this.parser_map_director.get(object_name);
+		
+		/*if there was a match, add to this entity's name list*/
+		if (movie != null)
+			movie.add_to_labels(parse_movie_label(fact_value));
+		else if (director != null)
+			director.add_to_person_names(parse_movie_label(fact_value));
+		else
+			return;
+		
 		c_label_movie++;
 	}
 	

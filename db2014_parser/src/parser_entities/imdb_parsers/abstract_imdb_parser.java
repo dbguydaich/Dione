@@ -58,6 +58,7 @@ public abstract class abstract_imdb_parser {
 	/*helper maps*/
 	protected HashMap<String,String> imdb_to_yago;			/*holds all possible imdb names, that are relevant to yago films*/
 	protected HashMap<String,String> imdb_name_to_director;	/* maps imdb movie name to imdb director*/ 
+	protected HashMap<String, HashSet<String>> imdb_names;		/* maps imdb movie name to its name in other languages*/
 	
 	protected Importer Caller; 
 	
@@ -124,14 +125,16 @@ public abstract class abstract_imdb_parser {
 	 * overloaded constructor - we have directors, and name maps
 	 * @param movie_map
 	 * @param director_map
+	 * @param imdb_movie_names 
 	 * @param imdb_to_yago
 	 */
 	public abstract_imdb_parser(HashMap<String,entity_movie> movie_map, HashMap<String,String> director_map, 
-			HashMap<String,String> imdb_to_yago, Importer caller)
+			HashMap<String, HashSet<String>> imdb_movie_names, HashMap<String,String> imdb_to_yago, Importer caller)
 	{
 		/*init movie catalog*/
 		this.parser_movie_map = movie_map; 
 		this.imdb_to_yago = imdb_to_yago;
+		this.imdb_names = imdb_movie_names;
 		this.imdb_name_to_director = director_map;
 		this.Caller = caller; 
 	}
@@ -141,6 +144,8 @@ public abstract class abstract_imdb_parser {
 	/**
 	 * populates the YAGO possible name-resolutions to a dictionary, 
 	 * we later search here, to find a YAGO film to enrich from IMDB
+	 * this maps qualified_yago_name -> entity_movie_id, and there are several
+	 * such names, depending on the yago label informations
 	 */
 	public void map_imdb_yago_names()
 	{
@@ -171,6 +176,11 @@ public abstract class abstract_imdb_parser {
 	 */
 	protected abstract int handle_single_line(String line, BufferedReader br);
 
+	/**
+	 * Parses a class-specific file - reading line by line, sending it to 
+	 * some specific parsing function, and recording rejections and enrcihments
+	 * we loop until our caller has terminated 
+	 */
 	public void parse_imdb_file()
 	{
 		int progress = 0;
@@ -213,36 +223,12 @@ public abstract class abstract_imdb_parser {
 		catch (Exception ex){}
 		System.out.println("added " + this.imdb_object + " to :" + enrich_count);
 	}
-			
-	private String[] get_line_parsing(BufferedReader br)
-	{		
-		String line;
-		int i;
-		
-		try{
-			if((line = br.readLine()) != null) 
-			{ 
-				/*split next line*/
-				line = line.trim();
-				String[] splitted_line = line.split("\\t");
-				/*check for expected number of parameters*/
-				if (splitted_line.length != 2)
-					return new String[2];
-				/*take "name (year)" part*/
-				splitted_line[0] = splitted_line[0].substring(0,splitted_line[0].indexOf(")")+1);  
-				
-				return splitted_line;
-			}
-			else
-				return null;
-		}
-		catch (Exception ex){
-			System.out.println("error on parsing line:" + ex.getMessage());
-		}
-		return null;
-	}
 	
-	/*remove bad characters from movie names*/
+	/**
+	 * remove bad characters from movie names
+	 * @param imdb_movie_name
+	 * @return
+	 */
 	protected String clean_imdb_name (String imdb_movie_name)
 	{
 		imdb_movie_name =imdb_movie_name.replaceAll("\"", "");		
@@ -252,34 +238,49 @@ public abstract class abstract_imdb_parser {
 		return imdb_movie_name;
 	}
 	
+	/**
+	 * returns an array of strings, that consists of all Fully Qualified YAGO names
+	 * That we consider to match this IMDB title: We allow the Yago name to have missing data
+	 * so we add artificial NANs to title, where it is needed. We Use all imdb names of the title:
+	 * including foreign names' International name.
+	 * @param imdb_movie_name
+	 * @return
+	 */
 	protected ArrayList<String> get_movie_keys(String imdb_movie_name)
 	{
 		ArrayList<String> keys = new ArrayList<String>();
-		String imdb_year = null;
-		if (imdb_movie_name == null || imdb_movie_name.equals(""))
-			return keys; 
 		
-		String imdb_director = null;
-		String imdb_name = clean_imdb_name(imdb_movie_name);
-		if (imdb_name.indexOf("(") > 0)
+		/*go over all names*/
+		this.imdb_names.get(imdb_movie_name).add(imdb_movie_name);
+		
+		for (String imdb_other_name : this.imdb_names.get(imdb_movie_name))
 		{
-			imdb_year = imdb_name.substring(imdb_name.indexOf("(") +1 , imdb_name.indexOf(")"));
-			imdb_name = imdb_name.substring(0, imdb_name.indexOf("("));
+			String imdb_year = null;
+			if (imdb_other_name == null || imdb_other_name.equals(""))
+				continue; 
+			
+			String imdb_director = null;
+			String imdb_name = clean_imdb_name(imdb_other_name);
+			if (imdb_name.indexOf("(") > 0)
+			{
+				imdb_year = imdb_name.substring(imdb_name.indexOf("(") +1 , imdb_name.indexOf(")"));
+				imdb_name = imdb_name.substring(0, imdb_name.indexOf("("));
+			}
+			imdb_name = imdb_name.trim();
+			
+			if (imdb_name_to_director.get(imdb_movie_name) == null)
+				imdb_director = "NAN";
+			else
+				imdb_director = imdb_name_to_director.get(imdb_movie_name);
+			if (imdb_year == null || imdb_year.equals(""))
+				imdb_director = "NAN";
+			
+			/*we create all possible matches for this movie*/
+			keys.add((imdb_name + " (" + imdb_year + ") (" + imdb_director +")").toUpperCase());
+			keys.add((imdb_name + " (NAN) (" + imdb_director +")").toUpperCase());
+			keys.add((imdb_name + " (" + imdb_year + ") (NAN)").toUpperCase());
+			keys.add((imdb_name + " (NAN) (NAN)").toUpperCase());
 		}
-		imdb_name = imdb_name.trim();
-		
-		if (imdb_name_to_director.get(imdb_movie_name) == null)
-			imdb_director = "NAN";
-		else
-			imdb_director = imdb_name_to_director.get(imdb_movie_name);
-		if (imdb_year == null || imdb_year.equals(""))
-			imdb_director = "NAN";
-		
-		/*we create all possible matches for this movie*/
-		keys.add((imdb_name + " (" + imdb_year + ") (" + imdb_director +")").toUpperCase());
-		keys.add((imdb_name + " (NAN) (" + imdb_director +")").toUpperCase());
-		keys.add((imdb_name + " (" + imdb_year + ") (NAN)").toUpperCase());
-		keys.add((imdb_name + " (NAN) (NAN)").toUpperCase());
 	
 		return keys;
 		
@@ -288,10 +289,14 @@ public abstract class abstract_imdb_parser {
 
 	
 	/**
-	 * tries all possible keys for this name, and returns a yago movie
-	 * if a movie matches
-	 * @param imdb_movie_name 
-	 * @return
+	 * imdb_name -> FQ_imdb_names[]; 
+	 * if exists i: FQ_yago_names(FQ_imdb_names[i]) != null
+	 * then FQ_yago_names(FQ_imdb_names[i]) == yago_movie_id
+	 * so, we can enrich movie_map(yago_movie_id), with some imdb data
+	 * we work with hashmaps, to speed up searches, and we Hash names, 
+	 * insted of objects, to avoid costly object hash() and equals() 
+	 * @param imdb_movie_name - the imdb name we found during the parsing of some file
+	 * @return the yago movie that represents this imdb movie name, null if n
 	 */
 	protected entity_movie get_movie_by_imdb_name(String imdb_movie_name)
 	{

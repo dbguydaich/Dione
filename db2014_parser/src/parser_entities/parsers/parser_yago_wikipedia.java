@@ -34,7 +34,7 @@ public class parser_yago_wikipedia extends abstract_yago_parser{
 		fact_name = splitted_line[yago_wiki_url_offset];
 		if (fact_name == null)
 			return;
-		fact_name = fact_name.substring(1, fact_name.length() -1);
+
 		
 		movie_name = splitted_line[yago_wiki_movie_offset];
 		if (fact_name == null)
@@ -45,6 +45,7 @@ public class parser_yago_wikipedia extends abstract_yago_parser{
 			return; 
 		
 		movie.set_movie_wikipedia_url(fact_name);
+		this.parser_map_movie.put(movie_name, movie);
 		c_wiki_movie++; 
 		
 

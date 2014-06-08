@@ -20,9 +20,11 @@ import parser_entities.imdb_parsers.abstract_imdb_parser;
 import parser_entities.imdb_parsers.imdb_director_parser;
 import parser_entities.imdb_parsers.imdb_genre_parser;
 import parser_entities.imdb_parsers.imdb_language_parser;
+import parser_entities.imdb_parsers.imdb_movie_names_parser;
 import parser_entities.imdb_parsers.imdb_plot_parser;
 import parser_entities.imdb_parsers.imdb_tag_movie_parser;
 import parser_entities.imdb_parsers.imdb_tag_parser;
+import parser_entities.imdb_parsers.imdb_tagline_parser;
 import parser_entities.loaders.abstract_loader;
 import parser_entities.loaders.actor_loader;
 import parser_entities.loaders.actor_movie_loader;
@@ -72,7 +74,12 @@ public class Importer extends db_operations implements Runnable,
 	 * imdb titles
 	 */
 	private HashMap<String, String> imdb_name_to_director = new HashMap<String, String>();
+	/*
+	 * imdb names, mapped to movie's name, in other languages, based on IMDB records
+	 */
+	private HashMap<String, HashSet<String>> imdb_movie_names = new HashMap<String, HashSet<String>>();
 
+	
 	private float progress_percent; /* final percentage of progress */
 	private int cur_progress_max; /* the total amount of work for current task */
 	private int cur_task; /* the current parse,load made */
@@ -146,9 +153,16 @@ public class Importer extends db_operations implements Runnable,
 	 * The Importer thread's main logic - we run all parsers and loaders
 	 */
 	public void run() {
+		String ts = null;
 		try {
 			/* mark process start in db */
-			set_invocation();
+			ts = set_invocation();
+			if (ts == null)
+			{
+				fireEvent("Cannot create an invocation",-1);
+				return;
+			}
+				
 			this.offset_progress = 0;			
 			
 			/* parse all yago files  */
@@ -180,8 +194,16 @@ public class Importer extends db_operations implements Runnable,
 				this.offset_progress += this.task_weight;
 			}
 			
-			/* we need to pass movies to IMDB parser, and create fq names*/
+			/* having parsed multilangual labels, we update names and dict refrences*/
+			yago_parsers[yago_parsers.length - 1].normalize_directors();
 			yago_parsers[yago_parsers.length - 1].update_fq_name();
+			
+			
+			parser_map_director = yago_parsers[yago_parsers.length - 1]
+					.get_yag_director_map();
+			parser_map_actor = yago_parsers[yago_parsers.length - 1]
+					.get_yag_actor_map();
+			
 			parser_map_movie = yago_parsers[yago_parsers.length - 1]
 					.get_parser_movies();
 
@@ -189,18 +211,22 @@ public class Importer extends db_operations implements Runnable,
 			abstract_imdb_parser[] imdb_parsers = {
 					new imdb_director_parser(parser_map_movie,
 							imdb_name_to_director, imdb_to_yago, this),
+					new imdb_movie_names_parser(parser_map_movie,
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago, this),
 					new imdb_genre_parser(parser_map_movie,
-							imdb_name_to_director, imdb_to_yago, this),
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago, this),
 					new imdb_language_parser(parser_map_movie,
-							imdb_name_to_director, imdb_to_yago, this),
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago, this),
 					new imdb_tag_parser(parser_map_movie,
-							imdb_name_to_director, imdb_to_yago,
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago,
+							parser_tag_count_map, this),
+					new imdb_tag_movie_parser(parser_map_movie,
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago,
 							parser_tag_count_map, this),
 					new imdb_plot_parser(parser_map_movie,
-							imdb_name_to_director, imdb_to_yago, this),
-					new imdb_tag_movie_parser(parser_map_movie,
-							imdb_name_to_director, imdb_to_yago,
-							parser_tag_count_map, this), };
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago, this),
+					new imdb_tagline_parser(parser_map_movie,
+							imdb_name_to_director, imdb_movie_names, imdb_to_yago, this),};
 
 			for (int i = 0; i < imdb_parsers.length; i++) {
 				abstract_imdb_parser p = imdb_parsers[i];
@@ -265,6 +291,7 @@ public class Importer extends db_operations implements Runnable,
 			} else {
 				System.out.println("Parser Terminated forcefully");
 				fireEvent("Parser Terminated forcefully",-2);
+				
 			}
 		} catch (SQLException ex) {
 			System.out.println("SQL exception Caught, trying next load");
@@ -272,7 +299,7 @@ public class Importer extends db_operations implements Runnable,
 			System.out.println("Error in major Importer Component");
 			ex.printStackTrace();
 			/* process run was unssucessfull, don't remember it */
-			remove_last_invocation();
+			remove_last_invocation(ts);
 			/* notify GUI of error */
 			fireEvent(ex.getMessage(),-1);
 		}
@@ -287,13 +314,13 @@ public class Importer extends db_operations implements Runnable,
 	private Set<String> get_import_set(int i) {
 		Set<String> retset = new HashSet<String>();
 		switch (i) {
-		case 1:
+		case 2:
 			retset = this.parser_genre_set;
 			break;
-		case 2:
+		case 3:
 			retset = this.parser_language_set;
 			break;
-		case 3:
+		case 4:
 			retset = this.parser_tag_set;
 			break;
 		default:
@@ -400,13 +427,14 @@ public class Importer extends db_operations implements Runnable,
 	 * 
 	 * @return
 	 */
-	private int set_invocation() {
+	private String set_invocation() {
 		try {
-			if (!perform_invocation(invocation_code.YAGO_UPDATE))
-				return 0;
-			return 1;
+			String ts = perform_invocation(invocation_code.YAGO_UPDATE);
+			if (ts == null)
+				return null;
+			return ts;
 		} catch (Exception ex) {
-			return 0;
+			return null;
 		}
 	}
 
@@ -415,9 +443,9 @@ public class Importer extends db_operations implements Runnable,
 	 * 
 	 * @return
 	 */
-	private int remove_last_invocation() {
+	private int remove_last_invocation(String ts) {
 		try {
-			delete_last_invocation(invocation_code.YAGO_UPDATE);
+			delete_last_invocation(invocation_code.YAGO_UPDATE, ts);
 		} catch (Exception ex) {
 			return 0;
 		}

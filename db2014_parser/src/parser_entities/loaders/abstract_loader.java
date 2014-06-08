@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import config.config;
 import parser_entities.Importer;
 import db.db_operations;
 
@@ -24,10 +26,12 @@ public abstract class abstract_loader extends db_operations {
 	private int task_size = 0; /* total size of load entity */
 	private Importer Caller;
 	protected PreparedStatement insert;
-
+	protected config properties;
+	
 	/* setters */
 	public abstract_loader(Importer caller) {
 		this.Caller = caller;
+		properties = new config();
 	}
 
 	/* getters */

@@ -20,13 +20,14 @@ public class imdb_genre_parser extends abstract_imdb_parser {
 	 * 
 	 * @param parser_movie_map
 	 * @param imdb_name_to_director
+	 * @param imdb_movie_names 
 	 * @param imdb_to_yago
 	 * @param importer
 	 */
 	public imdb_genre_parser(HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago, Importer importer) {
-		super(parser_movie_map, imdb_name_to_director, imdb_to_yago, importer);
+			HashMap<String, HashSet<String>> imdb_movie_names, HashMap<String, String> imdb_to_yago, Importer importer) {
+		super(parser_movie_map, imdb_name_to_director, imdb_movie_names, imdb_to_yago, importer);
 		this.filepath = this.properties.get_imdb_genres_path();
 		this.list_end = null;
 		this.list_start = imdb_genres_list_start;
@@ -55,6 +56,9 @@ public class imdb_genre_parser extends abstract_imdb_parser {
 				return -1;
 			String imdb_movie_name = clean_imdb_name(splitted_line[0]);
 
+			if (imdb_movie_name.contains("Peau neuve"))
+				imdb_movie_name = clean_imdb_name(splitted_line[0]);
+			
 			/* find title and enrich */
 			entity_movie movie = get_movie_by_imdb_name(imdb_movie_name);
 

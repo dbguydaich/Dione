@@ -1,8 +1,10 @@
 package parser_entities.parsers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -168,8 +170,10 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 			return;
 		// open files for read
 		try {
-			FileReader fr = new FileReader(this.yago_file_path);
-			BufferedReader br = new BufferedReader(fr);
+			//FileReader fr = new FileReader(this.yago_file_path);
+			//BufferedReader br = new BufferedReader(fr);
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+                     new FileInputStream(this.yago_file_path), "UTF8"));
 			try {
 				String splitted_line[];
 				/* read line */
@@ -195,7 +199,8 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 			} catch (Exception ex) {
 				System.out.println("ERROR parsing file:" + this.yago_file_path);
 				ex.printStackTrace();
-				fr.close();
+				//fr.close();
+				
 				br.close();
 			}
 		} catch (Exception ex) {
@@ -211,6 +216,7 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 	 * qualified names, instead of the temporary yago names
 	 **/
 	public void update_fq_name() {
+		
 		HashMap<String, entity_movie> fq_movie_map = new HashMap<String, entity_movie>();
 		for (entity_movie mv : this.parser_map_movie.values()) {
 			mv.set_fq_name();
@@ -341,6 +347,17 @@ public abstract class abstract_yago_parser implements Iyago_parser {
 		}
 		/* avoid division by 0 */
 		return 1;
+	}
+
+	public void normalize_directors() {
+		HashMap<String, entity_person> normalized_directors = new HashMap<String, entity_person>();
+		for (entity_person director: this.parser_map_director.values())
+		{
+			director.normalize_name();
+			normalized_directors.put(director.get_person_name(),director);
+		}
+		this.parser_map_director = normalized_directors;
+		
 	}
 
 }

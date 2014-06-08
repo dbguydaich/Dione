@@ -50,7 +50,7 @@ public class actor_movie_loader extends abstract_loader {
 
 	@Override
 	protected int create_statments(Object obj) throws SQLException {
-
+		int c_actor_movie = 0;
 		Set<String> attribute_set = new HashSet<String>();
 		
 		entity_movie movie = (entity_movie)obj;
@@ -73,9 +73,9 @@ public class actor_movie_loader extends abstract_loader {
 			insert.setInt(1,actor_id);
 			insert.setInt(2,movie_id);
 			insert.addBatch();
-			return 1;
+			c_actor_movie++;
 		}
-		return 0;
+		return c_actor_movie;
 	}
 
 

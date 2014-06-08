@@ -27,6 +27,7 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser {
 	 * 
 	 * @param parser_movie_map
 	 * @param imdb_name_to_director
+	 * @param imdb_movie_names 
 	 * @param imdb_to_yago
 	 * @param parser_tag_count_map
 	 * @param importer
@@ -34,10 +35,10 @@ public class imdb_tag_movie_parser extends abstract_imdb_parser {
 	public imdb_tag_movie_parser(
 			HashMap<String, entity_movie> parser_movie_map,
 			HashMap<String, String> imdb_name_to_director,
-			HashMap<String, String> imdb_to_yago,
+			HashMap<String, HashSet<String>> imdb_movie_names, HashMap<String, String> imdb_to_yago,
 			HashMap<String, Integer> parser_tag_count_map, Importer importer) {
 
-		super(parser_movie_map, imdb_name_to_director, imdb_to_yago, importer);
+		super(parser_movie_map, imdb_name_to_director, imdb_movie_names, imdb_to_yago, importer);
 
 		this.parser_tag_count_map = parser_tag_count_map;
 		this.filepath = this.properties.get_imdb_tags_path();

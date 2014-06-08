@@ -12,6 +12,7 @@ public class entity_person implements Serializable{
 	
 	public entity_person(String person_id){
 		this.entity_person_id = person_id;
+		entity_person_name = person_id;
 		entity_person_names = new HashSet<String>();
 	}
 
@@ -52,6 +53,53 @@ public class entity_person implements Serializable{
 	public Set<String> get_person_names()
 	{
 		return this.entity_person_names;
+	}
+	
+	public void normalize_name()
+	{
+		this.entity_person_name = removeDiacritic(entity_person_name);
+	}
+
+	
+	 /**
+	 * Mirror of the unicode table from 00c0 to 017f without diacritics.
+	 */
+	private static final String tab00c0 = "AAAAAAACEEEEIIII" +
+	    "DNOOOOO\u00d7\u00d8UUUUYI\u00df" +
+	    "aaaaaaaceeeeiiii" +
+	    "\u00f0nooooo\u00f7\u00f8uuuuy\u00fey" +
+	    "AaAaAaCcCcCcCcDd" +
+	    "DdEeEeEeEeEeGgGg" +
+	    "GgGgHhHhIiIiIiIi" +
+	    "IiJjJjKkkLlLlLlL" +
+	    "lLlNnNnNnnNnOoOo" +
+	    "OoOoRrRrRrSsSsSs" +
+	    "SsTtTtTtUuUuUuUu" +
+	    "UuUuWwYyYZzZzZzF";
+	
+	/**
+	 * Returns string without diacritics - 7 bit approximation.
+	 *
+	 * @param source string to convert
+	 * @return corresponding string without diacritics
+	 */
+	public static String removeDiacritic(String source) {
+		if (source == null)
+			return null;
+		try{
+	    char[] vysl = new char[source.length()];
+	    char one;
+	    for (int i = 0; i < source.length(); i++) {
+	        one = source.charAt(i);
+	        if (one >= '\u00c0' && one <= '\u017f') {
+	            one = tab00c0.charAt((int) one - '\u00c0');
+	        }
+	        vysl[i] = one;
+	    }
+	    return new String(vysl);
+		} catch (Exception ex){
+			return source; 
+		}
 	}
 
 }

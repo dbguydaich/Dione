@@ -1,6 +1,7 @@
 package parser_entities.loaders;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,26 +9,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 import parser_entities.Importer;
 import parser_entities.entity_movie;
 
 
+import db.db_operations;
 import db.db_queries_movies;
 import db.db_queries_persons;
 
 public class tag_movie_loader extends abstract_loader {
 	
-	public static int DEFAULT_TAG_SCORE = 5;
+	public static int DEFAULT_TAG_SCORE = 3;
 
 	HashMap<String,Integer> entity_map;
 	HashMap<String,Integer> tag_table;
+	
+	private PreparedStatement insert_rating = null;
 
 	
 	public tag_movie_loader(Importer importer) throws SQLException {
 		super(importer);
 		this.entity_table_name = "tag-movie";
-		this.entity_map = new HashMap<String,Integer>(); 	
+		this.entity_map = new HashMap<String,Integer>(); 
 	}
 
 	@Override
@@ -46,8 +51,8 @@ public class tag_movie_loader extends abstract_loader {
 
 	@Override
 	protected void set_perpared_statments(Connection db_conn) throws SQLException {
-		//insert = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag, scoreTag) VALUES(?,?,?)");
 		insert = db_conn.prepareStatement("INSERT INTO movie_tag(idMovie, idTag) VALUES(?,?)");
+		insert_rating =  db_conn.prepareStatement("INSERT INTO user_tag_movie (idUser,idTag,idMovie,rate,reteDate) VALUES(?,?,?,?,?);");
 	}
 
 	@Override
@@ -56,6 +61,7 @@ public class tag_movie_loader extends abstract_loader {
 		Set<String> attribute_set = new HashSet<String>();
 		entity_movie movie = (entity_movie)obj;
 		attribute_set = movie.get_movie_tags(); 
+		int c_tags = 0;
 		Integer movie_id = entity_map.get(movie.get_movie_qualified_name());
 		
 		if (movie_id == null)
@@ -66,15 +72,30 @@ public class tag_movie_loader extends abstract_loader {
 		{
 			Integer tag_id = tag_table.get(attribute);
 			if (tag_id == null)
-				return 0;
+				continue;
+			
 			insert.setInt(1,movie_id);
 			insert.setInt(2,tag_id);
-			//insert.setInt(3,DEFAULT_TAG_SCORE);
-			insert.addBatch();
-			return 1;
+			c_tags++;
+			
+			insert_rating.setInt(1,movie_id);
+			insert_rating.setInt(2,tag_id);
+			insert_rating.setInt(3,DEFAULT_TAG_SCORE);
+			insert_rating.setInt(4,this.properties.get_admin_userid());
+			insert_rating.setTimestamp(5,(new Timestamp(new Date().getTime())));
+			insert_rating.addBatch();
+			c_tags++;
+			
 		}
-		return 0;
+		return c_tags;
 	}
-
+	
+	@Override
+	protected int execute_batches(int batch_size) throws SQLException {
+		int fail_count=0;
+		fail_count += execute_batch(insert, batch_size);
+		fail_count += execute_batch(insert_rating, batch_size);
+		return fail_count;
+	}	
 
 }

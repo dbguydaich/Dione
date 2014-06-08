@@ -50,6 +50,7 @@ public class genre_movie_loader extends abstract_loader {
 	@Override
 	protected int create_statments(Object obj) throws SQLException {
 		Set<String> attribute_set = new HashSet<String>();
+		int c_tag_movie = 0; 
 		
 		entity_movie movie = (entity_movie)obj;
 		attribute_set = movie.get_movie_genres(); 
@@ -67,9 +68,9 @@ public class genre_movie_loader extends abstract_loader {
 			insert.setInt(1,movie_id);
 			insert.setInt(2,genre_id);
 			insert.addBatch();
-			return 1;
+			c_tag_movie++;
 		}
-		return 0;
+		return c_tag_movie;
 	}
 
 }
