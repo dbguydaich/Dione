@@ -74,7 +74,6 @@ public class import_progress_window extends abstract_window
 		    		  System.out.println("      event_id == " + (event_id));
 		    		  System.out.println("      event mssg == " + event.getActionCommand());
 		    		  System.out.println("      progress == " + progress_status);
-
 		    		  System.out.println();
 		    		  //
 		    		  
@@ -141,7 +140,6 @@ public class import_progress_window extends abstract_window
 	 */
 	static void handle_finish_import_bar(boolean done)
 	{
-		System.out.println("***** gui: closing progress bar *****");
 		gui_utils.import_progress_win.dispose();
 		
 		if(done) /* import succeeded */

@@ -13,8 +13,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Import Data Window
+ */
 public class import_window extends abstract_window
 {
 
@@ -30,11 +32,13 @@ public class import_window extends abstract_window
 		final Color import_window_color = display.getSystemColor(SWT.COLOR_GRAY);
 		this.setBackground(import_window_color);	
 		
-		//window background
+		/* Window Background */
 		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		
+		/* Disposal Listener */
 		this.addDisposeListener(new DisposeListener()
 		{
 			public void widgetDisposed(DisposeEvent e) 
@@ -90,6 +94,7 @@ public class import_window extends abstract_window
 			{
 				if(gui_utils.import_progress_win != null)
 				{
+					/* if progress bar is already open */
 					if(!gui_utils.import_progress_win.isDisposed())
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
@@ -97,14 +102,14 @@ public class import_window extends abstract_window
 						messageBox.setMessage("Import is already in progress.");
 						messageBox.open();
 					}
-					else //running progress win
+					else //running progress bar
 					{
 						gui_utils.import_progress_win = new import_progress_window(display);
 						gui_utils.import_progress_win.open();
 					}
 				}
 				
-				else //running progress win
+				else //running progress bar
 				{	
 					gui_utils.import_progress_win = new import_progress_window(display);
 					gui_utils.import_progress_win.open();

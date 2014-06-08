@@ -66,17 +66,16 @@ public class gui_utils
 			}
 		} catch (SQLException e) {
 			///shachar is that ok?
-			Shell shell = new Shell(display);;
-			MessageBox messageBox = new MessageBox(
-					shell,
-					SWT.ICON_ERROR);
+			Shell shell = new Shell(display);
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
 			messageBox.setText("Failure");
 			messageBox
 					.setMessage("SQL Error. If you run the program for the very first time\n, please run a data update by navigating to settings tab");
 			messageBox.open();
-			
 			login_win = new log_in_window(display);
 			login_win.open();
+			
+			shell.dispose();
 		}
 	
 		
