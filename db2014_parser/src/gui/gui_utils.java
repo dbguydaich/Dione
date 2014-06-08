@@ -13,6 +13,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 import parser_entities.entity_person;
 import parser_entities.light_entity_movie;
@@ -64,7 +65,16 @@ public class gui_utils
 				login_win.open();
 			}
 		} catch (SQLException e) {
-			//shachar: handle catch, show mssg
+			///shachar is that ok?
+			Shell shell = new Shell(display);;
+			MessageBox messageBox = new MessageBox(
+					shell,
+					SWT.ICON_ERROR);
+			messageBox.setText("Failure");
+			messageBox
+					.setMessage("SQL Error. If you run the program for the very first time\n, please run a data update by navigating to settings tab");
+			messageBox.open();
+			
 			login_win = new log_in_window(display);
 			login_win.open();
 		}
