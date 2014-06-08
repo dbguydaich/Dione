@@ -217,9 +217,6 @@ public class log_in_window extends abstract_window {
 													/* closing log in window, display remains undisposed */
 													gui_utils.EXIT_ON_LOGIN = false;
 													gui_utils.pref_win.dispose();
-													/* opening the main window */
-													gui_utils.tabs_win = new all_tabs_window(gui_utils.display);
-													gui_utils.tabs_win.open();
 													
 													/* showing an informative message box */
 													MessageBox messageBox = new MessageBox(gui_utils.tabs_win, SWT.ICON_WARNING);
