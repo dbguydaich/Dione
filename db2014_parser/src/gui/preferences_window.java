@@ -17,10 +17,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-
 import parser_entities.light_entity_movie;
 
+/**
+ * Preferences Window
+ */
 public class preferences_window extends abstract_window {
 
 	Label movie_label;
@@ -57,16 +58,12 @@ public class preferences_window extends abstract_window {
 				}
 			}
 		});
+		update_movie(); /* rate */
 
-		update_movie();
-
-		if (can_be_opened == false) {
+		if (can_be_opened == false) { /* there are no movies to rate */
 			return;
 		}
-
 		this.setSize(400, 300);
-
-
 
 		String my_name = null;
 		try {
@@ -74,11 +71,10 @@ public class preferences_window extends abstract_window {
 		} catch (SQLException e2) {
 			gui_utils.raise_sql_error_window(display);
 		}
-
-		
 		this.setText("Movie Preferences - Logged in As: " +  my_name);
 		this.setLayout(new FormLayout());
 
+		
 		// headline label
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Please Rate The Following Movies:");
@@ -99,20 +95,22 @@ public class preferences_window extends abstract_window {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		
 		// movie label
 		movie_label.setAlignment(SWT.CENTER);
 		movie_label.setText(current_movie.get_movie_name());
-
 		movie_label.setLayoutData(gui_utils.form_data_factory(370, 22, 70, 10));
 		final Font font_movie_label = new Font(display, "Ariel", 14, SWT.NONE);
 		movie_label.setFont(font_movie_label);
+		/* Disposal Listener */
 		movie_label.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				font_movie_label.dispose();
 			}
 		});
 
-		// area
+		//area
 		Composite radios_area = new Composite(this, SWT.NONE);
 		radios_area.setLayoutData(gui_utils
 				.form_data_factory(100, 143, 100, 90));
@@ -149,13 +147,14 @@ public class preferences_window extends abstract_window {
 			}
 		});
 
+		/* rate action */
 		rate_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				try {
 					int rate_desired = gui_utils.get_index_button(radios);
 					handle_rating(rate_desired); /* threads are initialized within this function */
-					update_movie();
+					update_movie(); /* get next movie to rate */
 					if (current_movie==null)
 					{
 						gui_utils.pref_win.dispose();
@@ -192,30 +191,29 @@ public class preferences_window extends abstract_window {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				gui_utils.pref_win.dispose();
-
 			}
 		});
 	}
 
+	
+	/**
+	 * rating the movie with rate
+	 * @param rate
+	 */
 	public void handle_rating(final int rate) {
-
+		/* new thread to access the db */
 		Thread t = new Thread(new Runnable() {
-
 			public void run() {
-
 				try {
 					log_in_window.user.rate_movie(current_movie.get_movie_id(),
 							rate);
-
 					Thread t = new Thread(new Runnable() {
-
 						public void run() {
 							try {
 								log_in_window.user.fill_user_prefence();
 							} catch (SQLException e) {
 							}
 						}
-
 					});
 
 					gui_utils.executor.execute(t);
@@ -225,65 +223,49 @@ public class preferences_window extends abstract_window {
 					gui_utils.display.asyncExec(new Runnable() {
 
 						public void run() {
-
 							gui_utils.raise_sql_error_window(gui_utils.display);
-							// TODO Auto-generated catch block
 							e.printStackTrace();
-
 						}
-
 					});
 				}
 			}
 
 		});
-
 		gui_utils.executor.execute(t);
-
+		
 	}
 
-	public void update_movie() {
+	/**
+	 * getting the next movie to rate
+	 */
+	public void update_movie() 
+	{
+		/* a new thread to access the db */
 		Thread t = new Thread(new Runnable() {
-
 			public void run() {
-
 				try {
-
 					current_movie = log_in_window.user.get_unrated_movie();
 					if (current_movie == null) {
 						// go_to_overview();
 						can_be_opened = false;
 						return;
-
+						
 					}
-
 					gui_utils.display.asyncExec(new Runnable() {
-
 						public void run() {
-
 							movie_label.setText(current_movie.get_movie_name());
-
 						}
-
 					});
-
 				} catch (final SQLException e) {
 
 					gui_utils.display.asyncExec(new Runnable() {
-
 						public void run() {
-
 							gui_utils.raise_sql_error_window(gui_utils.display);
-							// TODO Auto-generated catch block
 							e.printStackTrace();
-
 						}
-
 					});
-
 				}
 			}
-
 		});
 
 		t.start();
@@ -292,7 +274,6 @@ public class preferences_window extends abstract_window {
 		} catch (InterruptedException e) {
 		
 		}
-
 	}
 
 

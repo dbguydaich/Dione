@@ -8,13 +8,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -26,13 +22,9 @@ import org.eclipse.swt.widgets.Text;
 import bl.user_logics;
 import bl.verifier;
 
-/////**** Listeners to be implemented ****/////
-
-//update_button
-//log out button
-//username upply button
-//password upply button
-
+/**
+ * Settings Tab
+ */
 public class settings_tab extends Composite {
 
 	public settings_tab(final Display display, Composite parent, int style) {
@@ -41,7 +33,7 @@ public class settings_tab extends Composite {
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
 
-		// window background
+		//window background
 		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
@@ -52,7 +44,7 @@ public class settings_tab extends Composite {
 			}
 		});
 
-		// headline
+		//headline
 		Label headline_label = new Label(this, SWT.NONE);
 		headline_label.setText("Settings");
 		final Font font_headline_label = new Font(display, "Ariel", 21,
@@ -79,6 +71,7 @@ public class settings_tab extends Composite {
 			}
 		});
 
+		/* Update data action */
 		update_button.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent arg0) {
@@ -86,7 +79,6 @@ public class settings_tab extends Composite {
 				{
 					if (!gui_utils.import_progress_win.isDisposed())
 					{
-
 						MessageBox messageBox = new MessageBox(display
 								.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Error");
@@ -138,23 +130,30 @@ public class settings_tab extends Composite {
 			}
 		});
 
+		/* log out action */
 		log_out_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				log_in_window.user = null;
-				gui_utils.EXIT_ON_LOGIN = false;
-				gui_utils.tabs_win.dispose();
-
-				// closing all current opened movie windows
-				for (movie_details_window win : gui_utils.movie_windows) {
-					if (!win.isDisposed())
-						win.dispose();
+				if(gui_utils.import_progress_win != null)
+				{
+					if(!gui_utils.import_progress_win.isDisposed()) /* if user currently loading data */
+					{
+						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+						messageBox.setText("Failed");
+						messageBox.setMessage("Please abort the data load first. ");
+						messageBox.open();
+					}
+					
+					else
+					{
+						handle_logout();
+					}	
 				}
-
-				gui_utils.movie_windows = new ArrayList<movie_details_window>();
-				gui_utils.login_win = new log_in_window(gui_utils.display);
-				gui_utils.login_win.open();
-
+				
+				else
+				{
+					handle_logout();
+				}
 			}
 		});
 
@@ -167,11 +166,12 @@ public class settings_tab extends Composite {
 				SWT.NONE);
 		rate_movies_button.setFont(font_rate_movies_button);
 
+		/* open rate movies */
 		rate_movies_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (gui_utils.pref_win != null) {
-					if (!gui_utils.pref_win.isDisposed()) {
+					if (!gui_utils.pref_win.isDisposed()) { /* pref win is open */
 						MessageBox messageBox = new MessageBox(display
 								.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Failed");
@@ -264,6 +264,7 @@ public class settings_tab extends Composite {
 			}
 		});
 
+		/* user change action */
 		username_upply_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -284,9 +285,7 @@ public class settings_tab extends Composite {
 									username,
 									log_in_window.user.get_current_user_id(),
 									pass);
-
 							display.asyncExec(new Runnable() {
-
 								public void run() {
 
 									if (success) {
@@ -305,11 +304,8 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("Username couldn't be changed! Make sure you enter the right password.");
 										messageBox.open();
-
 									}
-
 								}
-
 							});
 
 						} catch (final SQLException e) {
@@ -320,13 +316,10 @@ public class settings_tab extends Composite {
 									gui_utils.raise_sql_error_window(display);
 									// TODO Auto-generated catch block
 									e.printStackTrace();
-
 								}
-
 							});
 						}
 					}
-
 				});
 
 				gui_utils.executor.execute(t);
@@ -408,6 +401,7 @@ public class settings_tab extends Composite {
 			}
 		});
 
+		/* change password action */
 		password_upply_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -422,19 +416,14 @@ public class settings_tab extends Composite {
 					messageBox.open();
 				}
 				Thread t = new Thread(new Runnable() {
-
 					public void run() {
-
 						try {
 							final boolean success = user_logics.update_pass(
 									pass_change_to,
 									log_in_window.user.get_current_user_id(),
 									pass);
-
 							display.asyncExec(new Runnable() {
-
 								public void run() {
-
 									if (success) {
 										MessageBox messageBox = new MessageBox(
 												display.getActiveShell(),
@@ -451,38 +440,29 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("Password couldn't be changed!  Make sure you enter the right password");
 										messageBox.open();
-
 									}
-
 								}
-
 							});
 
 						} catch (final SQLException e) {
 							display.asyncExec(new Runnable() {
-
 								public void run() {
-
 									gui_utils.raise_sql_error_window(display);
-									// TODO Auto-generated catch block
 									e.printStackTrace();
-
 								}
-
 							});
 						}
-
 					}
-
 				});
-
 				gui_utils.executor.execute(t);
-
 			}
 		});
 
 	}
 
+	/**
+	 * open preference window
+	 */
 	private static void open_pref_win() {
 		gui_utils.pref_win = new preferences_window(gui_utils.display);
 		if (gui_utils.pref_win.can_be_opened) {
@@ -494,6 +474,9 @@ public class settings_tab extends Composite {
 		}
 	}
 
+	/**
+	 * close preference window
+	 */
 	private static void close_pref_win() {
 		gui_utils.EXIT_ON_LOGIN = false;
 		gui_utils.pref_win.dispose();
@@ -505,4 +488,25 @@ public class settings_tab extends Composite {
 		messageBox.open();
 	}
 
+	
+	/**
+	 * handle log out 
+	 */
+	private static void handle_logout()
+	{
+		log_in_window.user = null;
+		gui_utils.EXIT_ON_LOGIN = false;
+		gui_utils.tabs_win.dispose();
+
+		// closing all current opened movie windows
+		for (movie_details_window win : gui_utils.movie_windows) {
+			if (!win.isDisposed())
+				win.dispose();
+		}
+
+		gui_utils.movie_windows = new ArrayList<movie_details_window>();
+		gui_utils.login_win = new log_in_window(gui_utils.display);
+		gui_utils.login_win.open();
+
+	}
 }

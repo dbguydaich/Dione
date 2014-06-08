@@ -51,7 +51,7 @@ public class overview_tab extends Composite
 				background.dispose();
 			}		
 		});
-		
+	
 		
 		//recommendation area
 		Composite reco_area = new Composite(this, SWT.NONE);
@@ -92,7 +92,6 @@ public class overview_tab extends Composite
 			reco_movies_labels.get(j).setLayoutData(gui_utils.grid_data_factory(280, 20, -1, 3, -1, -1, -1, -1));
 			reco_movies_labels.get(j).addMouseListener(new MouseAdapter() {
 				public void mouseUp(MouseEvent arg0) {
-					System.out.println("hi-1");
 					movie_details_window  movie_details= null;
 				try {
 					movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());

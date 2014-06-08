@@ -9,26 +9,20 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-
 import parser_entities.light_entity_movie;
 import bl.movie_logics;
 import bl.user_logics;
 
+/**
+ * Recommendation Tab
+ */
 public class recommendation_tab extends Composite {
 	List<String> movies_my_taste = null;
 	List<light_entity_movie> movies_my_taste_entity = null;
@@ -36,7 +30,8 @@ public class recommendation_tab extends Composite {
 	List<light_entity_movie> movies_friends_taste_entity = null;
 	List<String> movies_top_rated = null;
 	List<light_entity_movie> top_movies_entity = null;
-
+	int MOVIE_LIMIT = 5;
+	
 	public recommendation_tab(final Display display, Composite parent, int style) {
 		super(parent, style);
 
@@ -47,7 +42,7 @@ public class recommendation_tab extends Composite {
 		FormLayout form_layout_tab = new FormLayout();
 		this.setLayout(form_layout_tab);
 
-		// window background
+		//window background
 		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
@@ -95,12 +90,10 @@ public class recommendation_tab extends Composite {
 			}
 		});
 
+		/* new thread to access the db */
 		Thread t = new Thread(new Runnable() {
 
 			public void run() {
-
-				// based on what we have learned about you LINKS
-
 				try {
 					movies_my_taste_entity = user_logics
 							.get_user_recommended_movies(log_in_window.user
@@ -108,34 +101,22 @@ public class recommendation_tab extends Composite {
 					movies_my_taste = gui_utils
 							.convert_movies_entity_to_string(movies_my_taste_entity);
 				} catch (final SQLException e1) {
-
 					display.asyncExec(new Runnable() {
-
 						public void run() {
-
-							// TODO Auto-generated catch block
 							gui_utils.raise_sql_error_window(display);
-
 							e1.printStackTrace();
-
 						}
-
 					});
-
 				}
-
-				//
 
 				display.asyncExec(new Runnable() {
 
 					public void run() {
 
-						int i = 0;
 						int j = 0;
 						final List<light_entity_movie> movies_my_taste_entity_for_annonymus = movies_my_taste_entity;
 						for (j = 0; j < movies_my_taste.size(); j++) {
 							final int k = j;
-							System.out.println(movies_my_taste.get(j));
 							movies_my_taste_labels.add(new Label(area1,
 									SWT.NONE));
 							movies_my_taste_labels.get(j).setText(
@@ -153,42 +134,26 @@ public class recommendation_tab extends Composite {
 													new Runnable() {
 
 														public void run() {
-															System.out
-																	.println("hi-1");
-
 															display.asyncExec(new Runnable() {
 																movie_details_window movie_details = null;
-
 																public void run() {
-
 																	try {
-
 																		movie_details = new movie_details_window(
 																				display,
 																				movies_my_taste_entity_for_annonymus
 																						.get(k)
 																						.get_movie_id());
-
 																		movie_details
 																				.open();
 																	} catch (final SQLException e) {
 
 																		gui_utils
 																				.raise_sql_error_window(display);
-																		// TODO
-																		// Auto-generated
-																		// catch
-																		// block
 																		e.printStackTrace();
-
 																	}
-
 																}
-
 															});
-
 														}
-
 													});
 											gui_utils.executor.execute(t);
 
@@ -199,13 +164,9 @@ public class recommendation_tab extends Composite {
 							if (j == 4)
 								break;
 						}
-
 					}
-
 				});
-
 			}
-
 		});
 		gui_utils.executor.execute(t);
 
@@ -229,8 +190,8 @@ public class recommendation_tab extends Composite {
 			}
 		});
 
+		/* new thread to access the db */
 		Thread t2 = new Thread(new Runnable() {
-
 			public void run() {
 
 				try {
@@ -245,27 +206,18 @@ public class recommendation_tab extends Composite {
 							gui_utils.raise_sql_error_window(display);
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
-
 						}
-
 					});
 				}
-
 				display.asyncExec(new Runnable() {
-
 					public void run() {
 
 						movies_friends_taste = gui_utils
 								.convert_movies_entity_to_string(movies_friends_taste_entity);
-
-						//
-
-						int i = 0;
 						int j = 0;
 						final List<light_entity_movie> movies_freinds_taste_entity_for_annonymus = movies_friends_taste_entity;
 						for (j = 0; j < movies_friends_taste.size(); j++) {
 							final int k = j;
-							// System.out.println(movies_my_taste.get(j));
 							movies_friends_taste_labels.add(new Label(area2,
 									SWT.NONE));
 							movies_friends_taste_labels.get(j).setText(
@@ -277,8 +229,7 @@ public class recommendation_tab extends Composite {
 											-1, -1, -1, -1));
 							movies_friends_taste_labels.get(j)
 									.addMouseListener(new MouseAdapter() {
-										// @Override
-
+										 @Override
 										public void mouseUp(MouseEvent arg0) {
 											Thread t = new Thread(
 													new Runnable() {
@@ -297,10 +248,6 @@ public class recommendation_tab extends Composite {
 																		movie_details
 																				.open();
 																	} catch (SQLException e) {
-																		// TODO
-																		// Auto-generated
-																		// catch
-																		// block
 																		e.printStackTrace();
 																	}
 
@@ -331,8 +278,6 @@ public class recommendation_tab extends Composite {
 
 		gui_utils.executor.execute(t2);
 
-		// based on my friends LINKS
-
 		// top rated area area
 		final Composite area3 = new Composite(this, SWT.NONE);
 		area3.setLayoutData(gui_utils.form_data_factory(295, 185, 40, 310));
@@ -352,51 +297,33 @@ public class recommendation_tab extends Composite {
 				font_area3_headline.dispose();
 			}
 		});
-
+		
+		/* new thread to access the db */
 		Thread t3 = new Thread(new Runnable() {
-
 			public void run() {
 
 				// top LINKS
 
 				// List<light_entity_movie> movies_freinds_taste_entity = null;
 				try {
-					top_movies_entity = movie_logics.get_top_rated_movies(5); // shahar
-																				// please
-																				// change
-																				// to
-																				// constant
+					top_movies_entity = movie_logics.get_top_rated_movies(MOVIE_LIMIT); 
 				} catch (final SQLException e1) {
-
 					display.asyncExec(new Runnable() {
-
 						public void run() {
-
 							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
-
 						}
-
 					});
-
 				}
 
 				display.asyncExec(new Runnable() {
-
 					public void run() {
-
 						movies_top_rated = gui_utils
 								.convert_movies_entity_to_string(top_movies_entity);
-
-						//
-
-						int i = 0;
 						int j = 0;
 						final List<light_entity_movie> top_movies_entity_for_annonymus = top_movies_entity;
 						for (j = 0; j < movies_top_rated.size(); j++) {
 							final int k = j;
-							// System.out.println(movies_my_taste.get(j));
 							movies_top_rated_labels.add(new Label(area3,
 									SWT.NONE));
 							movies_top_rated_labels.get(j).setText(
@@ -412,13 +339,10 @@ public class recommendation_tab extends Composite {
 										public void mouseUp(MouseEvent arg0) {
 											Thread t = new Thread(
 													new Runnable() {
-
 														public void run() {
-
 															display.asyncExec(new Runnable() {
 
 																public void run() {
-
 																	movie_details_window movie_details = null;
 																	try {
 																		movie_details = new movie_details_window(
@@ -427,26 +351,16 @@ public class recommendation_tab extends Composite {
 																						.get(k)
 																						.get_movie_id());
 																	} catch (SQLException e) {
-																		// TODO
-																		// Auto-generated
-																		// catch
-																		// block
 																		e.printStackTrace();
 																	}
 																	movie_details
 																			.open();
-
 																}
-
 															});
-
 														}
-
 													});
 											gui_utils.executor.execute(t);
-
 										}
-
 									});
 
 							if (j == 4)

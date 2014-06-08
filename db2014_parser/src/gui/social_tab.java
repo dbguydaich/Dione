@@ -8,35 +8,27 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 
-import parser_entities.entity_person;
-import config.config;
-import db.db_queries_user;
 import bl.user_logics;
-//import db.db_queries;
 import bl.verifier;
 
+/**
+ * Social Tab
+ */
 public class social_tab extends Composite {
 
-	private Text friend_name_text;
 	private Combo remove_friend_combo;
 	List<String> friends_activities_strings_anonymus = null;
 	List<String> user_social_activities_strings = null;
@@ -45,7 +37,6 @@ public class social_tab extends Composite {
 		super(parent, style);
 
 		List<String> user_friends = null;
-		final List<String> friends_activities_strings;
 		final List<Label> friends_activities_labels = new ArrayList<Label>();
 
 		final List<Label> user_social_activities_labels = new ArrayList<Label>();
@@ -117,9 +108,8 @@ public class social_tab extends Composite {
 		add_friend_button.setLayoutData(gui_utils.grid_data_factory(60, 30, 10,
 				5, -1, -1, -1, -1));
 
+		/* add friend action */
 		add_friend_button.addSelectionListener(new SelectionAdapter() {
-
-			String friend_name = add_friend_text.getText();
 
 			public void widgetSelected(SelectionEvent arg0) {
 				if (!verifier.verifyname(add_friend_text.getText())) {
@@ -130,10 +120,9 @@ public class social_tab extends Composite {
 					alertBox.open();
 				} else {
 
+					/* new thread to access the db */
 					Thread t = new Thread(new Runnable() {
-
 						public void run() {
-
 							display.asyncExec(new Runnable() {
 
 								public void run() {
@@ -141,9 +130,7 @@ public class social_tab extends Composite {
 									try {
 				
 										String friend_name = add_friend_text.getText();
-
 										if (log_in_window.user.get_my_name().equals( friend_name)) {
-
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
 													SWT.ICON_WARNING);
@@ -152,7 +139,6 @@ public class social_tab extends Composite {
 													.setMessage("You can not be a friend of your self. Sorry.");
 											messageBox.open();
 											return;
-
 										}
 									} catch (SQLException e1) {
 										gui_utils
@@ -163,10 +149,7 @@ public class social_tab extends Composite {
 									try {
 										if (user_logics
 												.does_user_exists((add_friend_text
-														.getText()))) { // to be
-											// implemented
-											// next on
-											System.out.println("Here");
+														.getText()))) { 
 											Integer friend_id = user_logics
 													.get_user_id(add_friend_text
 															.getText());
@@ -174,20 +157,19 @@ public class social_tab extends Composite {
 													.get_current_user_id();
 											int success =user_logics.add_friendship(
 													friend_id, current_user_id);
-											
-											
-											if(success ==1)
+												
+											if(success ==1) /* friend already exists */
 											{
 												MessageBox messageBox = new MessageBox(
 														display.getActiveShell(),
 														SWT.ICON_WARNING);
-												messageBox.setText("Friend is already exists");
+												messageBox.setText("Friend already exists");
 												messageBox
-														.setMessage("Friend is already exists");
+														.setMessage("Friend already exists");
 												messageBox.open();
 												return;
 											}
-											if(success ==-1)
+											if(success ==-1) /* friend added */
 											{
 												MessageBox messageBox = new MessageBox(
 														display.getActiveShell(),
@@ -198,11 +180,6 @@ public class social_tab extends Composite {
 												messageBox.open();
 												return;
 											}
-										
-								
-											
-											
-
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
 													SWT.ICON_WARNING);
@@ -213,10 +190,8 @@ public class social_tab extends Composite {
 											update_friends_ddl(display);
 
 										}
-
 										else// no user found
 										{
-
 											MessageBox messageBox = new MessageBox(
 													display.getActiveShell(),
 													SWT.ICON_WARNING);
@@ -232,19 +207,13 @@ public class social_tab extends Composite {
 												.raise_sql_error_window(display);
 										e.printStackTrace();
 									}
-
 								}
-
 							});
-
 						}
-
 					});
 
 					gui_utils.executor.execute(t);
-
 				}
-
 			}
 
 		});
@@ -274,12 +243,11 @@ public class social_tab extends Composite {
 			user_friends = log_in_window.user.get_current_user_friends_names();
 		} catch (SQLException e2) {
 			gui_utils.raise_sql_error_window(display);
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
-		} // will be used when function exists
+		} 
 
 		final String[] user_friends_arr = user_friends
-				.toArray(new String[user_friends.size()]);// ////////////////////////////
+				.toArray(new String[user_friends.size()]);
 		remove_friend_combo.setItems(user_friends_arr);
 
 		// remove friend button
@@ -288,6 +256,7 @@ public class social_tab extends Composite {
 		remove_friend_button.setLayoutData(gui_utils.grid_data_factory(60, 30,
 				10, 5, -1, -1, -1, -1));
 
+		/* remove action */
 		remove_friend_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -300,7 +269,7 @@ public class social_tab extends Composite {
 					alertBox.open();
 				}
 
-				else if (remove_friend_combo.getText() == "") {
+				else if (remove_friend_combo.getText().equals("")) {
 					MessageBox alertBox = new MessageBox(display
 							.getActiveShell(), SWT.ICON_WARNING);
 					alertBox.setText("Illegal Username");
@@ -309,8 +278,8 @@ public class social_tab extends Composite {
 				}
 
 				else {
+					
 					Thread t = new Thread(new Runnable() {
-
 						public void run() {
 							display.syncExec(new Runnable() {
 
@@ -351,13 +320,11 @@ public class social_tab extends Composite {
 										} catch (SQLException e) {
 											gui_utils
 													.raise_sql_error_window(display);
-											// TODO Auto-generated catch block
 											e.printStackTrace();
 										}
 									} catch (SQLException e1) {
 										gui_utils
 												.raise_sql_error_window(display);
-										// TODO Auto-generated catch block
 										e1.printStackTrace();
 									}
 
@@ -402,12 +369,10 @@ public class social_tab extends Composite {
 			}
 		});
 
-		// user recent social activities labels
-
+		/* new thread to access the db */
 		Thread t = new Thread(new Runnable() {
 
 			public void run() {
-
 				try {
 					user_social_activities_strings = log_in_window.user.get_user_recent_friendship_activities(5);
 				} catch (final SQLException e1) {
@@ -415,20 +380,13 @@ public class social_tab extends Composite {
 					display.asyncExec(new Runnable() {
 
 						public void run() {
-
 							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
-
 						}
-
 					});
-
-				} // to be used when function exists
+				} 
 				display.asyncExec(new Runnable() {
-
 					public void run() {
-
 						final Font font_user_social_activities_labels = new Font(
 								display, "Ariel", 9, SWT.NONE);
 						int i = 0;
@@ -438,7 +396,6 @@ public class social_tab extends Composite {
 							user_social_activities_labels.get(i).setText(str);
 							user_social_activities_labels.get(i).setFont(
 									font_user_social_activities_labels);
-
 							if (i == 0) {
 								user_social_activities_labels.get(i)
 										.addDisposeListener(
@@ -450,17 +407,12 @@ public class social_tab extends Composite {
 													}
 												});
 							}
-
 							i++;
 						}
-
 						if (i == 0)
 							font_user_social_activities_labels.dispose();
-
 					}
-
 				});
-
 			}
 
 		});
@@ -488,30 +440,21 @@ public class social_tab extends Composite {
 			}
 		});
 
+		/* new thread to access the db */
 		Thread t2 = new Thread(new Runnable() {
-
 			public void run() {
-				// friends recent activities labels
-
 				try {
 					friends_activities_strings_anonymus = log_in_window.user
 							.get_friends_recent_string_activities();
 				} catch (final SQLException e1) {
-
 					display.asyncExec(new Runnable() {
-
 						public void run() {
-
 							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
-
 						}
-
 					});
 
-				} // to be used when function exists
-
+				} 
 				display.asyncExec(new Runnable() {
 
 					public void run() {
@@ -541,19 +484,15 @@ public class social_tab extends Composite {
 													}
 												});
 							}
-
 							i++;
 						}
 
 						if (i == 0)
 							font_friends_activities_labels.dispose();
-
 					}
 
 				});
-
 			}
-
 		});
 
 		gui_utils.executor.execute(t2);
@@ -562,44 +501,32 @@ public class social_tab extends Composite {
 
 	private void update_friends_ddl(final Display display) {
 
+		/* new thread to access the db */
 		Thread t = new Thread(new Runnable() {
 			List<String> user_friends = null;
 
 			public void run() {
-
 				try {
 					user_friends = log_in_window.user
 							.get_current_user_friends_names();
 
 				} catch (SQLException e2) {
-
 					display.asyncExec(new Runnable() {
-
 						public void run() {
-
 							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
-
 						}
-
 					});
-
 				}
 
 				display.asyncExec(new Runnable() {
-
 					public void run() {
 
 						final String[] user_friends_arr = user_friends
-								.toArray(new String[user_friends.size()]);// ////////////////////////////
+								.toArray(new String[user_friends.size()]);
 						remove_friend_combo.setItems(user_friends_arr);
-
 					}
-
 				});
-
 			}
-
 		});
 		gui_utils.executor.execute(t);
 

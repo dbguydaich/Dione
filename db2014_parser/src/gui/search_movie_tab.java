@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -13,10 +12,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -28,8 +24,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 import bl.movie_logics;
-import bl.verifier;
-import config.config;
 
 /* search movie tab */
 public class search_movie_tab extends Composite {
@@ -324,47 +318,6 @@ public class search_movie_tab extends Composite {
 			}
 		});
 
-		// final List<String> genres_for_annonymus = genres;
-		//
-		// /* search parameters */
-		// final String title = title_text.getText();
-		// final String director = director_text.getText();
-		//
-		// final String language = language_text.getText();
-		//
-		// final Integer year_from;
-		// final Integer year_until;
-		// if (!year_from_text.getText().equals("")) {
-		// year_from = Integer.parseInt(year_from_text.getText());
-		// } else {
-		// year_from = null;
-		// }
-		//
-		// if (!year_until_text.getText().equals("")) {
-		// year_until = Integer.parseInt(year_until_text.getText());
-		// } else {
-		// year_until = null;
-		// }
-		//
-		// final List<String> actor_list = new ArrayList<String>();
-		// get_text(actors_texts, actor_list);
-		//
-		// final List<String> tags_list = new ArrayList<String>();
-		// get_text(tags_texts, tags_list);
-		//
-		// List<Boolean> rating_radios_text_list = new ArrayList<Boolean>();
-		// gui_utils.get_text_button(rating_checkboxes,
-		// rating_radios_text_list);
-		//
-		// List<Boolean> genres_numbers_list = new ArrayList<Boolean>();
-		// gui_utils.get_text_button(genres_checkboxes, genres_numbers_list);
-		//
-		// final boolean[] rating_radios_text = gui_utils
-		// .convert_list_array(rating_radios_text_list);
-		//
-		// final List<String> desired_genres = gui_utils.get_genres_string(
-		// genres_numbers_list, genres_for_annonymus);
-
 		/* search Listener */
 		search_button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -373,11 +326,8 @@ public class search_movie_tab extends Composite {
 				Thread t = new Thread(new Runnable() {
 
 					public void run() {
-
 						display.asyncExec(new Runnable() {
-
 							public void run() {
-
 								final List<String> genres_for_annonymus = genres;
 
 								/* search parameters */
@@ -561,8 +511,11 @@ public class search_movie_tab extends Composite {
 		}
 	};
 
-	/*
-	 * Copies a Text list to a String list
+	
+	/**
+	 * Copies a Text list (from) to a String list (to)
+	 * @param from
+	 * @param to
 	 */
 	void get_text(List<Text> from, List<String> to) {
 		for (Text a : from) {

@@ -25,6 +25,7 @@ public class import_progress_window extends abstract_window
 	
 	ProgressBar prog_bar = null;
 	boolean exit_import = false; /* indicates whether user clicked "abort" button */
+	boolean exit_at_all = false; 
 	
 	public import_progress_window(final Display display)
 	{
@@ -67,6 +68,8 @@ public class import_progress_window extends abstract_window
 		          {
 		    		  int event_id = event.getID(); /* event type */
 		    		  int progress_status = (int) gui_utils.my_importer.get_progress_percent(); /* progress percent */
+		    		  if(progress_status > 100)
+		    			 progress_status = 100;
 		    		  prog_bar.setSelection(progress_status);
 		    		  
 		    		  //
@@ -117,11 +120,22 @@ public class import_progress_window extends abstract_window
 		 });
 		
 		
+		this.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if(!gui_utils.my_importer.is_thread_terminated())
+				{
+					gui_utils.my_importer.terminate_thread();
+				}
+			}
+		});
+		
+		
 		/* abort Listener */
 		abort_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				exit_import = true;
+				exit_at_all = true;
 				gui_utils.my_importer.terminate_thread(); /* terminating the importer thread  */
 			}
 		});

@@ -145,7 +145,8 @@ public class all_tabs_window extends abstract_window {
 						win.dispose();
 				}
 				if (gui_utils.pref_win != null) /* if pref_win exists */
-					if (!gui_utils.pref_win.isDisposed()) { /* and opened */
+					if (!gui_utils.pref_win.isDisposed()) /* and opened */
+					{ 
 						gui_utils.EXIT_ON_LOGIN = false;
 						gui_utils.pref_win.dispose();
 					}
