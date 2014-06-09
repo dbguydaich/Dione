@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import parser_entities.*;
+import parser_entities.activities.*;
 
 /**
  * The communication with the db is being made by this class methods. 
@@ -61,8 +62,7 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (false);
 	}
-	 
-	
+	 	
 	public static boolean rate_movie(int movie_id, int user_id, int rate) 
 			throws SQLException 
 	{
@@ -87,6 +87,12 @@ public abstract class db_queries_user extends db_operations
 			return (true);
 		else
 			return (false);
+	}
+	
+	public static boolean addNote(int user_id, int movie_id, String text, String time) 
+			throws SQLException 
+	{
+		return (insert("movie_notes", "`idUser`, `idMovie`, `noteDate`, `note`", user_id, movie_id, time, text) > 0);
 	}
 	
 // BOOLEANS
@@ -344,6 +350,10 @@ public abstract class db_queries_user extends db_operations
 	
 // ACTIVITIES	
 	
+	/**
+	 * @return - a list of recent activities related to ranking movies and tags
+	 * @throws SQLException
+	 */
 	public static List<rating_activity> get_user_recent_rank_activities(int user_id, int limit) 
 			throws SQLException 
 	{
@@ -446,6 +456,76 @@ public abstract class db_queries_user extends db_operations
 		return (retList);
 	}
 	
+	/**
+	 * @return - get all note activities of the user
+	 * @throws SQLException
+	 */
+	public static List<note_activity> get_user_note_activities(int user_id, Integer limit) 
+			throws SQLException 
+	{
+		String whereClause = 	"(movie_notes.idMovie = movie.idMovie AND "+
+								"(idUser = ?)) ORDER BY noteDate DESC limit "+ limit;
+
+		ResultSet results = select("movieName, note, noteDate" , "movie_notes, movie" , whereClause, user_id);
+		
+		// Create a list of the recent activities
+		List<note_activity> retList = new ArrayList<note_activity>();
+			
+		if (results.next())
+		{
+			// Get the user's name
+			String user_name = get_name_of_user(user_id);
+					
+			do
+			{
+				// create and add the activity
+				retList.add(new note_activity(user_name, 
+											 results.getString("movieName"),
+											 results.getString("note"), 
+											 results.getTimestamp("noteDate")));
+			
+			} while(results.next());
+		}
+		
+		// May be an empty list
+		return (retList);
+	}
+	
+	/**
+	 * @return - get all note activities of the user
+	 * @throws SQLException
+	 */
+	public static List<String> get_movie_notes(int movie_id, Integer limit) 
+			throws SQLException 
+	{
+		String whereClause = 	"(movie_notes.idMovie = movie.idMovie AND " +
+								" movie_notes.idUser = users.idUsers AND " +
+								"(idMovie = ?)) ORDER BY noteDate DESC limit "+ limit;
+
+		ResultSet results = select("movieName, note, userName, noteDate" , "movie_notes, movie, users" , whereClause, movie_id);
+		
+		// Create a list of the recent activities
+		List<String> retList = new ArrayList<String>();
+		
+		if (results.next())
+		{
+			do
+			{
+			// create and add the activity
+			note_activity note = new note_activity(results.getString("userName"), 
+										 results.getString("movieName"),
+										 results.getString("note"), 
+										 results.getTimestamp("noteDate"));
+			
+			 retList.add(note.fullNote());							 
+										 
+			} while(results.next());
+		}
+			
+		// May be an empty list
+		return (retList);
+	}
+	
 // ID GETTERS
 	
 	public static int get_user_id(String user_name) 
@@ -532,6 +612,11 @@ public abstract class db_queries_user extends db_operations
 		return (run_querey(querey, Integer.toString(new_pass.hashCode()) , id, Integer.toString(olp_pass.hashCode())) > 0);
 	}
 
+	/**
+	 * update the rate of movie_id for user_id with new rate
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean update_rate_movie(int movie_id, int user_id, int rate) 
 			throws SQLException 
 	{
@@ -546,7 +631,12 @@ public abstract class db_queries_user extends db_operations
 		else
 			return (false);
 	}
-	
+
+	/**
+	 * update the rate tag of tag_id on movie_id for user_id with new rate
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean update_rate_tag(int movie_id, int user_id, int tag_id, int rate) 
 			throws SQLException 
 	{
@@ -562,6 +652,18 @@ public abstract class db_queries_user extends db_operations
 			return (false);
 	}
 
+	/**
+	 * fills the table user_prefence with tags we know how much the user likes or dislikes
+	 * 
+	 * uses the movies that this user likes and dislikes
+	 * and taking to consideration how much does all the users say a tag fits to every one of these movies 
+	 * we try to determint which tags the user will like more and which he would like less
+	 * this computaion is finely tuned by the tag_movie relation which updates every 15 minuts or so...
+	 * 
+	 * Should run every time the user rates a movie
+	 * @return did succeed
+	 * @throws SQLException
+	 */
 	public static boolean fill_user_prefence(int user_id) 
 			throws SQLException 
 	{
@@ -577,6 +679,8 @@ public abstract class db_queries_user extends db_operations
 					" WHERE idUser = ? AND rank > 0 " +
 					" GROUP BY idTag)", user_id) >= 0);
 	}
+
+	
 
 	
 }

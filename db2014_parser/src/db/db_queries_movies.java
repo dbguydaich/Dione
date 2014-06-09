@@ -506,7 +506,7 @@ public abstract class db_queries_movies extends db_operations
 		config settings = new config();
 		int limit = settings.get_default_large_limit();
 		
-		ResultSet result = select(select, from, where + " limit " + limit , values);
+		ResultSet result = select(select, from, where + " ORDER BY RAND()  limit " + limit , values);
 		
 		List<light_entity_movie> returnedList = new ArrayList<light_entity_movie>();
 		

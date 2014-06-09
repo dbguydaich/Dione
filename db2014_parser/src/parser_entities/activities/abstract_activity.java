@@ -1,4 +1,4 @@
-package parser_entities;
+package parser_entities.activities;
 
 import java.sql.Timestamp;
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import config.config;
 import parser_entities.*;
+import parser_entities.activities.*;
 import db.*;
 import db.db_operations.invocation_code;
 
@@ -347,6 +348,45 @@ public class user_logics
 		
 		return(list_activity_to_list_string(db_queries_user.get_user_recent_friendship_activities(current_user_id, limit)));
 	}
+	
+	 /** get all notes that the user wrote
+	 * @param limit NULL will get the default limit
+	 * @throws SQLException
+	 */
+	public List<note_activity> get_current_user_note_activities(Integer limit) 
+			throws SQLException
+	{
+		if (limit == null)
+			limit = new config().get_default_small_limit();
+		
+		return(db_queries_user.get_user_note_activities(current_user_id, limit));
+	}
+	
+	/** get all notes that the user wrote
+	 * @param limit NULL will get the default limit
+	 * @throws SQLException
+	 */
+	public List<String> get_movies_notes(int movie_id, Integer limit) 
+			throws SQLException
+	{
+		if (limit == null)
+			limit = new config().get_default_small_limit();
+		
+		return(db_queries_user.get_movie_notes(movie_id, limit));
+	}
+	 
+	/** create a new note by user_id to novie_id with the note text at current time
+	 * @param limit NULL will get the default limit
+	 * @throws SQLException
+	 */
+	public boolean get_movies_notes(int user_id, int movie_id, String text) 
+			throws SQLException
+	{
+		String time = db_operations.get_curr_time();
+		
+		return(db_queries_user.addNote(user_id, movie_id, text, time));
+	}
+	
 	
 // MISC
 	

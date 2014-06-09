@@ -14,6 +14,10 @@ public abstract class movie_logics
 	
 // DATA GETTERS	
 	
+	/**
+	 * @return a list of all genres
+	 * @throws SQLException
+	 */
 	public static List<String> get_genres() 
 			throws SQLException
 	{
@@ -26,6 +30,14 @@ public abstract class movie_logics
 		return (ret);
 	}
 
+	/**
+	 * @return true if theres even a single movie that fits the description
+	 * @param actor_list	- all actors must appear in the movie
+	 * @param tags_list		- all tags must apear in the movie
+	 * @param genre_list	- all genres must apear in the movie
+	 * @param rating	- if the movie is of one of these tags 
+	 * @throws SQLException
+	 */
 	public static boolean does_movie_exists(String title, String director, String language, Integer min_year, Integer max_year,
 			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
@@ -33,6 +45,14 @@ public abstract class movie_logics
 		return (get_relevant_movies(title, director,language, min_year, max_year, actor_list, tags_list, genre_list, rating).size() > 0);
 	}
 	
+	/**
+	 * @return a list of the names of movies that fit the description
+	 * @param actor_list	- all actors must appear in the movie
+	 * @param tags_list		- all tags must apear in the movie
+	 * @param genre_list	- all genres must apear in the movie
+	 * @param rating	- if the movie is of one of these tags 
+	 * @throws SQLException
+	 */
 	public static List<String> get_relevant_movies_names(String title, String director, String language, Integer min_year, Integer max_year,
 			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating)
 			throws SQLException
@@ -48,6 +68,15 @@ public abstract class movie_logics
 		return (result);
 	}
 
+	/**
+	 * This is a key function.
+	 * @return a list of movies that fit the description
+	 * @param actor_list	- all actors must appear in the movie
+	 * @param tags_list		- all tags must apear in the movie
+	 * @param genre_list	- all genres must apear in the movie
+	 * @param rating	- if the movie is of one of these tags 
+	 * @throws SQLException
+	 */
 	public static List<light_entity_movie> get_relevant_movies(String title, String director, String language, Integer min_year, Integer max_year,
 			List<String> actor_list, List<String> tags_list, List<String> genre_list, boolean[] rating) 
 			throws SQLException
@@ -55,12 +84,20 @@ public abstract class movie_logics
 		return (db_queries_movies.get_relevant_movies(title, director, language, min_year, max_year, actor_list, tags_list, genre_list, rating));
 	}
 	
+	/**
+	 * @return true iff the movie movie_id is taged with all the tags from the list
+	 * @throws SQLException
+	 */
 	public static boolean is_movie_of_tags(int movie_id, List<String> tags_list) 
 			throws SQLException 
 	{
 		return(db_queries_movies.is_movie_of_tags(movie_id, tags_list));
 	}
 
+	/**
+	 * @return a list of the movies that are most related to this movie
+	 * @throws SQLException
+	 */
 	public static List<String> get_movie_top_tags(int movie_id, int limit) 
 			throws SQLException
 	{
@@ -83,12 +120,20 @@ public abstract class movie_logics
 		return (db_queries_movies.get_top_rated_movies(limit));
 	}
 	
+	/**
+	 * @return - Get the full data of a movie with the id moive_id 
+	 * @throws SQLException
+	 */
 	public static light_entity_movie get_movie_details(int movie_id) 
 			throws SQLException
 	{
 		return (db_queries_movies.get_movie_details(movie_id));
 	}
 	
+	/**
+	 * @return - a list of all genres related to this movie
+	 * @throws SQLException
+	 */
 	public static List<String> get_movie_genres(int movie_id) 
 			throws SQLException
 	{

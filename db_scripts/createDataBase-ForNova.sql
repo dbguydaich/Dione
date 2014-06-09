@@ -2,8 +2,7 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-CREATE SCHEMA IF NOT EXISTS `Dione` DEFAULT CHARACTER SET utf8 ;
-USE `Dione` ;
+USE `DbMysql10` ;
 
 -- -----------------------------------------------------
 -- Table `invocations`
@@ -158,6 +157,28 @@ CREATE TABLE IF NOT EXISTS `friend_relation` (
     ON UPDATE RESTRICT,
   CONSTRAINT `friend2_fk`
     FOREIGN KEY (`friend2`)
+    REFERENCES `users` (`idUsers`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `movie_notes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `movie_tag` (
+  `idMovie` INT NOT NULL,
+  `idUser` SMALLINT NOT NULL,
+  `noteDate` DATETIME NOT NULL,
+  `note` VARCHAR(144) NOT NULL,
+  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`),
+  INDEX `fk_tag_idx` (`idtag` ASC),
+  CONSTRAINT `fk_movie_onNotes`
+    FOREIGN KEY (`idMovie`)
+    REFERENCES `movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_user_onNotes`
+    FOREIGN KEY (`idUser`)
     REFERENCES `users` (`idUsers`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT)

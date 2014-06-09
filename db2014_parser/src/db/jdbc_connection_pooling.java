@@ -44,12 +44,12 @@ public class jdbc_connection_pooling
 			Class.forName("com.mysql.jdbc.Driver");
 			for (int count = 0 ; count < initialConnections ; count++) 
 			{
-				connectionsAvailable.addElement(getConnection());
+				connectionsAvailable.addElement(makeNewConnection());
 			}
 		} catch (ClassNotFoundException e) 
 		{
-			System.out.println(e.toString());
-			throw (new SQLException("JDBC driver not found or not sutiable..."));
+			System.out.println("JDBC driver not found Or the DB is inreachable");
+			System.out.println("please check your internet connection and connection string");
 		}
 	}
 
@@ -101,7 +101,7 @@ public class jdbc_connection_pooling
 		if (connectionsAvailable.size() == 0) 
 		{
 			// Creating and adding a new Connection
-			newConnection = getConnection();
+			newConnection = makeNewConnection();
 			connectionsUsed.addElement(newConnection);
 		} 
 		else 
@@ -127,7 +127,7 @@ public class jdbc_connection_pooling
 	 * Asks the driver for a connection
 	 * @throws SQLException
 	 */
-	private Connection getConnection() 
+	private Connection makeNewConnection() 
 			throws SQLException 
 	{
 		return DriverManager.getConnection(connectionUrl, userName, userPassword);

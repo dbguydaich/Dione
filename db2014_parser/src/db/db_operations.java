@@ -25,7 +25,7 @@ public abstract class db_operations
 {
 	public enum invocation_code {YAGO_UPDATE, USER_PREFENCE};
 	
-// BASIC FUNCTIONS
+// BASIC SQL FUNCTIONS
 	
 	/** insert tuple
 	 * @param table - the table name we want to insert to
