@@ -123,6 +123,17 @@ CREATE TABLE IF NOT EXISTS `tag` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
+-- Table `movie_notes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `movie_notes` (
+  `idMovie` INT NOT NULL,
+  `idUser` SMALLINT NOT NULL,
+  `noteDate` DATETIME NOT NULL,
+  `note` VARCHAR(80) NOT NULL,
+  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
 -- Table `actor_movie`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `actor_movie` (

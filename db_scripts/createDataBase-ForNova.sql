@@ -165,23 +165,12 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `movie_notes`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `movie_tag` (
+CREATE TABLE IF NOT EXISTS `movie_notes` (
   `idMovie` INT NOT NULL,
   `idUser` SMALLINT NOT NULL,
   `noteDate` DATETIME NOT NULL,
-  `note` VARCHAR(144) NOT NULL,
-  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`),
-  INDEX `fk_tag_idx` (`idtag` ASC),
-  CONSTRAINT `fk_movie_onNotes`
-    FOREIGN KEY (`idMovie`)
-    REFERENCES `movie` (`idMovie`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT,
-  CONSTRAINT `fk_user_onNotes`
-    FOREIGN KEY (`idUser`)
-    REFERENCES `users` (`idUsers`)
-    ON DELETE CASCADE
-    ON UPDATE RESTRICT)
+  `note` VARCHAR(80) NOT NULL,
+  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`))
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
