@@ -76,12 +76,13 @@ public class tag_movie_loader extends abstract_loader {
 			
 			insert.setInt(1,movie_id);
 			insert.setInt(2,tag_id);
+			insert_rating.addBatch();
 			c_tags++;
 			
-			insert_rating.setInt(1,movie_id);
+			insert_rating.setInt(1,this.properties.get_admin_userid());
 			insert_rating.setInt(2,tag_id);
-			insert_rating.setInt(3,DEFAULT_TAG_SCORE);
-			insert_rating.setInt(4,this.properties.get_admin_userid());
+			insert_rating.setInt(3,movie_id);
+			insert_rating.setInt(4,DEFAULT_TAG_SCORE);
 			insert_rating.setTimestamp(5,(new Timestamp(new Date().getTime())));
 			insert_rating.addBatch();
 			c_tags++;
@@ -91,6 +92,7 @@ public class tag_movie_loader extends abstract_loader {
 	}
 	
 	@Override
+	/** fix batch sizes...*/
 	protected int execute_batches(int batch_size) throws SQLException {
 		int fail_count=0;
 		fail_count += execute_batch(insert, batch_size);
