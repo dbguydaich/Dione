@@ -11,6 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 
@@ -24,6 +25,7 @@ public class import_progress_window extends abstract_window
 	int PROCESSING = 1;
 	
 	ProgressBar prog_bar = null;
+	Label percent_label = null;
 	boolean exit_import = false; /* indicates whether user clicked "abort" button */
 	boolean exit_at_all = false; 
 	
@@ -41,10 +43,15 @@ public class import_progress_window extends abstract_window
 		prog_bar.setMinimum(0);
 		prog_bar.setSelection(0);
 		
+		/* percent label */
+		percent_label = new Label(this, SWT.NONE);
+		percent_label.setBounds(20, 43, 90, 40);
+		percent_label.setText("Progress: 0%");
+		
 		/* abort button */
 		Button abort_button = new Button(this, SWT.PUSH);
 		abort_button.setText("Abort");
-		abort_button.setBounds(73, 35, 70, 35);
+		abort_button.setBounds(120, 35, 70, 35);
 		final Font font_abort_button = new Font(display, "Ariel", 12, SWT.NONE);
 		abort_button.setFont(font_abort_button);
 
@@ -71,6 +78,7 @@ public class import_progress_window extends abstract_window
 		    		  if(progress_status > 100)
 		    			 progress_status = 100;
 		    		  prog_bar.setSelection(progress_status);
+		    		  percent_label.setText("Progress: " + progress_status +   "%");
 		    		  
 		    		  	/* data update has finished successfully */
 				    	 if(event_id == FINE_TERMINATE) 

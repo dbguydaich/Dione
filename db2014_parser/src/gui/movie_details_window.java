@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Text;
 
 import bl.movie_logics;
 import bl.user_logics;
@@ -125,7 +126,7 @@ public class movie_details_window extends abstract_window
 		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
-		//this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.setLayout(new FormLayout());
 
 		final Font font_ariel_11 = new Font(display, "Ariel", 10, SWT.NONE);
@@ -302,7 +303,7 @@ public class movie_details_window extends abstract_window
 
 		// tags area
 		Composite tags_area = new Composite(this, SWT.NONE);
-		tags_area.setLayoutData(gui_utils.form_data_factory(320, 250, 60, 405));
+		tags_area.setLayoutData(gui_utils.form_data_factory(320, 250, 45, 405));
 		GridLayout grid_layout_area2 = new GridLayout(2, false);
 		tags_area.setLayout(grid_layout_area2);
 
@@ -590,11 +591,19 @@ public class movie_details_window extends abstract_window
 		
 		/* make a comment button */
 		Button make_comment_button = new Button(this, SWT.PUSH);	
-		make_comment_button.setText("Make Comment");
-		make_comment_button.setLayoutData(gui_utils.form_data_factory(100, 50, 380, 490));
+		make_comment_button.setText("Make a Comment");
+		make_comment_button.setLayoutData(gui_utils.form_data_factory(140, 30, 410, 530));
+		final Font font_comments_button = new Font(display, "Ariel", 11, SWT.NONE);
+		make_comment_button.setFont(font_comments_button);	
 
-		/* shahar a: need to set nicely on screen (can't open movie details for now!!!) */
-		
+		/* Disposal Listener */
+		make_comment_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				font_comments_button.dispose();
+			}
+		});
+
+				
 		/* make comment action */
 		make_comment_button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -629,8 +638,10 @@ public class movie_details_window extends abstract_window
 		
 		/* recent comments button */
 		Button recent_comments_button = new Button(this, SWT.PUSH);
-		recent_comments_button.setText("Recent \nComments");
-		recent_comments_button.setLayoutData(gui_utils.form_data_factory(100, 50, 380, 370));
+		recent_comments_button.setText("Recent Comments");
+		recent_comments_button.setLayoutData(gui_utils.form_data_factory(140, 30, 410, 370));
+		recent_comments_button.setFont(font_comments_button);
+
 		
 		/* recent comments action */
 		recent_comments_button.addSelectionListener(new SelectionAdapter() {
@@ -663,6 +674,62 @@ public class movie_details_window extends abstract_window
 			}
 		});
 		
+		
+		
+		/* make tag area */
+		Composite make_tag_area = new Composite(this, SWT.NONE);
+		make_tag_area.setLayoutData(gui_utils.form_data_factory(300, 105, 300, 405));
+		GridLayout grid_layout_make_tag_area = new GridLayout(5, false);
+		make_tag_area.setLayout(grid_layout_make_tag_area);
+		
+		/* add tag label */
+		Label add_tag_label = new Label(make_tag_area, SWT.NONE);
+		add_tag_label.setLayoutData(gui_utils.grid_data_factory(25, -1, 5, -1, -1, -1));
+		add_tag_label.setText("Add a New Tag(1=agree, 5=disagree)");
+		final Font font_add_tag_label = new Font(display, "Ariel", 11, SWT.NONE);
+		add_tag_label.setFont(font_add_tag_label);	
+
+		/* Disposal Listener */
+		add_tag_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				font_add_tag_label.dispose();
+			}
+		});
+		
+		/* add tag text */
+		Text add_tag_text = new Text(make_tag_area, SWT.BORDER);
+		add_tag_text.setLayoutData(gui_utils.grid_data_factory(80, 15, 93, -1, 5, -1, -1, -1));
+		add_tag_text.setTextLimit(15);
+		
+		/* add tag radios */
+		List<Button> new_tag_radios = new ArrayList<Button>();
+		for(i = 0; i < 5; i++)
+		{
+			new_tag_radios.add(new Button(make_tag_area, SWT.RADIO));
+			new_tag_radios.get(i).setText("" + (i+1));
+			if(i == 0)
+			{
+				new_tag_radios.get(i).setLayoutData(gui_utils.grid_data_factory(60, -1, -1, -1, -1, -1));
+			}
+		}
+		new_tag_radios.get(2).setSelection(true);
+		
+
+		/* add tag button */
+		Button add_tag_button = new Button(make_tag_area, SWT.PUSH);
+		add_tag_button.setLayoutData(gui_utils.grid_data_factory(115, -1, 5, -1, -1, -1));
+		add_tag_button.setText("Add");
+		final Font font_add_tag_button = new Font(display, "Ariel", 11, SWT.NONE);
+		add_tag_button.setFont(font_add_tag_button);	
+
+		
+		/* Disposal Listener */
+		add_tag_button.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				font_add_tag_button.dispose();
+			}
+		});
+
 		
 	}
 

@@ -29,6 +29,9 @@ public class gui_utils
 	static preferences_window pref_win = null;
 	static import_window import_win = null;
 	static import_progress_window import_progress_win = null;
+	//static comment_window comment_win = null;
+	//static movie_comments_window movie_comments_win = null;
+	
 	static Display display;
 	static boolean EXIT_ON_LOGIN = true;
 	static parser_entities.Importer my_importer = null;
@@ -65,7 +68,6 @@ public class gui_utils
 				login_win.open();
 			}
 		} catch (SQLException e) {
-			///shachar is that ok?
 			Shell shell = new Shell(display);
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
 			messageBox.setText("Failure");
@@ -78,6 +80,7 @@ public class gui_utils
 			shell.dispose();
 		}
 	
+		
 		
 		/* SWT Event Loop */
 		while (!display.isDisposed()) 
