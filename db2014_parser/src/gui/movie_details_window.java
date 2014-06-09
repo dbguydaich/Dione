@@ -39,13 +39,12 @@ import config.config;
 /**
  * Movie Window
  */
-public class movie_details_window extends abstract_window 
-{
+public class movie_details_window extends abstract_window {
 	config config = new config();
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
 	int movie_id_number;
-	
+
 	movie_comments_window recent_comments_win = null;
 	comment_window comment_win = null;
 
@@ -66,7 +65,7 @@ public class movie_details_window extends abstract_window
 			throws SQLException {
 
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
-		
+
 		/* Getting the movie data in a new thread */
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -85,7 +84,7 @@ public class movie_details_window extends abstract_window
 					rating_str = String.valueOf(movie.get_movie_rating());
 					wiki_str = movie.get_movie_wikipedia_url();
 					tags = (List<String>) movie.get_movie_tags();
-					
+
 				} catch (final SQLException e) {
 					display.asyncExec(new Runnable() {
 						public void run() {
@@ -101,13 +100,12 @@ public class movie_details_window extends abstract_window
 		});
 
 		t.start();
-		try {	
+		try {
 			t.join();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
 
 		movie_id_number = movie_id;
 		gui_utils.movie_windows.add(this);
@@ -136,26 +134,21 @@ public class movie_details_window extends abstract_window
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				font_ariel_11.dispose();
-				
-				if(comment_win != null)
-				{
-					if(!comment_win.isDisposed())
-					{
+
+				if (comment_win != null) {
+					if (!comment_win.isDisposed()) {
 						comment_win.dispose();
 					}
 				}
-				
-				if(recent_comments_win != null)
-				{
-					if(!recent_comments_win.isDisposed())
-					{
+
+				if (recent_comments_win != null) {
+					if (!recent_comments_win.isDisposed()) {
 						recent_comments_win.dispose();
 					}
 				}
 
 			}
 		});
-
 
 		List<Label> movie_details_labels = new ArrayList<Label>();
 
@@ -167,7 +160,7 @@ public class movie_details_window extends abstract_window
 		headline_label.setAlignment(SWT.CENTER);
 		final Font font1 = new Font(display, "Ariel", 15, SWT.BOLD);
 		headline_label.setFont(font1);
-	
+
 		/* Disposal Listener */
 		headline_label.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -193,19 +186,18 @@ public class movie_details_window extends abstract_window
 			movie_details_labels.get(i).setFont(font_ariel_11);
 		}
 
-		//genres labels
+		// genres labels
 		movie_details_labels.get(0).setText("Genres:");
 		String genres_str = "";
 		int i = 0;
-		for (String str : genres)
-		{
+		for (String str : genres) {
 			genres_str = genres_str + str + ", ";
-			
+
 			i++;
-			if(i == 3)
+			if (i == 3)
 				break;
 		}
-			
+
 		if (genres_str.length() >= 2)
 			genres_str = genres_str.substring(0, genres_str.length() - 2);
 
@@ -244,7 +236,7 @@ public class movie_details_window extends abstract_window
 
 		// rating1
 		movie_details_labels.get(8).setText("Rating(1-5):");
-		
+
 		// rating2
 		movie_details_labels.get(9).setText(rating_str);
 
@@ -254,17 +246,18 @@ public class movie_details_window extends abstract_window
 		wiki_label.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1,
 				-1));
 		wiki_label.setFont(font_ariel_11);
-	
+
 		// wiki url
 		Label wiki_url = new Label(left_area, SWT.NONE);
 		wiki_url.setText(wiki_str);
 		final Color blue_color = new Color(display, 0, 0, 255);
 		wiki_url.setLayoutData(gui_utils.grid_data_factory(-1, 5, -1, -1, -1,
 				-1));
-		final Font font_wiki_url = new Font(display, "Ariel", 10, SWT.UNDERLINE_DOUBLE);
+		final Font font_wiki_url = new Font(display, "Ariel", 10,
+				SWT.UNDERLINE_DOUBLE);
 		wiki_url.setFont(font_wiki_url);
 		wiki_url.setForeground(blue_color);
-		
+
 		/* Disposal Listener */
 		wiki_url.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -272,30 +265,31 @@ public class movie_details_window extends abstract_window
 				blue_color.dispose();
 			}
 		});
-		
+
 		/* wiki click action */
 		wiki_url.addMouseListener(new MouseAdapter() {
 			// @Override
-			public void mouseUp(MouseEvent arg0) {	
+			public void mouseUp(MouseEvent arg0) {
 				try {
-					Desktop.getDesktop().browse(new URI(wiki_str)); /* open wiki page on default browser */
-					
+					Desktop.getDesktop().browse(new URI(wiki_str)); /*
+																	 * open wiki
+																	 * page on
+																	 * default
+																	 * browser
+																	 */
+
 				} catch (IOException e) {
-					MessageBox messageBox = new MessageBox(
-							display.getActiveShell(),
-							SWT.ICON_ERROR);
+					MessageBox messageBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_ERROR);
 					messageBox.setText("Failure");
-					messageBox
-							.setMessage("Couldn't open the desired link.");
+					messageBox.setMessage("Couldn't open the desired link.");
 					messageBox.open();
-					
+
 				} catch (URISyntaxException e) {
-					MessageBox messageBox = new MessageBox(
-							display.getActiveShell(),
-							SWT.ICON_ERROR);
+					MessageBox messageBox = new MessageBox(display
+							.getActiveShell(), SWT.ICON_ERROR);
 					messageBox.setText("Failure");
-					messageBox
-							.setMessage("Couldn't open the desired link.");
+					messageBox.setMessage("Couldn't open the desired link.");
 					messageBox.open();
 				}
 			}
@@ -324,7 +318,7 @@ public class movie_details_window extends abstract_window
 		List<Label> tags_labels = new ArrayList<Label>();
 		final List<List<Button>> radios_lists = new ArrayList<List<Button>>();
 		List<Composite> radios_areas = new ArrayList<Composite>();
-		
+
 		int count = 0;
 		for (String str : tags) {
 			if (count > 4)
@@ -348,7 +342,10 @@ public class movie_details_window extends abstract_window
 			count++;
 		}
 
-		/* if the movie has now tags related with it, set the tags area to be invisible */
+		/*
+		 * if the movie has now tags related with it, set the tags area to be
+		 * invisible
+		 */
 		if (count == 0)
 			tags_area.setVisible(false);
 
@@ -357,12 +354,12 @@ public class movie_details_window extends abstract_window
 		tags_button.setText("Rate");
 		tags_button.setLayoutData(gui_utils.grid_data_factory(95, -1, 2, -1,
 				-1, -1));
-		
+
 		/* tags rate button */
 		tags_button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				
+
 				/* new thread to access the db */
 				Thread t = new Thread(new Runnable() {
 					public void run() {
@@ -428,15 +425,15 @@ public class movie_details_window extends abstract_window
 
 		});
 
-
 		// tags bottom label
 		Label tags_bottom_label = new Label(tags_area, SWT.NONE);
-		tags_bottom_label.setText("Please rate these tags for the movie \n(1=disagree, 5=agree)");
+		tags_bottom_label
+				.setText("Please rate these tags for the movie \n(1=disagree, 5=agree)");
 		tags_bottom_label.setLayoutData(gui_utils.grid_data_factory(-1, -1, 2,
 				-1, -1, -1));
 		final Font font_bottom_tags = new Font(display, "Ariel", 8, SWT.NONE);
 		tags_bottom_label.setFont(font_bottom_tags);
-		
+
 		/* Disposal Listener */
 		tags_bottom_label.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -452,7 +449,7 @@ public class movie_details_window extends abstract_window
 		final Font font_plot_headline_label = new Font(display, "Ariel", 11,
 				SWT.NONE);
 		plot_headline_label.setFont(font_plot_headline_label);
-		
+
 		/* Disposal Listener */
 		plot_headline_label.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -460,7 +457,7 @@ public class movie_details_window extends abstract_window
 			}
 		});
 
-		//plot scroller
+		// plot scroller
 		ScrolledComposite scroller_plot = new ScrolledComposite(this,
 				SWT.V_SCROLL);
 		FormData form_data_scroller_plot = new FormData(290, 100);
@@ -495,7 +492,7 @@ public class movie_details_window extends abstract_window
 		final Font font_movie_rate_label = new Font(display, "Ariel", 13,
 				SWT.NONE);
 		movie_rate_label.setFont(font_movie_rate_label);
-		
+
 		/* Disposal Listener */
 		movie_rate_label.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -521,7 +518,7 @@ public class movie_details_window extends abstract_window
 		final Font font_movie_rate_button = new Font(display, "Ariel", 11,
 				SWT.NONE);
 		movie_rate_button.setFont(font_movie_rate_button);
-		
+
 		/* Disposal Listener */
 		movie_rate_button.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -531,9 +528,9 @@ public class movie_details_window extends abstract_window
 
 		/* rate movie action */
 		movie_rate_button.addMouseListener(new MouseAdapter() {
-			 @Override
+			@Override
 			public void mouseUp(MouseEvent arg0) {
-				 /* a new thread to access the db */
+				/* a new thread to access the db */
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						display.asyncExec(new Runnable() {
@@ -543,8 +540,7 @@ public class movie_details_window extends abstract_window
 								boolean success = true;
 								try {
 									if (log_in_window.user.rate_movie(
-											movie_id_number, rate_number) == false)
-									{
+											movie_id_number, rate_number) == false) {
 										success = false;
 									}
 									Thread t2 = new Thread(new Runnable() {
@@ -567,7 +563,7 @@ public class movie_details_window extends abstract_window
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-								
+
 								if (success) {
 
 									MessageBox messageBox = new MessageBox(
@@ -587,14 +583,15 @@ public class movie_details_window extends abstract_window
 
 			}
 		});
-		
-		
+
 		/* make a comment button */
-		Button make_comment_button = new Button(this, SWT.PUSH);	
+		Button make_comment_button = new Button(this, SWT.PUSH);
 		make_comment_button.setText("Make a Comment");
-		make_comment_button.setLayoutData(gui_utils.form_data_factory(140, 30, 410, 530));
-		final Font font_comments_button = new Font(display, "Ariel", 11, SWT.NONE);
-		make_comment_button.setFont(font_comments_button);	
+		make_comment_button.setLayoutData(gui_utils.form_data_factory(140, 30,
+				410, 530));
+		final Font font_comments_button = new Font(display, "Ariel", 11,
+				SWT.NONE);
+		make_comment_button.setFont(font_comments_button);
 
 		/* Disposal Listener */
 		make_comment_button.addDisposeListener(new DisposeListener() {
@@ -603,91 +600,134 @@ public class movie_details_window extends abstract_window
 			}
 		});
 
-				
 		/* make comment action */
 		make_comment_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
+
 				/* opening comment win, unless it is already open */
-				if(comment_win != null)
-				{
-					if(!comment_win.isDisposed())
-					{
-						MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
-			    		 messageBox.setText("Failure");
-			    		 messageBox.setMessage("Comment window is already open.");
-			   			 messageBox.open();
-					}
-					else
-					{
+				if (comment_win != null) {
+					if (!comment_win.isDisposed()) {
+						MessageBox messageBox = new MessageBox(
+								gui_utils.display.getActiveShell(),
+								SWT.ICON_WARNING);
+						messageBox.setText("Failure");
+						messageBox
+								.setMessage("Comment window is already open.");
+						messageBox.open();
+					} else {
 						comment_win = new comment_window(display, movie_id);
 						comment_win.open();
 					}
 				}
-				
-				else
-				{
+
+				else {
 					comment_win = new comment_window(display, movie_id);
 					comment_win.open();
 				}
-				
+
 			}
 		});
-		
-		
+
 		/* recent comments button */
 		Button recent_comments_button = new Button(this, SWT.PUSH);
 		recent_comments_button.setText("Recent Comments");
-		recent_comments_button.setLayoutData(gui_utils.form_data_factory(140, 30, 410, 370));
+		recent_comments_button.setLayoutData(gui_utils.form_data_factory(140,
+				30, 410, 370));
 		recent_comments_button.setFont(font_comments_button);
 
-		
 		/* recent comments action */
 		recent_comments_button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				
-				/* opening recent comments win, unless it is already open */
-				if(recent_comments_win != null)
-				{
-					if(!recent_comments_win.isDisposed())
-					{
-			    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
-			    		 messageBox.setText("Failure");
-			    		 messageBox.setMessage("Movie comments window is already open.");
-			   			 messageBox.open();
+
+				Thread t = new Thread(new Runnable() {
+
+					public void run() {
+
+						display.asyncExec(new Runnable() {
+
+							public void run() {
+
+								List<String> movie_comments;
+								/*
+								 * opening recent comments win, unless it is
+								 * already open
+								 */
+								if (recent_comments_win != null) {
+									if (!recent_comments_win.isDisposed()) {
+										MessageBox messageBox = new MessageBox(
+												gui_utils.display
+														.getActiveShell(),
+												SWT.ICON_WARNING);
+										messageBox.setText("Failure");
+										messageBox
+												.setMessage("Movie comments window is already open.");
+										messageBox.open();
+									} else {
+
+										try {
+											movie_comments = user_logics
+													.get_movie_notes(movie_id,
+															12);
+
+											recent_comments_win = new movie_comments_window(
+													display, movie_comments);
+
+											recent_comments_win.open();
+										} catch (SQLException e) {
+											// TODO Auto-generated catch block
+											gui_utils
+													.raise_sql_error_window(display);
+											e.printStackTrace();
+										}
+
+									}
+								}
+
+								else {
+
+									try {
+										movie_comments = user_logics
+												.get_movie_notes(movie_id, 12);
+										recent_comments_win = new movie_comments_window(
+												display, movie_comments);
+										recent_comments_win.open();
+									} catch (SQLException e) {
+										// TODO Auto-generated catch block
+										gui_utils
+												.raise_sql_error_window(display);
+										e.printStackTrace();
+									}
+
+								}
+
+							}
+
+						});
+
 					}
-					else
-					{
-						recent_comments_win = new movie_comments_window(display, movie_id);	
-						recent_comments_win.open();
-					}
-				}
-				
-				else
-				{
-					recent_comments_win = new movie_comments_window(display, movie_id);				
-					recent_comments_win.open();
-				}
+
+				});
+				gui_utils.executor.execute(t);
 
 			}
 		});
-		
-		
-		
+
 		/* make tag area */
 		Composite make_tag_area = new Composite(this, SWT.NONE);
-		make_tag_area.setLayoutData(gui_utils.form_data_factory(300, 105, 300, 405));
+		make_tag_area.setLayoutData(gui_utils.form_data_factory(300, 105, 300,
+				405));
 		GridLayout grid_layout_make_tag_area = new GridLayout(5, false);
 		make_tag_area.setLayout(grid_layout_make_tag_area);
-		
+
 		/* add tag label */
 		Label add_tag_label = new Label(make_tag_area, SWT.NONE);
-		add_tag_label.setLayoutData(gui_utils.grid_data_factory(25, -1, 5, -1, -1, -1));
+		add_tag_label.setLayoutData(gui_utils.grid_data_factory(25, -1, 5, -1,
+				-1, -1));
 		add_tag_label.setText("Add a New Tag(1=agree, 5=disagree)");
 		final Font font_add_tag_label = new Font(display, "Ariel", 11, SWT.NONE);
-		add_tag_label.setFont(font_add_tag_label);	
+		add_tag_label.setFont(font_add_tag_label);
 
 		/* Disposal Listener */
 		add_tag_label.addDisposeListener(new DisposeListener() {
@@ -695,34 +735,104 @@ public class movie_details_window extends abstract_window
 				font_add_tag_label.dispose();
 			}
 		});
-		
+
 		/* add tag text */
-		Text add_tag_text = new Text(make_tag_area, SWT.BORDER);
-		add_tag_text.setLayoutData(gui_utils.grid_data_factory(80, 15, 93, -1, 5, -1, -1, -1));
+		final Text add_tag_text = new Text(make_tag_area, SWT.BORDER);
+		add_tag_text.setLayoutData(gui_utils.grid_data_factory(80, 15, 93, -1,
+				5, -1, -1, -1));
 		add_tag_text.setTextLimit(15);
-		
+
 		/* add tag radios */
-		List<Button> new_tag_radios = new ArrayList<Button>();
-		for(i = 0; i < 5; i++)
-		{
+		final List<Button> new_tag_radios = new ArrayList<Button>();
+		for (i = 0; i < 5; i++) {
 			new_tag_radios.add(new Button(make_tag_area, SWT.RADIO));
-			new_tag_radios.get(i).setText("" + (i+1));
-			if(i == 0)
-			{
-				new_tag_radios.get(i).setLayoutData(gui_utils.grid_data_factory(60, -1, -1, -1, -1, -1));
+			new_tag_radios.get(i).setText("" + (i + 1));
+			if (i == 0) {
+				new_tag_radios.get(i).setLayoutData(
+						gui_utils.grid_data_factory(60, -1, -1, -1, -1, -1));
 			}
 		}
 		new_tag_radios.get(2).setSelection(true);
-		
 
 		/* add tag button */
 		Button add_tag_button = new Button(make_tag_area, SWT.PUSH);
-		add_tag_button.setLayoutData(gui_utils.grid_data_factory(115, -1, 5, -1, -1, -1));
+		add_tag_button.setLayoutData(gui_utils.grid_data_factory(115, -1, 5,
+				-1, -1, -1));
 		add_tag_button.setText("Add");
-		final Font font_add_tag_button = new Font(display, "Ariel", 11, SWT.NONE);
-		add_tag_button.setFont(font_add_tag_button);	
+		final Font font_add_tag_button = new Font(display, "Ariel", 11,
+				SWT.NONE);
+		add_tag_button.setFont(font_add_tag_button);
 
-		
+		add_tag_button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+
+				Thread t = new Thread(new Runnable() {
+
+					public void run() {
+
+						display.syncExec(new Runnable() {
+
+							public void run() {
+
+								int rate = gui_utils
+										.get_index_button(new_tag_radios) +1;
+								String tag_name = add_tag_text.getText();
+								System.out.println(rate);
+								System.out.println(tag_name);
+
+								try {
+									if(user_logics.rate_tag_movie(movie_id,  // ////matan is this the funciton
+											log_in_window.user
+													.get_current_user_id(),
+											tag_name, rate))
+									{
+										MessageBox messageBox = new MessageBox(
+												display.getActiveShell(),
+												SWT.ICON_WARNING);
+
+										messageBox.setText("Success");
+
+										messageBox
+												.setMessage("New tag added succefully!");
+
+										messageBox.open();
+									}
+									
+									else
+
+									{
+										MessageBox messageBox = new MessageBox(
+												display.getActiveShell(),
+												SWT.ICON_WARNING);
+
+										messageBox.setText("Failure");
+
+										messageBox.setMessage("Couldn't add new tag");
+
+										messageBox.open();
+
+									}
+									
+								} catch (SQLException e) {
+									// TODO Auto-generated catch block
+									gui_utils.raise_sql_error_window(display);
+									e.printStackTrace();
+								}
+
+							}
+
+						});
+
+					}
+
+				});
+
+				gui_utils.executor.execute(t);
+
+			}
+		});
+
 		/* Disposal Listener */
 		add_tag_button.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -730,7 +840,6 @@ public class movie_details_window extends abstract_window
 			}
 		});
 
-		
 	}
 
 }

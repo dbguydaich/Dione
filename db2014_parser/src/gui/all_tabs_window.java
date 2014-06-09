@@ -70,48 +70,73 @@ public class all_tabs_window extends abstract_window {
 		/* getting data from the db to the first tab */
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				try {
-					/* get user recommended movies */
-					movies_my_taste_entity = 
-							user_logics.get_user_recommended_movies(log_in_window.user.get_current_user_id());
-				} catch (SQLException e1) {
-					gui_utils.raise_sql_error_window(display);
-
-					e1.printStackTrace();
-				}
-
-				try {
-					/* get user preferred tags */
-					user_tags_string = log_in_window.user
-							.get_user_popular_tags();
-				} catch (SQLException e1) {
-					user_tags_string = new ArrayList<String>();
-					gui_utils.raise_sql_error_window(display);
-					e1.printStackTrace();
-				} 
-
-				try {
-					/* recent user activities */
-					user_activities_strings = user_logics.get_user_recent_string_activities(
-							log_in_window.user.get_current_user_id(), 6);
-
-				} catch (SQLException e1) {
-					user_activities_strings = new ArrayList<String>();
-					gui_utils.raise_sql_error_window(display);
-					e1.printStackTrace();
-				}
 				
-				/* updating the gui thread  */
 				display.asyncExec(new Runnable() {
+
 					public void run() {
-						/* opening the overview tab */
-						overview_tab my_overview_tab = new overview_tab(
-								display, tab_folder, SWT.NONE,
-								movies_my_taste_entity, user_tags_string,
-								user_activities_strings);
-						tab1.setControl(my_overview_tab);
+
+
+						display.asyncExec(new Runnable() {
+
+							public void run() {
+
+									
+
+
+
+								
+								try {
+									/* get user recommended movies */
+									movies_my_taste_entity = 
+											user_logics.get_user_recommended_movies(log_in_window.user.get_current_user_id());
+								} catch (SQLException e1) {
+									gui_utils.raise_sql_error_window(display);
+
+									e1.printStackTrace();
+								}
+
+								try {
+									/* get user preferred tags */
+									user_tags_string = log_in_window.user
+											.get_user_popular_tags();
+								} catch (SQLException e1) {
+									user_tags_string = new ArrayList<String>();
+									gui_utils.raise_sql_error_window(display);
+									e1.printStackTrace();
+								} 
+
+								try {
+									/* recent user activities */
+									user_activities_strings = user_logics.get_user_recent_string_activities(
+											log_in_window.user.get_current_user_id(), 6);
+
+								} catch (SQLException e1) {
+									
+									user_activities_strings = new ArrayList<String>();
+									gui_utils.raise_sql_error_window(display);
+									e1.printStackTrace();
+								}
+
+							
+										/* opening the overview tab */
+										overview_tab my_overview_tab = new overview_tab(
+												display, tab_folder, SWT.NONE,
+												movies_my_taste_entity, user_tags_string,
+												user_activities_strings);
+										tab1.setControl(my_overview_tab);
+								
+
+							}
+
+});
+
+
 					}
-				});
+
+});
+
+
+			
 			}
 		});
 
