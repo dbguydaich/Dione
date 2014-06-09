@@ -125,7 +125,7 @@ public class movie_details_window extends abstract_window
 		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
-		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		//this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		this.setLayout(new FormLayout());
 
 		final Font font_ariel_11 = new Font(display, "Ariel", 10, SWT.NONE);
@@ -482,7 +482,7 @@ public class movie_details_window extends abstract_window
 		// movie rate area
 		Composite rate_movie_area = new Composite(this, SWT.NONE);
 		rate_movie_area.setLayoutData(gui_utils.form_data_factory(300, 60, 370,
-				250));
+				50));
 		GridLayout grid_layout_rate_movie_area = new GridLayout(6, false);
 		rate_movie_area.setLayout(grid_layout_rate_movie_area);
 
@@ -590,6 +590,9 @@ public class movie_details_window extends abstract_window
 		
 		/* make a comment button */
 		Button make_comment_button = new Button(this, SWT.PUSH);	
+		make_comment_button.setText("Make Comment");
+		make_comment_button.setLayoutData(gui_utils.form_data_factory(100, 50, 380, 490));
+
 		/* shahar a: need to set nicely on screen (can't open movie details for now!!!) */
 		
 		/* make comment action */
@@ -602,24 +605,22 @@ public class movie_details_window extends abstract_window
 				{
 					if(!comment_win.isDisposed())
 					{
-						comment_win = new comment_window(display, movie_id);
-					}
-					else
-					{
-			    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
+						MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
 			    		 messageBox.setText("Failure");
 			    		 messageBox.setMessage("Comment window is already open.");
 			   			 messageBox.open();
+					}
+					else
+					{
+						comment_win = new comment_window(display, movie_id);
+						comment_win.open();
 					}
 				}
 				
 				else
 				{
-		    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
-		    		 messageBox.setText("Failure");
-		    		 messageBox.setMessage("Comment window is already open.");
-		   			 messageBox.open();
-
+					comment_win = new comment_window(display, movie_id);
+					comment_win.open();
 				}
 				
 			}
@@ -628,6 +629,8 @@ public class movie_details_window extends abstract_window
 		
 		/* recent comments button */
 		Button recent_comments_button = new Button(this, SWT.PUSH);
+		recent_comments_button.setText("Recent \nComments");
+		recent_comments_button.setLayoutData(gui_utils.form_data_factory(100, 50, 380, 370));
 		
 		/* recent comments action */
 		recent_comments_button.addSelectionListener(new SelectionAdapter() {
@@ -639,23 +642,22 @@ public class movie_details_window extends abstract_window
 				{
 					if(!recent_comments_win.isDisposed())
 					{
-						recent_comments_win = new movie_comments_window(display, movie_id);
-					}
-					else
-					{
 			    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
 			    		 messageBox.setText("Failure");
 			    		 messageBox.setMessage("Movie comments window is already open.");
 			   			 messageBox.open();
 					}
+					else
+					{
+						recent_comments_win = new movie_comments_window(display, movie_id);	
+						recent_comments_win.open();
+					}
 				}
 				
 				else
 				{
-		    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
-		    		 messageBox.setText("Failure");
-		    		 messageBox.setMessage("Movie comments window is already open.");
-		   			 messageBox.open();
+					recent_comments_win = new movie_comments_window(display, movie_id);				
+					recent_comments_win.open();
 				}
 
 			}
