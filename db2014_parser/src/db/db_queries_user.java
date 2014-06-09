@@ -94,7 +94,7 @@ public abstract class db_queries_user extends db_operations
 	{
 		return (insert("movie_notes", "`idUser`, `idMovie`, `noteDate`, `note`", user_id, movie_id, time, text) > 0);
 	}
-	
+		
 // BOOLEANS
 	
 	public static boolean are_friends(Integer user1_id, Integer user2_id) 
@@ -460,7 +460,7 @@ public abstract class db_queries_user extends db_operations
 	 * @return - get all note activities of the user
 	 * @throws SQLException
 	 */
-	public static List<note_activity> get_user_note_activities(int user_id, Integer limit) 
+	public static List<note_activity> get_user_recent_note_activities(int user_id, Integer limit) 
 			throws SQLException 
 	{
 		String whereClause = 	"(movie_notes.idMovie = movie.idMovie AND "+
@@ -679,8 +679,6 @@ public abstract class db_queries_user extends db_operations
 					" WHERE idUser = ? AND rank > 0 " +
 					" GROUP BY idTag)", user_id) >= 0);
 	}
-
-	
 
 	
 }

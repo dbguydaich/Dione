@@ -319,6 +319,7 @@ public class user_logics
 		returnedList.addAll(db_queries_user.get_user_recent_rank_activities(user, limit));
 		returnedList.addAll(db_queries_user.get_user_recent_friendship_activities(user, limit));
 		returnedList.addAll(db_queries_user.get_user_recent_tag_activities(user, limit));
+		returnedList.addAll(db_queries_user.get_user_recent_note_activities(user, limit));
 		
 		// Sorting by date, using compateTo()
 		Collections.sort(returnedList);
@@ -349,24 +350,11 @@ public class user_logics
 		return(list_activity_to_list_string(db_queries_user.get_user_recent_friendship_activities(current_user_id, limit)));
 	}
 	
-	 /** get all notes that the user wrote
-	 * @param limit NULL will get the default limit
-	 * @throws SQLException
-	 */
-	public List<note_activity> get_current_user_note_activities(Integer limit) 
-			throws SQLException
-	{
-		if (limit == null)
-			limit = new config().get_default_small_limit();
-		
-		return(db_queries_user.get_user_note_activities(current_user_id, limit));
-	}
-	
 	/** get all notes that the user wrote
 	 * @param limit NULL will get the default limit
 	 * @throws SQLException
 	 */
-	public List<String> get_movies_notes(int movie_id, Integer limit) 
+	public static List<String> get_movie_notes(int movie_id, Integer limit) 
 			throws SQLException
 	{
 		if (limit == null)
@@ -379,12 +367,12 @@ public class user_logics
 	 * @param limit NULL will get the default limit
 	 * @throws SQLException
 	 */
-	public boolean get_movies_notes(int user_id, int movie_id, String text) 
+	public boolean add_movies_notes(int movie_id, String text) 
 			throws SQLException
 	{
 		String time = db_operations.get_curr_time();
 		
-		return(db_queries_user.addNote(user_id, movie_id, text, time));
+		return(db_queries_user.addNote(current_user_id, movie_id, text, time));
 	}
 	
 	
@@ -591,6 +579,17 @@ public class user_logics
 	
 // INTERNALS
 	
+	/** Rate a movie tag
+	 * @param 0-5, 0 dont know 1 lowest
+	 * @return did succeed?
+	 * @throws SQLException 
+	 */
+	public static boolean rate_movie_tag(int movie_id,int tag_id, int user_id,int rate) 
+			throws SQLException
+	{
+		return (db_queries_user.rate_tag(movie_id, user_id, tag_id, rate));
+	}
+	
 	/**
 	 * Rate a movie
 	 * @param rate (-5) - 5
@@ -677,8 +676,6 @@ public class user_logics
 		else
 			return (db_queries_user.update_rate_tag(movie_id, user_id, tag_id ,rate));
 	}
-
-// INTERNALES	
 	
 	/**
 	 * Iterate over all activities in activity_list and toString() them to a String list
