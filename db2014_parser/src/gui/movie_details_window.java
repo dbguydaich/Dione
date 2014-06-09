@@ -14,6 +14,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
+
 import bl.movie_logics;
 import bl.user_logics;
 import parser_entities.light_entity_movie;
@@ -41,6 +44,9 @@ public class movie_details_window extends abstract_window
 	int window_height = config.get_window_height();
 	int window_width = config.get_window_width();
 	int movie_id_number;
+	
+	movie_comments_window recent_comments_win = null;
+	comment_window comment_win = null;
 
 	/* movie data */
 	light_entity_movie movie;
@@ -129,6 +135,23 @@ public class movie_details_window extends abstract_window
 			public void widgetDisposed(DisposeEvent e) {
 				background.dispose();
 				font_ariel_11.dispose();
+				
+				if(comment_win != null)
+				{
+					if(!comment_win.isDisposed())
+					{
+						comment_win.dispose();
+					}
+				}
+				
+				if(recent_comments_win != null)
+				{
+					if(!recent_comments_win.isDisposed())
+					{
+						recent_comments_win.dispose();
+					}
+				}
+
 			}
 		});
 
@@ -563,6 +586,82 @@ public class movie_details_window extends abstract_window
 
 			}
 		});
+		
+		
+		/* make a comment button */
+		Button make_comment_button = new Button(this, SWT.PUSH);	
+		/* shahar a: need to set nicely on screen (can't open movie details for now!!!) */
+		
+		/* make comment action */
+		make_comment_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+				/* opening comment win, unless it is already open */
+				if(comment_win != null)
+				{
+					if(!comment_win.isDisposed())
+					{
+						comment_win = new comment_window(display, movie_id);
+					}
+					else
+					{
+			    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
+			    		 messageBox.setText("Failure");
+			    		 messageBox.setMessage("Comment window is already open.");
+			   			 messageBox.open();
+					}
+				}
+				
+				else
+				{
+		    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
+		    		 messageBox.setText("Failure");
+		    		 messageBox.setMessage("Comment window is already open.");
+		   			 messageBox.open();
+
+				}
+				
+			}
+		});
+		
+		
+		/* recent comments button */
+		Button recent_comments_button = new Button(this, SWT.PUSH);
+		
+		/* recent comments action */
+		recent_comments_button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				
+				/* opening recent comments win, unless it is already open */
+				if(recent_comments_win != null)
+				{
+					if(!recent_comments_win.isDisposed())
+					{
+						recent_comments_win = new movie_comments_window(display, movie_id);
+					}
+					else
+					{
+			    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
+			    		 messageBox.setText("Failure");
+			    		 messageBox.setMessage("Movie comments window is already open.");
+			   			 messageBox.open();
+					}
+				}
+				
+				else
+				{
+		    		 MessageBox messageBox = new MessageBox(gui_utils.display.getActiveShell(), SWT.ICON_WARNING);
+		    		 messageBox.setText("Failure");
+		    		 messageBox.setMessage("Movie comments window is already open.");
+		   			 messageBox.open();
+				}
+
+			}
+		});
+		
+		
 	}
 
 }

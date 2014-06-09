@@ -5,7 +5,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormLayout;
@@ -29,9 +28,6 @@ public class import_window extends abstract_window
 				
 		this.setLayout(new FormLayout());
 		
-		final Color import_window_color = display.getSystemColor(SWT.COLOR_GRAY);
-		this.setBackground(import_window_color);	
-		
 		/* Window Background */
 		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
 		final Image background = new Image(display, imgURL);
@@ -43,9 +39,7 @@ public class import_window extends abstract_window
 		{
 			public void widgetDisposed(DisposeEvent e) 
 			{
-				import_window_color.dispose();
-				background.dispose();
-				
+				background.dispose();				
 				if(gui_utils.EXIT_ON_LOGIN == true) /* EXIT */
 				{
 					display.dispose();
