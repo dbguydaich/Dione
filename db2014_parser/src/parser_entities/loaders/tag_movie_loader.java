@@ -68,6 +68,7 @@ public class tag_movie_loader extends abstract_loader {
 			return 0;
 		if (attribute_set == null)
 			return 0;
+		
 		for (String attribute : attribute_set)
 		{
 			Integer tag_id = tag_table.get(attribute);
@@ -76,7 +77,7 @@ public class tag_movie_loader extends abstract_loader {
 			
 			insert.setInt(1,movie_id);
 			insert.setInt(2,tag_id);
-			insert_rating.addBatch();
+			insert.addBatch();
 			c_tags++;
 			
 			insert_rating.setInt(1,this.properties.get_admin_userid());
