@@ -67,7 +67,22 @@ public class recommendation_tab extends Composite {
 				font_headline_label.dispose();
 			}
 		});
+		
+		
+		
+		/* lower note */
+		Label lower_label = new Label(this, SWT.NONE);
+		lower_label.setText("Click on a movie name for movie details");
+		lower_label.setLayoutData(gui_utils.form_data_factory(-1, -1, 390, 315));
+		final Font font_lower_label = new Font(display, "Ariel", 11, SWT.BOLD);
+		lower_label.setFont(font_lower_label);
+		lower_label.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				font_lower_label.dispose();
+			}
+		});
 
+		
 		// based on what we have learned about you AREA
 		final Composite area1 = new Composite(this, SWT.NONE);
 		area1.setLayoutData(gui_utils.form_data_factory(295, 185, 40, 10));

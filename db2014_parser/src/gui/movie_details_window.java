@@ -35,7 +35,6 @@ import bl.movie_logics;
 import bl.user_logics;
 import parser_entities.light_entity_movie;
 import config.config;
-import db.db_operations;
 
 /**
  * Movie Window
