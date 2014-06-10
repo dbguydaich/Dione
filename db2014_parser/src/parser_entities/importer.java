@@ -15,6 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import db.db_operations;
+import db.db_operations.invocation_code;
 
 import parser_entities.imdb_parsers.abstract_imdb_parser;
 import parser_entities.imdb_parsers.imdb_director_parser;
@@ -155,13 +156,32 @@ public class Importer extends db_operations implements Runnable,
 	public void run() {
 		String ts = null;
 		try {
-			/* mark process start in db */
-			ts = set_invocation();
-			/*if (ts == null)
-			{
-				fireEvent("Cannot create an invocation",-1);
+			try {
+				/* if parser already running. don't run*/
+				if (is_currently_invoked(invocation_code.YAGO_UPDATE) != null)
+				{
+					fireEvent("There is a parser that began running at" + 
+							is_currently_invoked(invocation_code.YAGO_UPDATE).toString(),-1);
+					return; 
+				}
+			} catch (Exception ex) {
+				fireEvent("error with invocations table" ,-1);
 				return;
-			}*/
+			}
+			
+			try { 
+				/* mark process start in db */
+				ts = db_operations.perform_invocation(invocation_code.YAGO_UPDATE);
+				if (ts == null)
+				{
+					fireEvent("Cannot create an invocation",-1);
+					return;
+				}
+			} catch (Exception ex) {
+				fireEvent("error with invocations table" ,-1);
+				return;
+			}
+		
 				
 			this.offset_progress = 0;			
 			
@@ -299,7 +319,7 @@ public class Importer extends db_operations implements Runnable,
 			System.out.println("Error in major Importer Component");
 			ex.printStackTrace();
 			/* process run was unssucessfull, don't remember it */
-			remove_last_invocation(ts);
+			db_operations.confirm_invocation_performed(invocation_code.YAGO_UPDATE, ts);
 			/* notify GUI of error */
 			fireEvent(ex.getMessage(),-1);
 		}
@@ -395,61 +415,6 @@ public class Importer extends db_operations implements Runnable,
 			return false;
 		}
 		
-	}
-
-	/**
-	 * checks if the yago update has benn run recently
-	 * 
-	 * @return
-	 */
-	private boolean can_run() {
-		try {
-			Timestamp ts = get_last_invocation(invocation_code.YAGO_UPDATE);
-
-			// Is it ok not to redo this
-			if (ts != null) {
-				Timestamp now = new Timestamp(
-						new java.util.Date().getTime() - 1000 * 60 * 7);
-
-				// was this performed in the last 15 minutes
-				if (now.before(ts))
-					return false;
-				return true;
-			}
-		} catch (Exception ex) {
-			return false;
-		}
-		return false;
-	}
-
-	/**
-	 * makes and invocation for the process
-	 * 
-	 * @return
-	 */
-	private String set_invocation() {
-		try {
-			String ts = perform_invocation(invocation_code.YAGO_UPDATE);
-			if (ts == null)
-				return null;
-			return ts;
-		} catch (Exception ex) {
-			return null;
-		}
-	}
-
-	/**
-	 * removes last YAGO invocation
-	 * 
-	 * @return
-	 */
-	private int remove_last_invocation(String ts) {
-		try {
-			delete_last_invocation(invocation_code.YAGO_UPDATE, ts);
-		} catch (Exception ex) {
-			return 0;
-		}
-		return 1;
 	}
 
 }
