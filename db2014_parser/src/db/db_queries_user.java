@@ -500,7 +500,7 @@ public abstract class db_queries_user extends db_operations
 	{
 		String whereClause = 	"(movie_notes.idMovie = movie.idMovie AND " +
 								" movie_notes.idUser = users.idUsers AND " +
-								"(idMovie = ?)) ORDER BY noteDate DESC limit "+ limit;
+								"(movie_notes.idMovie = ?)) ORDER BY noteDate DESC limit "+ limit;
 
 		ResultSet results = select("movieName, note, userName, noteDate" , "movie_notes, movie, users" , whereClause, movie_id);
 		

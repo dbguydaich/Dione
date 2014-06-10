@@ -255,6 +255,7 @@ public abstract class db_operations
 		// execute insert SQL stetement
 		ResultSet rows_effected = stmt.executeQuery();
 		
+		
 		// Close connection
 		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
