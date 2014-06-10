@@ -60,7 +60,7 @@ public class all_tabs_window extends abstract_window {
 
 		// tab4
 		TabItem tab4 = new TabItem(tab_folder, SWT.NONE);
-		tab4.setText("Reccomended Movies");
+		tab4.setText("Recommended Movies");
 
 		// tab5
 		TabItem tab5 = new TabItem(tab_folder, SWT.NONE);
