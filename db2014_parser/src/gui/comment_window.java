@@ -74,6 +74,8 @@ public class comment_window extends abstract_window {
 												.setMessage("Comment added succefully!");
 
 										messageBox.open();
+										
+										comment_text.setText("");
 
 									}
 
@@ -105,7 +107,7 @@ public class comment_window extends abstract_window {
 				});
 
 				gui_utils.executor.execute(t);
-				local_comment_win.dispose();
+			
 			}
 
 		});

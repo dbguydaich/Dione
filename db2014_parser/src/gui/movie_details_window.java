@@ -689,7 +689,7 @@ public class movie_details_window extends abstract_window {
 
 									try {
 										movie_comments = user_logics
-												.get_movie_notes(movie_id, 12);
+												.get_movie_notes(movie_id, 6);
 										recent_comments_win = new movie_comments_window(
 												display, movie_comments);
 										recent_comments_win.open();
