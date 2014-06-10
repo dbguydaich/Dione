@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+
 import parser_entities.light_entity_movie;
 
 /**
@@ -69,7 +70,7 @@ public class preferences_window extends abstract_window {
 		try {
 			 my_name = log_in_window.user.get_my_name();
 		} catch (SQLException e2) {
-			gui_utils.raise_sql_error_window(display);
+			gui_utils.raise_sql_error_window(gui_utils.display);
 		}
 		this.setText("Movie Preferences - Logged in As: " +  my_name);
 		this.setLayout(new FormLayout());
@@ -92,8 +93,7 @@ public class preferences_window extends abstract_window {
 		try {
 			current_movie = log_in_window.user.get_unrated_movie();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			gui_utils.raise_sql_error_window(gui_utils.display);
 		}
 		
 		
@@ -160,8 +160,9 @@ public class preferences_window extends abstract_window {
 						gui_utils.pref_win.dispose();
 					}
 				} catch (NumberFormatException e) {
-					gui_utils.raise_sql_error_window(display);
-					e.printStackTrace();
+					gui_utils.raise_sql_error_window(gui_utils.display);
+					return;
+				
 				}
 
 			}
@@ -224,7 +225,7 @@ public class preferences_window extends abstract_window {
 
 						public void run() {
 							gui_utils.raise_sql_error_window(gui_utils.display);
-							e.printStackTrace();
+							return;
 						}
 					});
 				}
@@ -261,7 +262,7 @@ public class preferences_window extends abstract_window {
 					gui_utils.display.asyncExec(new Runnable() {
 						public void run() {
 							gui_utils.raise_sql_error_window(gui_utils.display);
-							e.printStackTrace();
+						return;
 						}
 					});
 				}

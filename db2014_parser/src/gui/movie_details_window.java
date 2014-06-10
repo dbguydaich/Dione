@@ -35,6 +35,7 @@ import bl.movie_logics;
 import bl.user_logics;
 import parser_entities.light_entity_movie;
 import config.config;
+import db.db_operations;
 
 /**
  * Movie Window
@@ -65,6 +66,7 @@ public class movie_details_window extends abstract_window {
 			throws SQLException {
 
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
+		
 
 		/* Getting the movie data in a new thread */
 		Thread t = new Thread(new Runnable() {
@@ -88,8 +90,8 @@ public class movie_details_window extends abstract_window {
 				} catch (final SQLException e) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
-							e.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 
 					});
@@ -104,7 +106,7 @@ public class movie_details_window extends abstract_window {
 			t.join();
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+	
 		}
 
 		movie_id_number = movie_id;
@@ -116,7 +118,7 @@ public class movie_details_window extends abstract_window {
 		try {
 			my_name = log_in_window.user.get_my_name();
 		} catch (SQLException e2) {
-			gui_utils.raise_sql_error_window(display);
+			gui_utils.raise_sql_error_window(gui_utils.display);
 		}
 		this.setText("Movie Details - Logged in As: " + my_name);
 
@@ -399,8 +401,8 @@ public class movie_details_window extends abstract_window {
 
 									} catch (SQLException e) {
 										gui_utils
-												.raise_sql_error_window(display);
-										e.printStackTrace();
+												.raise_sql_error_window(gui_utils.display);
+										return;
 									}
 								}
 								if (success) {
@@ -559,9 +561,8 @@ public class movie_details_window extends abstract_window {
 
 								} catch (final SQLException e) {
 
-									gui_utils.raise_sql_error_window(display);
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
 								}
 
 								if (success) {
@@ -678,8 +679,8 @@ public class movie_details_window extends abstract_window {
 										} catch (SQLException e) {
 											// TODO Auto-generated catch block
 											gui_utils
-													.raise_sql_error_window(display);
-											e.printStackTrace();
+													.raise_sql_error_window(gui_utils.display);
+											return;
 										}
 
 									}
@@ -694,10 +695,11 @@ public class movie_details_window extends abstract_window {
 												display, movie_comments);
 										recent_comments_win.open();
 									} catch (SQLException e) {
-										// TODO Auto-generated catch block
+									
 										gui_utils
-												.raise_sql_error_window(display);
-										e.printStackTrace();
+												.raise_sql_error_window(gui_utils.display);
+										return;
+									
 									}
 
 								}
@@ -787,6 +789,9 @@ public class movie_details_window extends abstract_window {
 													.get_current_user_id(),
 											tag_name, rate))
 									{
+									
+													log_in_window.user.fill_user_prefence(); // rating algorithm///
+												
 										MessageBox messageBox = new MessageBox(
 												display.getActiveShell(),
 												SWT.ICON_WARNING);
@@ -815,9 +820,11 @@ public class movie_details_window extends abstract_window {
 									}
 									
 								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									gui_utils.raise_sql_error_window(display);
-									e.printStackTrace();
+								
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									e.printStackTrace(); ////remember to remove!!!!!
+									return;
+
 								}
 
 							}

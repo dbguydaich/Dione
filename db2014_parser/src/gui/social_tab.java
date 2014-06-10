@@ -142,8 +142,9 @@ public class social_tab extends Composite {
 										}
 									} catch (SQLException e1) {
 										gui_utils
-												.raise_sql_error_window(display);
-										e1.printStackTrace();
+												.raise_sql_error_window(gui_utils.display);
+										return;
+						
 									}
 
 									try {
@@ -204,8 +205,9 @@ public class social_tab extends Composite {
 									} catch (SQLException e) {
 										// TODO Auto-generated catch block
 										gui_utils
-												.raise_sql_error_window(display);
-										e.printStackTrace();
+												.raise_sql_error_window(gui_utils.display);
+										return;
+										
 									}
 								}
 							});
@@ -242,8 +244,7 @@ public class social_tab extends Composite {
 		try {
 			user_friends = log_in_window.user.get_current_user_friends_names();
 		} catch (SQLException e2) {
-			gui_utils.raise_sql_error_window(display);
-			e2.printStackTrace();
+			gui_utils.raise_sql_error_window(gui_utils.display);
 		} 
 
 		final String[] user_friends_arr = user_friends
@@ -319,13 +320,14 @@ public class social_tab extends Composite {
 											}
 										} catch (SQLException e) {
 											gui_utils
-													.raise_sql_error_window(display);
-											e.printStackTrace();
+													.raise_sql_error_window(gui_utils.display);
+											return;
+									
 										}
 									} catch (SQLException e1) {
 										gui_utils
-												.raise_sql_error_window(display);
-										e1.printStackTrace();
+												.raise_sql_error_window(gui_utils.display);
+										return;
 									}
 
 								}
@@ -380,8 +382,8 @@ public class social_tab extends Composite {
 					display.asyncExec(new Runnable() {
 
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
-							e1.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 				} 
@@ -449,8 +451,8 @@ public class social_tab extends Composite {
 				} catch (final SQLException e1) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
-							e1.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 
@@ -513,7 +515,8 @@ public class social_tab extends Composite {
 				} catch (SQLException e2) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 				}

@@ -132,8 +132,7 @@ public class import_window extends abstract_window
 					
 				} catch (SQLException e) {
 					gui_utils.raise_sql_error_window(gui_utils.display);
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return;
 				}
 			}
 			

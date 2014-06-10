@@ -124,7 +124,7 @@ public class settings_tab extends Composite {
 				
 				} catch (SQLException e) {
 					gui_utils.raise_sql_error_window(gui_utils.display);
-					e.printStackTrace();
+					return;
 				}
 			}
 
@@ -302,6 +302,7 @@ public class settings_tab extends Composite {
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
+					return;
 				}
 				Thread t = new Thread(new Runnable() {
 
@@ -322,6 +323,12 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("Username has been successfully changed");
 										messageBox.open();
+										gui_utils.tabs_win.setText("Dione - Logged in As: " + username);
+										return;
+										
+										
+										
+										
 									} else {
 										MessageBox messageBox = new MessageBox(
 												display.getActiveShell(),
@@ -330,6 +337,7 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("Username couldn't be changed! Make sure you enter the right password.");
 										messageBox.open();
+										return;
 									}
 								}
 							});
@@ -339,9 +347,8 @@ public class settings_tab extends Composite {
 
 								public void run() {
 
-									gui_utils.raise_sql_error_window(display);
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
 								}
 							});
 						}
@@ -440,6 +447,7 @@ public class settings_tab extends Composite {
 					messageBox
 							.setMessage("Password must contain 4-10 alphanumeric chars.");
 					messageBox.open();
+					return;
 				}
 				Thread t = new Thread(new Runnable() {
 					public void run() {
@@ -458,6 +466,7 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("password has been successfully changed");
 										messageBox.open();
+										return;
 									} else {
 										MessageBox messageBox = new MessageBox(
 												display.getActiveShell(),
@@ -466,6 +475,7 @@ public class settings_tab extends Composite {
 										messageBox
 												.setMessage("Password couldn't be changed!  Make sure you enter the right password");
 										messageBox.open();
+										return;
 									}
 								}
 							});
@@ -473,8 +483,8 @@ public class settings_tab extends Composite {
 						} catch (final SQLException e) {
 							display.asyncExec(new Runnable() {
 								public void run() {
-									gui_utils.raise_sql_error_window(display);
-									e.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
 								}
 							});
 						}

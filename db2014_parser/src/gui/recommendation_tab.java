@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+
 import parser_entities.light_entity_movie;
 import bl.movie_logics;
 import bl.user_logics;
@@ -103,8 +104,8 @@ public class recommendation_tab extends Composite {
 				} catch (final SQLException e1) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
-							e1.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 				}
@@ -148,8 +149,8 @@ public class recommendation_tab extends Composite {
 																	} catch (final SQLException e) {
 
 																		gui_utils
-																				.raise_sql_error_window(display);
-																		e.printStackTrace();
+																				.raise_sql_error_window(gui_utils.display);
+																		return;
 																	}
 																}
 															});
@@ -203,9 +204,8 @@ public class recommendation_tab extends Composite {
 
 						public void run() {
 
-							gui_utils.raise_sql_error_window(display);
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 				}
@@ -248,7 +248,7 @@ public class recommendation_tab extends Composite {
 																		movie_details
 																				.open();
 																	} catch (SQLException e) {
-																		e.printStackTrace();
+																	
 																	}
 
 																}
@@ -310,8 +310,8 @@ public class recommendation_tab extends Composite {
 				} catch (final SQLException e1) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							gui_utils.raise_sql_error_window(display);
-							e1.printStackTrace();
+							gui_utils.raise_sql_error_window(gui_utils.display);
+							return;
 						}
 					});
 				}
@@ -351,7 +351,8 @@ public class recommendation_tab extends Composite {
 																						.get(k)
 																						.get_movie_id());
 																	} catch (SQLException e) {
-																		e.printStackTrace();
+																		gui_utils.raise_sql_error_window(gui_utils.display);
+																		return;
 																	}
 																	movie_details
 																			.open();

@@ -96,7 +96,7 @@ public class overview_tab extends Composite
 				try {
 					movie_details =new movie_details_window( display ,movies_my_taste_entity_for_annonymus.get(k).get_movie_id());
 				} catch (SQLException e) {
-					e.printStackTrace();
+					gui_utils.raise_sql_error_window(gui_utils.display);
 				}
 					movie_details.open();
 				}

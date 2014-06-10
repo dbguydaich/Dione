@@ -151,6 +151,7 @@ public class log_in_window extends abstract_window {
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
+					return;
 				}
 
 				/* Invalid password */
@@ -159,8 +160,9 @@ public class log_in_window extends abstract_window {
 							.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
 					messageBox
-							.setMessage("Password must contain 1-6 alphanumeric chars.");
+							.setMessage("Password must contain 1-10 alphanumeric chars.");
 					messageBox.open();
+					return;
 				}
 
 				else {
@@ -223,6 +225,7 @@ public class log_in_window extends abstract_window {
 													messageBox.setText("Error");
 													messageBox.setMessage("Couldn't find any movies to rate");
 													messageBox.open();
+													return;
 												}
 											}
 										});
@@ -238,6 +241,7 @@ public class log_in_window extends abstract_window {
 											messageBox.setText("Error");
 											messageBox.setMessage("Password and username do not match. Try again.");
 											messageBox.open();
+											return;
 										}
 
 									});
@@ -247,8 +251,9 @@ public class log_in_window extends abstract_window {
 
 								display.asyncExec(new Runnable() {
 									public void run() {
-										gui_utils.raise_sql_error_window(display);
-										e.printStackTrace(); //shachar: remove it!
+										gui_utils.raise_sql_error_window(gui_utils.display);
+										return;
+										
 									}
 								});
 							}
@@ -287,12 +292,14 @@ public class log_in_window extends abstract_window {
 					alertBox.setText("Illegal Username");
 					alertBox.setMessage("user name length is 1-10 chars \n Only letters or numbers allowed.");
 					alertBox.open();
+					return;
 				} else if (!verifier.verifyPassSignUp(pass)) { /* Invalid password  */
 					/* showing an informative message box */
 					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 					messageBox.setText("Illegal Password");
 					messageBox.setMessage("Password must contain 4-10 alphanumeric chars.");
 					messageBox.open();
+					return;
 				} else
 
 				{
@@ -311,12 +318,14 @@ public class log_in_window extends abstract_window {
 											messageBox.setMessage("User " + username + 
 													" has been succesfully signed up");
 											messageBox.open();
+											return;
 										} else {
 											/* showing an informative message box */
 											MessageBox messageBox = new MessageBox(display.getActiveShell(),SWT.ICON_WARNING);
 											messageBox.setText("Error");
 											messageBox.setMessage("There was an error during signup. Sorry.");
 											messageBox.open();
+											return;
 										}
 									}
 								});
@@ -326,8 +335,8 @@ public class log_in_window extends abstract_window {
 
 									public void run() {
 										/* showing a sql error message box */
-										gui_utils.raise_sql_error_window(display);
-										e.printStackTrace(); //shachar: remove it!
+										gui_utils.raise_sql_error_window(gui_utils.display);
+										return;
 									}
 
 								});
@@ -341,6 +350,7 @@ public class log_in_window extends abstract_window {
 			}
 		});
 
+		
 	}
 
 

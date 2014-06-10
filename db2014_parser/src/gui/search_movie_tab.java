@@ -197,6 +197,7 @@ public class search_movie_tab extends Composite {
 
 		// year from text
 		final Text year_from_text = new Text(year_area, SWT.BORDER);
+		
 		year_from_text.setLayoutData(gui_utils.grid_data_factory(14, 10, -1,
 				-1, -1, -1));
 
@@ -287,9 +288,9 @@ public class search_movie_tab extends Composite {
 		try {
 			genres = movie_logics.get_genres();
 		} catch (SQLException e1) {
-			gui_utils.raise_sql_error_window(display);
+			gui_utils.raise_sql_error_window(gui_utils.display);
 			genres = new ArrayList<String>();
-			e1.printStackTrace(); // shachar: remove it!
+		
 		}
 
 		genres_checkboxes = new ArrayList<Button>();
@@ -338,18 +339,37 @@ public class search_movie_tab extends Composite {
 
 								final Integer year_from;
 								final Integer year_until;
-								if (!year_from_text.getText().equals("")) {
+								if (!year_from_text.getText().equals("") && (year_from_text.getText().matches("[0-9]"))) {
 									year_from = Integer.parseInt(year_from_text
 											.getText());
 								} else {
 									year_from = null;
 								}
 
-								if (!year_until_text.getText().equals("")) {
+								if (!year_until_text.getText().equals("")&& (year_from_text.getText().matches("[0-9]"))) {
 									year_until = Integer
 											.parseInt(year_until_text.getText());
 								} else {
 									year_until = null;
+								}
+								
+								
+								if( !year_from_text.getText().matches("[0-9]") &&!(year_from_text.getText().length()==0))
+								{
+									/* showing an informative message box */
+									MessageBox messageBox = new MessageBox(display.getActiveShell(),SWT.ICON_WARNING);
+									messageBox.setText("Error");
+									messageBox.setMessage("Ignored year from. Only alpha-numeric chars are allowed!");
+									messageBox.open();
+								}
+								
+								if( !year_until_text.getText().matches("[0-9]") &&!(year_until_text.getText().length()==0))
+								{
+									/* showing an informative message box */
+									MessageBox messageBox = new MessageBox(display.getActiveShell(),SWT.ICON_WARNING);
+									messageBox.setText("Error");
+									messageBox.setMessage("Ignored year until. Only alpha-numeric chars are allowed!");
+									messageBox.open();
 								}
 
 								// /getting the desired information
@@ -399,7 +419,7 @@ public class search_movie_tab extends Composite {
 															rating_radios_text);
 										} catch (SQLException e) {
 											// TODO Auto-generated catch block
-											e.printStackTrace();
+											
 										}
 
 										/* put results in movie_list */
@@ -428,7 +448,7 @@ public class search_movie_tab extends Composite {
 									}
 								} catch (SQLException e) {
 									// TODO Auto-generated catch block
-									e.printStackTrace();
+								
 								}
 
 							}
@@ -492,7 +512,7 @@ public class search_movie_tab extends Composite {
 
 										gui_utils
 												.raise_sql_error_window(gui_utils.display);
-										e.printStackTrace();
+										return;
 									}
 								}
 							});
@@ -500,7 +520,7 @@ public class search_movie_tab extends Composite {
 
 					} catch (SQLException e) {
 						gui_utils.raise_sql_error_window(gui_utils.display);
-						e.printStackTrace();
+						return;
 					}
 				}
 			});

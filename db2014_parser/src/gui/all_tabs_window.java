@@ -39,7 +39,7 @@ public class all_tabs_window extends abstract_window {
 		try {
 			 my_name = log_in_window.user.get_my_name(); /* get current logged in username */
 		} catch (SQLException e2) {
-			gui_utils.raise_sql_error_window(display);
+			gui_utils.raise_sql_error_window(gui_utils.display);
 		}
 	
 		this.setText("Dione - Logged in As: " +  my_name); /* window title */
@@ -90,9 +90,9 @@ public class all_tabs_window extends abstract_window {
 									movies_my_taste_entity = 
 											user_logics.get_user_recommended_movies(log_in_window.user.get_current_user_id());
 								} catch (SQLException e1) {
-									gui_utils.raise_sql_error_window(display);
-
-									e1.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
+							
 								}
 
 								try {
@@ -101,8 +101,8 @@ public class all_tabs_window extends abstract_window {
 											.get_user_popular_tags();
 								} catch (SQLException e1) {
 									user_tags_string = new ArrayList<String>();
-									gui_utils.raise_sql_error_window(display);
-									e1.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
 								} 
 
 								try {
@@ -113,8 +113,9 @@ public class all_tabs_window extends abstract_window {
 								} catch (SQLException e1) {
 									
 									user_activities_strings = new ArrayList<String>();
-									gui_utils.raise_sql_error_window(display);
-									e1.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
+									
 								}
 
 							

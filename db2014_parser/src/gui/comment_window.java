@@ -94,8 +94,8 @@ public class comment_window extends abstract_window {
 
 									}
 								} catch (SQLException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									gui_utils.raise_sql_error_window(gui_utils.display);
+									return;
 								}
 
 							}
