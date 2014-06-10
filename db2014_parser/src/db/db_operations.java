@@ -631,6 +631,25 @@ public abstract class db_operations
 			return (null);
 	}
 	
+	
+	/**
+	 * @return the Timestamp of the last invocation of this code
+	 * @param code - the invocation code as found in the enum invocation_code
+	 * @throws SQLException
+	 */
+	public static Timestamp is_currently_invoked(invocation_code code) 
+			throws SQLException
+	{
+		String whereClause = "invokeCode = ? and didFinish = 0 ORDER BY invokeDate desc";
+		
+		ResultSet results = select("invokeDate" , "invocations" , whereClause, code.ordinal());
+	
+		if (results.next())
+			return (results.getTimestamp(1));
+		else
+			return (null);
+	}
+
 	/**
 	 * @return true iff there was at least one invocation of this code
 	 * @param code - the invocation code as found in the enum invocation_code
