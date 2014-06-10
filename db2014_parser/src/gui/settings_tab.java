@@ -1,6 +1,7 @@
 package gui;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
+import db.db_operations.invocation_code;
 import bl.user_logics;
 import bl.verifier;
 
@@ -27,6 +29,8 @@ import bl.verifier;
  */
 public class settings_tab extends Composite {
 
+	Timestamp time = null;
+	
 	public settings_tab(final Display display, Composite parent, int style) {
 		super(parent, style);
 
@@ -75,30 +79,52 @@ public class settings_tab extends Composite {
 		update_button.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent arg0) {
-				if (gui_utils.import_progress_win != null)
+				
+				try {
+					time = db.db_operations.is_currently_invoked(invocation_code.YAGO_UPDATE);
+
+				/* if not currently running an update */
+				if(time == null)
 				{
-					if (!gui_utils.import_progress_win.isDisposed())
+					if (gui_utils.import_progress_win != null)
 					{
-						MessageBox messageBox = new MessageBox(display
-								.getActiveShell(), SWT.ICON_WARNING);
-						messageBox.setText("Error");
-						messageBox
+						if (!gui_utils.import_progress_win.isDisposed())
+						{
+							MessageBox messageBox = new MessageBox(display
+									.getActiveShell(), SWT.ICON_WARNING);
+							messageBox.setText("Error");
+							messageBox
 								.setMessage("Data import is already in progress.");
-						messageBox.open();
+							messageBox.open();
+						}
+						else // running progress win
+						{
+							gui_utils.import_progress_win = new import_progress_window(
+								display);
+							gui_utils.import_progress_win.open();
+
+						}
 					}
 					else // running progress win
 					{
 						gui_utils.import_progress_win = new import_progress_window(
 								display);
 						gui_utils.import_progress_win.open();
-
 					}
 				}
-				else // running progress win
+				
+				/* currently running an update to the db */
+				else
 				{
-					gui_utils.import_progress_win = new import_progress_window(
-							display);
-					gui_utils.import_progress_win.open();
+					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+					messageBox.setText("Error");
+					messageBox.setMessage("Can't start an import: Another data update is already in progress.");
+					messageBox.open();
+				}
+				
+				} catch (SQLException e) {
+					gui_utils.raise_sql_error_window(gui_utils.display);
+					e.printStackTrace();
 				}
 			}
 

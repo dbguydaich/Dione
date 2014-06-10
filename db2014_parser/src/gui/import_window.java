@@ -1,5 +1,8 @@
 package gui;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -13,11 +16,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 
+import db.db_operations.*;
+
 /**
  * Import Data Window
  */
 public class import_window extends abstract_window
 {
+	
+	Timestamp time = null;
 
 	public import_window(final Display display)
 	{
@@ -86,30 +93,49 @@ public class import_window extends abstract_window
 			
 			public void widgetSelected(SelectionEvent arg0)
 			{
-				if(gui_utils.import_progress_win != null)
-				{
-					/* if progress bar is already open */
-					if(!gui_utils.import_progress_win.isDisposed())
+				try {
+					time = db.db_operations.is_currently_invoked(invocation_code.YAGO_UPDATE);
+					/* if not currently running an update */
+					if(time == null)
+					{
+						if(gui_utils.import_progress_win != null)
+						{
+							/* if progress bar is already open */
+							if(!gui_utils.import_progress_win.isDisposed())
+							{
+								MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
+								messageBox.setText("Error");
+								messageBox.setMessage("Import is already in progress.");
+								messageBox.open();
+							}
+							else //running progress bar
+							{
+								gui_utils.import_progress_win = new import_progress_window(display);
+								gui_utils.import_progress_win.open();
+							}
+						}
+					
+						else //running progress bar
+						{	
+							gui_utils.import_progress_win = new import_progress_window(display);
+							gui_utils.import_progress_win.open();
+						}
+					}
+					/* someone is currently updating the db  */
+					else
 					{
 						MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
 						messageBox.setText("Error");
-						messageBox.setMessage("Import is already in progress.");
+						messageBox.setMessage("Can't start an import: Another data update is already in progress. Please exit ant try again later");
 						messageBox.open();
 					}
-					else //running progress bar
-					{
-						gui_utils.import_progress_win = new import_progress_window(display);
-						gui_utils.import_progress_win.open();
-					}
-				}
-				
-				else //running progress bar
-				{	
-					gui_utils.import_progress_win = new import_progress_window(display);
-					gui_utils.import_progress_win.open();
+					
+				} catch (SQLException e) {
+					gui_utils.raise_sql_error_window(gui_utils.display);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-			
 			
 		});
 		
