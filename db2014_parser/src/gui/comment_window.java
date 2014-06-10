@@ -15,9 +15,13 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 public class comment_window extends abstract_window {
+	
+	comment_window local_comment_win;
+	
 	public comment_window(final Display display, final int movie_id) {
 		super(display, SWT.SHELL_TRIM & (~SWT.RESIZE) & (~SWT.MAX));
 
+		local_comment_win = this;
 		this.setSize(250, 150);
 		this.setText("Make a Comment");
 
@@ -32,7 +36,7 @@ public class comment_window extends abstract_window {
 		/* comment text */
 		final Text comment_text = new Text(this, SWT.WRAP);
 		comment_text.setLayoutData(gui_utils.form_data_factory(245, 80, 0, 0));
-		comment_text.setTextLimit(100);
+		comment_text.setTextLimit(68);
 
 		/* comment button */
 		Button comment_button = new Button(this, SWT.PUSH);
@@ -101,7 +105,7 @@ public class comment_window extends abstract_window {
 				});
 
 				gui_utils.executor.execute(t);
-
+				local_comment_win.dispose();
 			}
 
 		});
