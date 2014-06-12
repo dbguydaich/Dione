@@ -127,10 +127,20 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `movie_notes` (
   `idMovie` INT NOT NULL,
-  `idUser` SMALLINT NOT NULL,
+  `idUser` INT NOT NULL,
   `noteDate` DATETIME NOT NULL,
   `note` VARCHAR(80) NOT NULL,
-  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`))
+  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`),
+  CONSTRAINT `note_usr_fk`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `users` (`idUsers`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `note_movie_fk`
+    FOREIGN KEY (`idMovie`)
+    REFERENCES `movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -286,9 +296,19 @@ ENGINE = InnoDB;
 -- Table `movie_tag_rate`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `movie_tag_rate` (
-  `idMovie` SMALLINT NOT NULL,
-  `idTag` INT NOT NULL,
-  `rate` TINYINT NOT NULL))
+  `idMovie` INT NOT NULL,
+  `idTag` SMALLINT NOT NULL,
+  `rate` TINYINT NOT NULL,
+  CONSTRAINT `MTR_movie_fk`
+    FOREIGN KEY (`idMovie`)
+    REFERENCES `movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+	CONSTRAINT `MTR_tag_fk`
+    FOREIGN KEY (`idTag`)
+    REFERENCES `tag` (`idTag`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;

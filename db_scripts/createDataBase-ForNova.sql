@@ -168,10 +168,20 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `movie_notes` (
   `idMovie` INT NOT NULL,
-  `idUser` SMALLINT NOT NULL,
+  `idUser` INT NOT NULL,
   `noteDate` DATETIME NOT NULL,
   `note` VARCHAR(80) NOT NULL,
-  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`))
+  PRIMARY KEY (`idmovie`, `idUser`, `noteDate`),
+  CONSTRAINT `note_usr_fk`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `users` (`idUsers`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `note_movie_fk`
+    FOREIGN KEY (`idMovie`)
+    REFERENCES `movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -249,6 +259,11 @@ CREATE TABLE IF NOT EXISTS `user_rank` (
   CONSTRAINT `movie_fk`
     FOREIGN KEY (`idMovie`)
     REFERENCES `movie` (`idMovie`)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT,
+  CONSTRAINT `user_fk`
+    FOREIGN KEY (`idUser`)
+    REFERENCES `users` (`idUsers`)
     ON DELETE CASCADE
     ON UPDATE RESTRICT)
 ENGINE = InnoDB;
