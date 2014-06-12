@@ -565,8 +565,10 @@ public abstract class db_operations
 			// Confirm success to DB
 			confirm_invocation_performed(invocation_code.USER_PREFENCE, timePerformed);
 		} 
-		catch (SQLException e) {
+		catch (SQLException e) 
+		{
 			// Do nothing, somone else will run this again
+			System.out.println(e.getStackTrace());
 		}
 	}
 	

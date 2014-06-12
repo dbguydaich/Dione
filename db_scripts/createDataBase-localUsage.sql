@@ -288,8 +288,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `movie_tag_rate` (
   `idMovie` SMALLINT NOT NULL,
   `idTag` INT NOT NULL,
-  `rate` TINYINT NOT NULL,
-  PRIMARY KEY (`idTag`, `idMovie`))
+  `rate` TINYINT NOT NULL))
 ENGINE = InnoDB;
 
 SET SQL_MODE=@OLD_SQL_MODE;

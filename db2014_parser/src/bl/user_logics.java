@@ -587,7 +587,14 @@ public class user_logics
 	public static boolean rate_movie_tag(int movie_id,int tag_id, int user_id,int rate) 
 			throws SQLException
 	{
-		return (db_queries_user.rate_tag(movie_id, user_id, tag_id, rate));
+		// is there a tag like this
+		if (!db_queries_movies.tag_exists(tag_id))
+			return (false);
+		
+		if (!db_queries_user.rated_tag(movie_id, user_id, tag_id))
+			return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
+		else
+			return (db_queries_user.update_rate_tag(movie_id, user_id, tag_id ,rate));
 	}
 	
 	/**
@@ -648,19 +655,6 @@ public class user_logics
 	
 	/**
 	 * add a row to user_tag_movie
-	 * in which user_id will rate tag_id for movie_id with rate at current time
-	 * @param rate - expected 0-5, 0 is "Dont know"
-	 * @return did succeed
-	 * @throws SQLException
-	 */
-	public static boolean rate_tag_movie(int movie_id, int user_id, int tag_id, int rate) 
-			throws SQLException
-	{
-		return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
-	}
-	
-	/**
-	 * add a row to user_tag_movie
 	 * in which user_id will rate the tag called tag_name for movie_id with rate at current time
 	 * @param rate - expected 0-5, 0 is "Dont know"
 	 * @return did succeed
@@ -671,10 +665,7 @@ public class user_logics
 	{
 		int tag_id = db_queries_movies.get_tag_id(tag_name);
 		
-		if (!db_queries_user.rated_tag(movie_id, user_id, tag_id))
-			return (db_queries_user.rate_tag(movie_id, user_id, tag_id ,rate));
-		else
-			return (db_queries_user.update_rate_tag(movie_id, user_id, tag_id ,rate));
+		return (rate_movie_tag(movie_id, tag_id, user_id, rate));
 	}
 	
 	/**

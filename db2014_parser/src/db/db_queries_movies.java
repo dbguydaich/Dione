@@ -135,6 +135,26 @@ public abstract class db_queries_movies extends db_operations
 	}
 	
 	/**
+	 * @return true iff theres a tag with the name tag_name 
+	 * @throws SQLException
+	 */
+	public static boolean tag_exists(Integer id_tag)
+		throws SQLException
+	{
+		if (id_tag == null)
+			return (false);
+		
+		String whereSegment = "idTag = ?";
+		ResultSet result = select("idTag", "tag", whereSegment, id_tag);
+		
+		// did select find souch user
+		if (result.next())
+			return (true);
+		else
+			return (false);
+	}
+	
+	/**
 	 * is there a movie that has some of these
 	 * @param params - all params may be NULL
 	 * @return - true only if there is one movie that answers all parameters inserted
@@ -787,12 +807,6 @@ public abstract class db_queries_movies extends db_operations
 	{
 		return (delete("actor_movie","") != -1);
 	}
-
-	
-
-
-
-	
 	
 }
 

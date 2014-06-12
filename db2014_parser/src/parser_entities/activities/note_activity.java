@@ -27,7 +27,7 @@ public class note_activity extends abstract_activity
 
 	public String fullNote()
 	{
-		return (get_activity_user() + " wrote a note on the movie " + get_movie() + " saying:\n " + get_note());
+		return (get_activity_user() + " wrote a comment on the movie " + '"' + get_movie() + '"' + " saying:\n " + get_note());
 	}
 	
 	public String toString()
