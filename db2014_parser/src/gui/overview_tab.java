@@ -83,8 +83,12 @@ public class overview_tab extends Composite
 		int i = 0;
 		int j=0;
 		final List<light_entity_movie> movies_my_taste_entity_for_annonymus = movies_my_taste_entity;
-		for(j=0; j< 5; j++)
+		for(j=0; j< movies_my_taste.size(); j++)
 		{
+			if(j==5)
+			{
+				break;
+			}
 			final int k =j;
 			reco_movies_labels.add(new Label(reco_area, SWT.NONE));
 			reco_movies_labels.get(j).setText(movies_my_taste.get(j));
@@ -103,6 +107,7 @@ public class overview_tab extends Composite
 			});
 			
 			i++;
+			
 		}
 		
 		//recommendation buttom label
