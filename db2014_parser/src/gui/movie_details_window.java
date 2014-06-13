@@ -779,11 +779,10 @@ public class movie_details_window extends abstract_window {
 								int rate = gui_utils
 										.get_index_button(new_tag_radios) +1;
 								String tag_name = add_tag_text.getText();
-								System.out.println(rate);
-								System.out.println(tag_name);
+							
 
 								try {
-									if(user_logics.rate_tag_movie(movie_id,  // ////matan is this the funciton
+									if(user_logics.rate_tag_movie(movie_id, 
 											log_in_window.user
 													.get_current_user_id(),
 											tag_name, rate))
@@ -821,7 +820,7 @@ public class movie_details_window extends abstract_window {
 								} catch (SQLException e) {
 								
 									gui_utils.raise_sql_error_window(gui_utils.display);
-									e.printStackTrace(); ////remember to remove!!!!!
+						
 									return;
 
 								}
