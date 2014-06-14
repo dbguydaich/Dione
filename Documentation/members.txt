@@ -1,7 +1,7 @@
 == Members: ==
 
-Shachar Pooyae, 305686297: , pooyae:
-Shahar Avital, 304825391: , shaharavital:
+Shachar Pooyae, ID: 305686297, user: pooyae
+Shahar Avital, ID: 304825391, user: shaharavital
 Matan Poleg, ID: , user: 
 Guy Daich, ID: 307069310, user: guydaich
 
