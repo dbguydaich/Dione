@@ -86,7 +86,7 @@ public class jdbc_connection_pooling
 		// Add it to the avilable list
 		connectionsAvailable.add(connToRemove);
 	}
-
+	
 	/**
 	 * returns a java.sql Connection from the available vector
 	 * @return Connection to be used with the DB

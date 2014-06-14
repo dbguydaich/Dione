@@ -43,7 +43,7 @@ public class db_queries_persons extends db_operations
 		public static HashMap<String, String> get_all_persons() 
 				throws SQLException 
 		{
-			ResultSet result = select("idPerson, personName", "person", "");
+			ResultSet result = select_no_limit("idPerson, personName", "person", "");
 			
 			// is table empty
 			if (result == null)
@@ -62,7 +62,6 @@ public class db_queries_persons extends db_operations
 
 			return (returnedSet);
 		}
-
 		
 		/**
 		 * ID as listed on the DB
@@ -72,7 +71,7 @@ public class db_queries_persons extends db_operations
 		public static HashMap<String, Integer> get_person_names_and_ids() 
 				throws SQLException 
 		{
-			ResultSet result = select("idPerson, personName", "person", "");
+			ResultSet result = select_no_limit("idPerson, personName", "person", "");
 			
 			// is table empty
 			if (result == null)
