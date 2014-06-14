@@ -190,7 +190,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_director, this);
 				retval = handle_single_task(types, 6);
 				if (done) /*if we terminated prematurely, because of the user*/
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 
@@ -203,7 +206,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_director, this);
 				retval = handle_single_task(facts, 6);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 
@@ -216,7 +222,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_director, this);
 				retval = handle_single_task(labels, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 
@@ -229,7 +238,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_director, this);
 				retval = handle_single_task(literal_facts, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 
@@ -246,7 +258,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_director, this);
 				handle_single_task(wiki, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 			} catch (Exception ex) {
 				System.out
 						.println("Error Parsing Wikipedia links, Importer continues");
@@ -286,7 +301,10 @@ public class Importer extends db_operations implements Runnable,
 						imdb_name_to_yago_movie, this);
 				retval = handle_single_task(directors, 6);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 
@@ -296,13 +314,19 @@ public class Importer extends db_operations implements Runnable,
 				retval = handle_single_task(names, 6);
 
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Critical Parser Failed");
 				
 				names.map_yago_fq_to_imdb_name();
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				};
 				
 				/*dispose of helper dicts*/
 				this.imdb_movie_names.clear();
@@ -347,7 +371,10 @@ public class Importer extends db_operations implements Runnable,
 						parser_map_movie, imdb_name_to_yago_movie, this);
 				retval = handle_single_task(laguages, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				this.parser_language_set = laguages.get_enrichment_set();
 			} catch (Exception ex) {
 				if (done)
@@ -430,7 +457,10 @@ public class Importer extends db_operations implements Runnable,
 						this.parser_map_director);
 				retval = handle_single_task(person_ldr_d, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception(
 							"Loading directors to person table failed");
@@ -439,7 +469,10 @@ public class Importer extends db_operations implements Runnable,
 						this.parser_map_director);
 				retval = handle_single_task(director_ldr, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception(
 							"Loading directors to directors table failed");
@@ -471,7 +504,10 @@ public class Importer extends db_operations implements Runnable,
 							this.parser_map_actor);
 					retval = handle_single_task(person_ldr_a, 4);
 					if (done)
+					{
+						fireEvent("Parser Terminated forcefully", -2);
 						return;
+					}
 					else if (retval < 0)
 						throw new Exception(
 								"Loading directors to person table failed");
@@ -480,7 +516,10 @@ public class Importer extends db_operations implements Runnable,
 							this.parser_map_actor);
 					retval = handle_single_task(actor_ldr, 4);
 					if (done)
+					{
+						fireEvent("Parser Terminated forcefully", -2);
 						return;
+					}
 					else if (retval < 0)
 						throw new Exception(
 								"Loading directors to directors table failed");
@@ -505,7 +544,10 @@ public class Importer extends db_operations implements Runnable,
 						this.parser_map_movie);
 				retval = handle_single_task(actor_movie_ldr, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Loading to movie-actors table failed");
 
@@ -513,7 +555,10 @@ public class Importer extends db_operations implements Runnable,
 						this.parser_genre_set);
 				retval = handle_single_task(genre_ldr, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Loading to genres table failed");
 
@@ -521,7 +566,10 @@ public class Importer extends db_operations implements Runnable,
 						this.parser_map_movie);
 				retval = handle_single_task(genre_movie_ldr, 4);
 				if (done)
+				{
+					fireEvent("Parser Terminated forcefully", -2);
 					return;
+				}
 				else if (retval < 0)
 					throw new Exception("Loading to genre-movie table failed");
 
@@ -531,7 +579,10 @@ public class Importer extends db_operations implements Runnable,
 							this.parser_tag_set);
 					retval = handle_single_task(tag_ldr, 4);
 					if (done)
+					{
+						fireEvent("Parser Terminated forcefully", -2);
 						return;
+					}
 					else if (retval < 0)
 						throw new Exception("Loading to tags table failed");
 
@@ -539,7 +590,10 @@ public class Importer extends db_operations implements Runnable,
 							this.parser_map_movie);
 					retval = handle_single_task(tag_movie_ldr, 4);
 					if (done)
+					{
+						fireEvent("Parser Terminated forcefully", -2);
 						return;
+					}
 					else if (retval < 0)
 						throw new Exception("Loading to tag-movie table failed");
 	
