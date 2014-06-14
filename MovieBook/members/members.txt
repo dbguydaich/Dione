@@ -1,0 +1,3 @@
+there is no hirarchy in the users, an existing user
+	u: admin
+	p: w

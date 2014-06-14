@@ -1,0 +1,3 @@
+The user manual is integraded whithin the documentation
+
+documentation/documentation.docx
