@@ -131,6 +131,7 @@ public class import_progress_window extends abstract_window
 			public void widgetSelected(SelectionEvent arg0) {
 				exit_import = true;
 				exit_at_all = true;
+				percent_label.setText("Aborting...");
 				gui_utils.my_importer.terminate_thread(); /* terminating the importer thread  */
 			}
 		});

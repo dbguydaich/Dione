@@ -122,7 +122,7 @@ public class movie_details_window extends abstract_window {
 		this.setText("Movie Details - Logged in As: " + my_name);
 
 		/* window background */
-		String imgURL = ".\\src\\gui\\images\\blue_740_480.jpg";
+		String imgURL = gui_utils.my_config.get_image_740_480();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);

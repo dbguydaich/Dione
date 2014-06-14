@@ -28,7 +28,7 @@ public class comment_window extends abstract_window {
 		this.setLayout(new FormLayout());
 
 		/* Window Background */
-		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
+		String imgURL = gui_utils.my_config.get_image_300();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);

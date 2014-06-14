@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import dione.config.config;
 import dione.core.entities.entity_person;
 import dione.core.entities.light_entity_movie;
 
@@ -30,8 +31,7 @@ public class gui_utils
 	static preferences_window pref_win = null;
 	static import_window import_win = null;
 	static import_progress_window import_progress_win = null;
-	//static comment_window comment_win = null;
-	//static movie_comments_window movie_comments_win = null;
+	static config my_config = null;
 	
 	static Display display;
 	static boolean EXIT_ON_LOGIN = true;
@@ -51,6 +51,7 @@ public class gui_utils
 		executor.execute(cron);
 		
 		display = new Display();
+		my_config = new config();
 		
 		
 		try {

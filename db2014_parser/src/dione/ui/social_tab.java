@@ -46,7 +46,7 @@ public class social_tab extends Composite {
 		this.setLayout(form_layout_tab);
 
 		// window background
-		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		String imgURL = gui_utils.my_config.get_image_640_480();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);

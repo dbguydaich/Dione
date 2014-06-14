@@ -181,4 +181,32 @@ public class config {
 	public int get_default_director_id() {
 		return Integer.parseInt(configFile.getProperty("DEFAULT_DIRECTOR_ID"));
 	}
+	
+	public String get_image_640_480(){
+		return configFile.getProperty("ImagePath_blue_640_480");
+	}
+	
+	public String get_image_400_300(){
+		return configFile.getProperty("ImagePath_blue_400_300");
+	}
+	
+	public String get_image_740_480(){
+		return configFile.getProperty("ImagePath_blue_740_480");
+	}
+	
+	public String get_image_300(){
+		return configFile.getProperty("ImagePath_blue_300");
+	}
+	
+	public String get_icon_16(){
+		return configFile.getProperty("IconPath16");
+	}
+
+	public String get_icon_32(){
+		return configFile.getProperty("IconPath32");
+	}
+	
+	public String get_icon_48(){
+		return configFile.getProperty("IconPath48");
+	}
 }

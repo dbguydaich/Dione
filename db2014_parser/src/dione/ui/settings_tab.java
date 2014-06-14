@@ -38,7 +38,7 @@ public class settings_tab extends Composite {
 		this.setLayout(form_layout_tab);
 
 		//window background
-		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		String imgURL = gui_utils.my_config.get_image_640_480();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -81,8 +81,7 @@ public class settings_tab extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				
 				try {
-					time = dione.db.db_operations.is_currently_invoked(invocation_code.YAGO_UPDATE);
-
+				time = dione.db.db_operations.is_currently_invoked(invocation_code.YAGO_UPDATE);
 				/* if not currently running an update */
 				if(time == null)
 				{
@@ -116,10 +115,42 @@ public class settings_tab extends Composite {
 				/* currently running an update to the db */
 				else
 				{
-					MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_WARNING);
-					messageBox.setText("Error");
-					messageBox.setMessage("Can't start an import: Another data update is already in progress.");
-					messageBox.open();
+			        MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+			        messageBox.setMessage("An import process that began at " + time.toString() + " hasn't finished successfully. "
+			        		+ "do you wish to import again?");
+			        messageBox.setText("Exiting Application");
+			        int response = messageBox.open();
+			        
+			        /* user clicked yes */
+			        if (response == SWT.YES)
+			        {
+						if (gui_utils.import_progress_win != null)
+						{
+							if (!gui_utils.import_progress_win.isDisposed())
+							{
+								MessageBox messageBox1 = new MessageBox(display
+										.getActiveShell(), SWT.ICON_WARNING);
+								messageBox1.setText("Error");
+								messageBox1
+									.setMessage("Data import is already in progress.");
+								messageBox1.open();
+							}
+							else // running progress win
+							{
+								gui_utils.import_progress_win = new import_progress_window(
+									display);
+								gui_utils.import_progress_win.open();
+
+							}
+						}
+						else // running progress win
+						{
+							gui_utils.import_progress_win = new import_progress_window(
+									display);
+							gui_utils.import_progress_win.open();
+						}
+			        }
+
 				}
 				
 				} catch (SQLException e) {

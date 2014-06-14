@@ -51,7 +51,7 @@ public class log_in_window extends abstract_window {
 		this.setLayout(new GridLayout(2, false));
 
 		// window background
-		String imgURL = ".\\src\\gui\\images\\blue_300.jpg";
+		String imgURL = gui_utils.my_config.get_image_300();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);

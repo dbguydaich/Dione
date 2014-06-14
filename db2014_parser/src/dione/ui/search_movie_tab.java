@@ -71,7 +71,7 @@ public class search_movie_tab extends Composite {
 				SWT.FILL, -1, SWT.FILL, -1));
 
 		// window background
-		String imgURL = ".\\src\\gui\\images\\blue_640_480_3.jpg";
+		String imgURL = gui_utils.my_config.get_image_640_480();
 		final Image background = new Image(display, imgURL);
 		this.setBackgroundImage(background);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
