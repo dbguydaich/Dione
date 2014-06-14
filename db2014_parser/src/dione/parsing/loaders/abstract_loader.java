@@ -115,7 +115,7 @@ public abstract class abstract_loader extends dione.db.db_operations implements 
 				if (batch_count > 0 && batch_count % BATCH_SIZE == 0 && batch_count > prev_batch_count)
 				{
 					prev_batch_count = batch_count;
-					fail_count += execute_batches(batch_count);
+					fail_count += execute_batches(BATCH_SIZE);
 					db_conn.commit();
 				}
 			}

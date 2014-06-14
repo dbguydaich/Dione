@@ -261,7 +261,64 @@ public abstract class db_operations
 		jdbc_connection_pooling.get_instance().close(conn);
 		return (rows_effected);
 	}
+	/** select tuple/s
+	 * @param tableName	- the name of the table we want to delete from
+	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."
+	 * @param values	- the objects to switch '?' in the where clause 
+	 * @throws SQLException 
+	 */
+	protected static ResultSet select_no_limit(String select, String table , String whereClause, Object... values) throws SQLException 
+	{
+		if (table == null)
+			throw (new SQLException("null table name"));
+		
+		// Does value count match the number of "?"
+		if (values != null)
+			if (countChar(whereClause, '?') != values.length)
+				throw (new SQLException("wrong number of values entered"));
+		
+		// Set the connection
+		Connection conn = null;
+		conn = jdbc_connection_pooling.get_instance().get_connection();
+		
+		// Build insert string
+		String select_string;
+		if 	(whereClause == null || whereClause == "")
+			select_string = "SELECT " + select + " FROM " + table;
+		else
+			select_string = "SELECT " + select + " FROM " + table + " WHERE " + whereClause;
+			
+		// Set the statment
+		PreparedStatement stmt = null; 
+		stmt = conn.prepareStatement(select_string);
 
+		// Fill the question marks
+		if (values != null)
+		{
+			for (int i = 0; i < values.length; i++) 
+			{
+				if (values[i] instanceof Integer)
+				{
+					stmt.setInt((i+1), (int) values[i]);
+					continue;
+				} 
+				if (values[i] instanceof String)
+				{	
+					stmt.setString((i+1), (String) values[i]);
+					continue;
+				}
+			}
+		}
+		
+		// execute insert SQL stetement
+		ResultSet rows_effected = stmt.executeQuery();
+		
+		
+		// Close connection
+		jdbc_connection_pooling.get_instance().close(conn);
+		return (rows_effected);
+	}
+	
 	/** select tuple/s
 	 * @param tableName	- the name of the table we want to delete from
 	 * @param whereCol	- "WHERE column1 = ? AND column 2 = ? Or ..."
@@ -361,7 +418,7 @@ public abstract class db_operations
 	protected static HashMap <String,Integer> generic_get_two_values(String values, String table, String where) 
 			throws SQLException
 	{
-		ResultSet result = select(values, table, where);
+		ResultSet result = select_no_limit(values, table, where);
 		
 		// Enumerate all movies
 		HashMap <String,Integer> retMap =  new HashMap<String,Integer>(); 

@@ -331,7 +331,7 @@ public class Importer extends db_operations implements Runnable,
 					fireEvent("Parser Terminated forcefully", -2);
 					return;
 				}
-				is_failed = true; 
+				this.parser_genre_set = genres.get_enrichment_set();
 			} catch (Exception ex) {
 				if (done)
 				{
@@ -363,9 +363,9 @@ public class Importer extends db_operations implements Runnable,
 				abstract_imdb_parser tags = new imdb_tag_parser(
 						parser_map_movie, imdb_name_to_yago_movie,
 						parser_tag_count_map, this);
-				this.parser_tag_set = tags.get_enrichment_set();
 				handle_single_task(tags, 1);
-
+				this.parser_tag_set = tags.get_enrichment_set();
+				
 				abstract_imdb_parser tag_movie = new imdb_tag_movie_parser(
 						parser_map_movie, imdb_name_to_yago_movie,
 						parser_tag_count_map, this);

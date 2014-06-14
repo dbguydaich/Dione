@@ -26,6 +26,9 @@ public class movie_loader extends abstract_loader {
 	HashMap<String,Integer> languages_table;
 	HashMap<String,Integer> directors_table;
 	
+	private int insert_c = 0;
+	private int update_c = 0;
+	
 	private int noDirectorId = (new config().get_default_director_id());
 	
 	/**
@@ -80,13 +83,15 @@ public class movie_loader extends abstract_loader {
 		{	
 			update = set_values_movie_update(update, movie, movie_id);
 			update.addBatch();
+			update_c++;
 			return 1;	
 		}
 		/*movie doesn't exists, insert new movie*/
 		else
 		{				
 			insert = set_values_movie_insert(insert, movie);
-			insert.addBatch(); 
+			insert.addBatch();
+			insert_c++;
 			return 1;
 		}
 	}
@@ -172,11 +177,15 @@ public class movie_loader extends abstract_loader {
 	@Override
 	protected int execute_batches(int batch_size) throws SQLException {
 		int fail_count=0;
-		fail_count += execute_batch(insert, batch_size);
-		fail_count += execute_batch(update, batch_size);
+		fail_count += execute_batch(insert, insert_c);
+		fail_count += execute_batch(update, update_c);
+		insert_c = 0;
+		update_c = 0;
+	
 		return fail_count;
 	}
 	
+
 	@Override
 	/**
 	 * closes the special statements 

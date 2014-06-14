@@ -324,7 +324,7 @@ public abstract class abstract_imdb_parser implements Iimport_task {
 		}
 
 		System.out
-				.println("Found" + enrich_count+ "enrichments for: " + this.imdb_object + "in imdb titles");
+				.println("Found " + enrich_count+ " enrichments for: " + this.imdb_object + " in imdb titles");
 		return enrich_count;
 	}
 
