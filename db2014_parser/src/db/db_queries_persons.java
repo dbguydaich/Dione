@@ -179,6 +179,18 @@ public class db_queries_persons extends db_operations
 			return (delete("actor_movie","") != -1);
 		}
 
-		
+		/**
+		 * delete from person everybody who is not an actor nor director
+		 * @return true if succeeded
+		 * @throws SQLException 
+		 */
+		public static boolean delete_non_related_persons() 
+				throws SQLException
+		{
+			String where = " idPerson NOT IN (select idPerson from director) AND " +
+							" idPerson NOT IN (select idPerson from actor)" ;
+			
+			return (delete("person",where) >= 0);
+		}
 			
 }
