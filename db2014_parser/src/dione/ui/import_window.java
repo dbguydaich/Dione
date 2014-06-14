@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 
+import dione.db.db_operations;
 import dione.db.db_operations.*;
 
 /**
@@ -126,7 +127,7 @@ public class import_window extends abstract_window
 					{
 				        MessageBox messageBox = new MessageBox(display.getActiveShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 				        messageBox.setMessage("An import process that began at " + time.toString() + " hasn't finished successfully. "
-				        		+ "do you wish to import again?");
+				        		+ "Do you wish to import again?");
 				        messageBox.setText("Exiting Application");
 				        int response = messageBox.open();
 				        
@@ -147,6 +148,7 @@ public class import_window extends abstract_window
 								{
 									gui_utils.import_progress_win = new import_progress_window(display);
 									gui_utils.import_progress_win.open();
+									db_operations.confirm_invocation_performed(invocation_code.YAGO_UPDATE, time.toString());
 								}
 							}
 						
@@ -154,6 +156,7 @@ public class import_window extends abstract_window
 							{	
 								gui_utils.import_progress_win = new import_progress_window(display);
 								gui_utils.import_progress_win.open();
+								db_operations.confirm_invocation_performed(invocation_code.YAGO_UPDATE, time.toString());
 							}
 
 				        }

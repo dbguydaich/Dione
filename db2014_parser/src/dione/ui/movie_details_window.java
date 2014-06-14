@@ -811,7 +811,7 @@ public class movie_details_window extends abstract_window {
 
 										messageBox.setText("Failure");
 
-										messageBox.setMessage("Couldn't add new tag");
+										messageBox.setMessage("Couldn't add new tag. Make sure you try to add an existing tag!");
 
 										messageBox.open();
 
